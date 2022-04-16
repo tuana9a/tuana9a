@@ -1,0 +1,48 @@
+{
+  "name": "tuana9a",
+  "version": "1.0.0",
+  "description": "My personal manager",
+  "main": "src/main/node/index.js",
+  "scripts": {
+    "start": "node src/main/node/index.js",
+    "test:unit": "jest",
+    "dev:server": "nodemon --watch src/main/node/ src/main/node/index.js",
+    "dev:webpack": "webpack --config webpack.dev.js",
+    "prod:webpack": "webpack --config webpack.prod.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuana9a/tuana9a.git"
+  },
+  "author": "Tuan Nguyen Minh",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/tuana9a/tuana9a/issues"
+  },
+  "homepage": "https://github.com/tuana9a/tuana9a#readme",
+  "dependencies": {
+    "axios": "0.25.0",
+    "cors": "2.8.5",
+    "dotenv": "16.0.0",
+    "ejs": "^3.0.2",
+    "express": "4.17.3",
+    "express-rate-limit": "5.5.1",
+    "form-data": "3.0.0",
+    "mongodb": "4.3.1",
+    "multer": "1.4.4"
+  },
+  "devDependencies": {
+    "css-loader": "6.7.1",
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "html-loader": "3.1.0",
+    "html-webpack-plugin": "5.5.0",
+    "jest": "27.5.1",
+    "mini-css-extract-plugin": "2.6.0",
+    "nodemon": "2.0.15",
+    "style-loader": "3.3.1",
+    "webpack": "5.70.0",
+    "webpack-cli": "4.9.2"
+  }
+}
