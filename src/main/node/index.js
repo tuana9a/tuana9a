@@ -18,6 +18,8 @@ const EntryStatus = require("./school/automation/configs/entry-status");
 const automationUtils = require("./school/automation/utils/automation.utils");
 const botClient = require("./global/clients/bot.client");
 const faviconUtils = require("./global/utils/favicon.utils");
+const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
+const schoolAutomationRateLimit = require("./school/automation/middlewares/rate-limit");
 
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.autoRegisterClasses, "dk-sis.hust.edu.vn/autoRegisterClasses");
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentProgram, "ctt-sis.hust.edu.vn/getStudentProgram");
@@ -121,8 +123,13 @@ async function main() {
         }
         res.render("explorer", { faviconUrl, titleName: pathRequest, entries });
     });
-    server.use("/api/school/automation/entry", automationEntryRouter);
-    server.use("/api/school/register-preview/classes", schoolClassesRouter);
+    server.get("/api/school/automation/entry", automationEntryRouter.find);
+    server.post("/api/school/automation/entry", schoolAutomationRateLimit.submitEntry, automationEntryRouter.insert);
+    server.put("/api/school/automation/entry/:entryId", automationEntryRouter.update);
+    // school/register-preview
+    server.get("/api/school/register-preview/classes", schoolClassesRouter.find);
+    server.post("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.find);
+    server.delete("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.drop);
     LOGGER.log({ type: "INFO", data: `bind: ${CONFIG.bind}:${CONFIG.port}` });
     const { port } = CONFIG;
     if (CONFIG.ssl.enabled) {

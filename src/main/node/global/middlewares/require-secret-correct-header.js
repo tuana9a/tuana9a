@@ -15,6 +15,4 @@ function requireCorrectSecretHeader(req, resp, next) {
     resp.sendStatus(403);
 }
 
-module.exports = {
-    requireCorrectSecretHeader,
-};
+module.exports = requireCorrectSecretHeader;

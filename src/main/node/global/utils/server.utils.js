@@ -3,7 +3,7 @@ const SafeError = require("../exceptions/safe-error");
 const LOGGER = require("../loggers/logger");
 
 module.exports = {
-    wrapper(handler) {
+    makeSafeHandler(handler) {
         const safeHandler = async (req, resp) => {
             try {
                 const data = await handler(req, resp);

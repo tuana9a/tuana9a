@@ -8,11 +8,5 @@ module.exports = {
             },
         },
     },
-    rateLimit: {
-        automation: {
-            windowMs: 5 * 60 * 1000,
-            max: 5,
-        },
-    },
     logsDir: "logs/",
 };

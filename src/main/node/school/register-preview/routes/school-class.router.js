@@ -1,12 +1,9 @@
-const express = require("express");
-const multer = require("multer");
-
 const stringDTO = require("../../../global/dto/string.dto");
 const serverUtils = require("../../../global/utils/server.utils");
 const validation = require("../../../global/validations/validation");
 const schoolClassController = require("../controllers/school-class.controller");
 const semesterValidation = require("../validations/semester.validation");
-const filter = require("../../../global/middlewares/filter");
+const SafeError = require("../../../global/exceptions/safe-error");
 
 async function find(req) {
     const { query } = req;
@@ -22,7 +19,7 @@ async function insert(req) {
     const { file } = req;
     semesterValidation.check(semester);
     validation.checkNulOrUndefined(file);
-    throw new Error("not implemented");
+    throw new SafeError("not implemented");
 }
 
 async function drop(req) {
@@ -32,11 +29,8 @@ async function drop(req) {
     return result;
 }
 
-const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }).single("file");
-
-const router = express.Router();
-router.get("/", serverUtils.wrapper(find));
-router.post("/", filter.requireCorrectSecretHeader, upload, serverUtils.wrapper(insert));
-router.delete("/", filter.requireCorrectSecretHeader, serverUtils.wrapper(drop));
-
-module.exports = router;
+module.exports = {
+    find: serverUtils.makeSafeHandler(find),
+    insert: serverUtils.makeSafeHandler(insert),
+    drop: serverUtils.makeSafeHandler(drop),
+};

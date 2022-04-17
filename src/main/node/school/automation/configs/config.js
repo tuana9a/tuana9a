@@ -13,4 +13,10 @@ module.exports = {
         autoRegisterClasses: AUTO_REGISTER_CLASSES_ID,
     },
     allowedActions,
+    rateLimit: {
+        submitEntry: {
+            windowMs: 5 * 60 * 1000,
+            max: 5,
+        },
+    },
 };

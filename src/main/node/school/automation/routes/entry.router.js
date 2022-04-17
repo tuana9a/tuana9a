@@ -1,11 +1,9 @@
-const express = require("express");
-
-const rateLimit = require("../middlewares/rate-limit");
 const serverUtils = require("../../../global/utils/server.utils");
 const entryController = require("../controllers/entry.controller");
 const entryDTO = require("../dto/entry.dto");
 const entryValidation = require("../validations/entry.validation");
 const EntryStatus = require("../configs/entry-status");
+const SafeError = require("../../../global/exceptions/safe-error");
 
 async function insert(req) {
     const entry = entryDTO.fromRequestBodyToEntry(req.body);
@@ -23,15 +21,15 @@ async function update(req) {
     return result;
 }
 
+// eslint-disable-next-line no-unused-vars
 async function find(req, resp) {
     // TODO: hiện tại chưa sử dụng
     // nếu dùng nhớ xóa password trước khi trả vè frontend
-    resp.send("Under construction");
+    throw new SafeError("not implemented");
 }
 
-const router = express.Router();
-router.get("/", serverUtils.wrapper(find));
-router.post("/", rateLimit.submitEntry, serverUtils.wrapper(insert));
-router.put("/:entryId", rateLimit.submitEntry, serverUtils.wrapper(update));
-
-module.exports = router;
+module.exports = {
+    find: serverUtils.makeSafeHandler(find),
+    insert: serverUtils.makeSafeHandler(insert),
+    update: serverUtils.makeSafeHandler(update),
+};
