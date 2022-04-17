@@ -1,0 +1,11 @@
+@import url("./column.css");
+
+/* SECTION: table building */
+.RenderTable {
+    /* CAUTION: không đc để overflow ở đây 
+    vì nó làm mất cái sticky của hourIndex */
+    /* width: max-content; */
+    /* min-width: 100%; */
+    background: #ffffff;
+    color: black;
+}

@@ -1,0 +1,13 @@
+:root {
+    --green-neon: #73ff00;
+    --black-neon: #000800;
+    --black-neon-faded: #000a00f3;
+    --green-neon-faded: #081000;
+}
+
+.color-green-neon {
+    color: var(--green-neon);
+}
+.color-black-neon {
+    color: var(--black-neon);
+}

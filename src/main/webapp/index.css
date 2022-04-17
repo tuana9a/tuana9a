@@ -1,0 +1,39 @@
+@import url("./global/styles/index.css");
+@import url("./common/styles/index.css");
+@import url("./kernel/styles/index.css");
+@import url("./neon/styles/index.css");
+@import url("./apps/school/register-preview/styles/index.css");
+@import url("./apps/school/automation/styles/index.css");
+@import url("./apps/terminal/styles/index.css");
+
+* {
+    margin: 0;
+    padding: 0;
+}
+html {
+    min-height: 101%;
+}
+body {
+    background-color: var(--web-background);
+    overflow: auto;
+}
+
+/* SECTION: RESPONSIVE*/
+@media screen and (orientation: portrait) {
+    .RenderContainer {
+        grid-column: 1 / span 10;
+    }
+
+    .Terminal {
+        grid-column: 1 / span 10;
+    }
+}
+@media screen and (max-width: 1080px) {
+    .RenderContainer {
+        grid-column: 1 / span 10;
+    }
+
+    .Terminal {
+        grid-column: 1 / span 10;
+    }
+}
