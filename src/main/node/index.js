@@ -96,11 +96,13 @@ async function main() {
         "/docs",
         (req, res, next) => {
             next();
-            if (req.path.match(/^.*(\.sh|\.cmd|\.ps1)$/)) {
+            const extesions = [".sh", ".cmd", ".ps1", ".md", ".ini", ".gitignore"];
+            const regex = new RegExp(`^.*(${extesions.join("|")})$`);
+            if (req.path.match(regex)) {
                 res.set("Content-Type", "text/plain");
             }
         },
-        express.static(CONFIG.docsDir, { maxAge: String(7 * 24 * 60 * 60) /* 7 day */ }),
+        express.static(CONFIG.docsDir, { maxAge: String(7 * 24 * 60 * 60) /* 7 day */, dotfiles: "allow" }),
     );
     server.get("/docs/*", (req, res) => {
         // this block of code is hard to understand
@@ -120,7 +122,11 @@ async function main() {
             entry.type = isDir ? "d" : "f";
             entries.push(entry);
         }
-        res.render("explorer", { faviconUrl, titleName: pathRequest, entries });
+        res.render("explorer", {
+            faviconUrl,
+            titleName: pathRequest,
+            entries,
+        });
     });
     server.get("/api/school/automation/entry", automationEntryRouter.find);
     server.post("/api/school/automation/entry", schoolAutomationRateLimit.submitEntry, automationEntryRouter.insert);
