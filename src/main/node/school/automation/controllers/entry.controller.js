@@ -4,10 +4,15 @@ const HistoryRecord = require("../data/history-record");
 const automationUtils = require("../utils/automation.utils");
 const mongodbClient = require("../../../global/clients/mongodb.client");
 const EntryStatus = require("../configs/entry-status");
+// eslint-disable-next-line no-unused-vars
+const Entry = require("../data/entry");
+const SafeError = require("../../../global/exceptions/safe-error");
+const HttpStatusCode = require("../../../global/configs/http-status-code");
 
 module.exports = {
     /**
      * thêm mới entry
+     * @param {Entry} entry
      */
     async insert(entry) {
         const entriesCollection = mongodbClient.getEntriesCollection();
@@ -31,7 +36,7 @@ module.exports = {
     /**
      * NOTE: sử  dụng chung cho cả update entry và cancel entry
      * @param {String} entryId
-     * @param {Entry} updateEntry
+     * @param {*} updateEntry
      */
     async update(entryId, updateEntry) {
         // prepare collection
@@ -40,39 +45,52 @@ module.exports = {
         // check exist first
         const existEntry = await entriesCollection.findOne({ _id: new mongodb.ObjectId(entryId) });
         if (!existEntry) {
-            return "entry not exists";
+            throw new SafeError("entry not found", HttpStatusCode.NOT_FOUND);
         }
         // không tin tưởng user không được sử dụng trực tiếp entry từ input
         // vì có thể người dùng này cập nhật entry của người khác nếu biết _id
         if (existEntry.username !== updateEntry.username) {
-            return "not your account";
+            throw new SafeError("username not match", HttpStatusCode.FORBIDDEN);
         }
         if (existEntry.password !== updateEntry.password) {
-            return "your password is same as before";
+            throw new SafeError("password not match", HttpStatusCode.FORBIDDEN);
         }
         if (existEntry.status === EntryStatus.DONE) {
-            return "your entry is done so insert new on instead";
+            throw new SafeError("entry is done", HttpStatusCode.BAD_REQUEST);
         }
         if (existEntry.status === EntryStatus.CANCELED) {
-            return "your entry is canceled so insert new on instead";
+            throw new SafeError("entry is canceled", HttpStatusCode.BAD_REQUEST);
+        }
+        const updateDTO = {};
+        if (updateEntry.actionId) {
+            updateDTO.actionId = updateEntry.actionId;
+        }
+        if (updateEntry.newUsername) {
+            updateDTO.username = updateEntry.username;
+        }
+        if (updateEntry.newPassword) {
+            updateDTO.password = updateEntry.newPassword;
+        }
+        if (updateEntry.classIds) {
+            updateDTO.classIds = updateEntry.classIds;
+        }
+        if (updateEntry.timeToStart) {
+            updateDTO.timeToStart = updateEntry.timeToStart;
+        }
+        if (updateEntry.status) {
+            // TODO: nếu cho người dùng có thể cập nhật có thể  cho phép họ spam retry
+            updateDTO.status = updateEntry.status;
         }
         await entriesCollection.updateOne(
             { _id: new mongodb.ObjectId(entryId) },
             {
-                $set: {
-                    // not necessary to update username and password
-                    actionId: updateEntry.actionId,
-                    classIds: updateEntry.classIds,
-                    timeToStart: updateEntry.timeToStart,
-                    status: updateEntry.status,
-                },
+                $set: updateDTO,
             },
         );
         // thêm log vào history của bản ghi cũ
         const ignoreKey = new Set([
             // ignore property for create difference between two entry
             "_id",
-            "username",
             "created",
             "historyId",
         ]);

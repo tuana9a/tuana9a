@@ -11,9 +11,10 @@ module.exports = {
     createEntryDiff(oldEntry, newEntry, opts = { ignoreKey: new Set() }) {
         const diff = {};
         const { ignoreKey } = opts;
+        const keys = new Set(Object.keys(oldEntry).concat(Object.keys(newEntry)));
         // eslint-disable-next-line no-restricted-syntax
-        for (const key in oldEntry) {
-            if (ignoreKey.has(key)) {
+        for (const key of keys) {
+            if (ignoreKey.has(key) || !newEntry[key]) {
                 // eslint-disable-next-line no-continue
                 continue;
             }

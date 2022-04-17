@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require("axios").default.create();
 const CONFIG = require("../configs/config");
 
 class BotClient {
@@ -19,9 +19,8 @@ class BotClient {
             jobId: this.getJobId(entry.actionId),
             data: entry,
         };
-        const { url } = CONFIG.automation.bot;
         return axios
-            .post(url, body, {
+            .post(CONFIG.automation.bot.url, body, {
                 headers: {
                     secret: CONFIG.automation.bot.secret,
                 },

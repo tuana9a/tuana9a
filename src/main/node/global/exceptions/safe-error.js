@@ -1,7 +1,9 @@
+const HttpStatusCode = require("../configs/http-status-code");
+
 class SafeError extends Error {
-    // eslint-disable-next-line no-useless-constructor
-    constructor(message) {
+    constructor(message, code = HttpStatusCode.BAD_REQUEST) {
         super(message);
+        this.code = code;
     }
 }
 

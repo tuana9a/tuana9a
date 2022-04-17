@@ -4,17 +4,19 @@ const entryDTO = require("../dto/entry.dto");
 const entryValidation = require("../validations/entry.validation");
 const EntryStatus = require("../configs/entry-status");
 const SafeError = require("../../../global/exceptions/safe-error");
+const DateTime = require("../../../global/data/datetime");
 
 async function insert(req) {
-    const entry = entryDTO.fromRequestBodyToEntry(req.body);
-    entryValidation.checkUsernamePasswordActionId(entry);
+    const entry = entryDTO.toEntryToInsert(req.body);
+    entry.created = new DateTime(new Date());
     entry.status = EntryStatus.READY;
+    entryValidation.checkUsernamePasswordActionId(entry);
     const result = await entryController.insert(entry);
     return result;
 }
 
 async function update(req) {
-    const entry = entryDTO.fromRequestBodyToEntry(req.body);
+    const entry = entryDTO.toEntryToUpdate(req.body);
     const { entryId } = req.params;
     entryValidation.checkUsernamePasswordActionId(entry);
     const result = await entryController.update(entryId, entry);

@@ -1,7 +1,7 @@
 const EntryStatus = {
     READY: "READY",
     DONE: "DONE",
-    CANCELED: "CANELED",
+    CANCELED: "CANCELED",
 };
 
 module.exports = EntryStatus;

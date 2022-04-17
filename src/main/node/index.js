@@ -46,7 +46,6 @@ async function repeatProcessAutomationEntry() {
             // eslint-disable-next-line no-await-in-loop
             const result = await botClient.send(entry);
             const historyRecord = automationUtils.injectTimestampAt(result);
-            LOGGER.info(historyRecord);
             historyCollection.updateOne(
                 { _id: new mongodb.ObjectId(historyId) },
                 {
