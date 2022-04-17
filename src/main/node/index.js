@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
@@ -90,8 +91,8 @@ async function main() {
         server.use(cors());
     }
     server.use(express.json());
-    server.use(express.static(CONFIG.static, { maxAge: String(24 * 60 * 60) /* 1 day */ }));
-    server.use("/libs", express.static("./libs", { maxAge: String(7 * 24 * 60 * 60) /* 7 day */ }));
+    server.use(express.static(CONFIG.static, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
+    server.use("/libs", express.static("./libs", { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
     server.use(
         "/docs",
         (req, res, next) => {
@@ -102,7 +103,7 @@ async function main() {
                 res.set("Content-Type", "text/plain");
             }
         },
-        express.static(CONFIG.docsDir, { maxAge: String(7 * 24 * 60 * 60) /* 7 day */, dotfiles: "allow" }),
+        express.static(CONFIG.docsDir, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */, dotfiles: "allow" }),
     );
     server.get("/docs/*", (req, res) => {
         // this block of code is hard to understand
