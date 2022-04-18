@@ -11,11 +11,12 @@
     padding: 0;
 }
 html {
-    min-height: 101%;
+    min-height: 100%;
 }
 body {
     background-color: var(--web-background);
     overflow: auto;
+    height: 100vh;
 }
 
 /* SECTION: RESPONSIVE*/

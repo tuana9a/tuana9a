@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 import BashComponent from "./bash.component";
 import App from "./app.component";
+import makeClickThenBringToFront from "../../common/styles/bring-to-front";
+import makeDragToMove from "../../common/styles/make-drag-to-move";
 // eslint-disable-next-line no-unused-vars
 import LaunchOption from "../data/launch.option";
 import WindowManagerComponent from "./window-manager.component";
@@ -45,7 +47,7 @@ export default class OS extends BaseComponent {
         launcher.addEventListener("click", () => {
             thiss.launch(name, launchOption);
         });
-        this.appendChild(launcher);
+        this.windowManager.appendChild(launcher);
     }
 
     uninstall(name) {
@@ -69,6 +71,8 @@ export default class OS extends BaseComponent {
             throw new Error(`app "${AppClass}" is not a App`);
         }
         const window = new WindowComponent(document.createElement("div"));
+        makeDragToMove(window, window.headerBar, { boundComponent: this.windowManager });
+        makeClickThenBringToFront(window);
         window.launch(launchOption, app);
         window.appendChild(app);
         this.windowManager.appendChild(window);

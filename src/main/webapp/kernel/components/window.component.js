@@ -1,5 +1,3 @@
-import makeClickThenBringToFront from "../../common/styles/bring-to-front";
-import makeDragToMove from "../../common/styles/make-drag-to-move";
 import BaseComponent from "../../global/components/base.component";
 // eslint-disable-next-line no-unused-vars
 import LaunchOption from "../data/launch.option";
@@ -18,8 +16,6 @@ export default class WindowComponent extends BaseComponent {
             thiss.close();
         });
         this.appendChild(this.headerBar);
-        makeDragToMove(this, this.headerBar);
-        makeClickThenBringToFront(this);
     }
 
     /**
