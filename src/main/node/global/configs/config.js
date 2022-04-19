@@ -32,6 +32,23 @@ CONFIG.database.connectionString = process.env.MONGODB_CONNECTION_STRING;
 CONFIG.database.name = process.env.MONGODB_DATABASE_NAME;
 CONFIG.database.readLimit = parseInt(process.env.MONGODB_READ_LIMIT) || 20;
 
+// load message queue config
+CONFIG.rabbitmq = {};
+CONFIG.rabbitmq.connectionString = process.env.RABBITMQ_CONNECTION_STRING;
+CONFIG.rabbitmq.queueNames = {
+    school: {
+        automation: {
+            response: "tuana9a.school.automation.response",
+        },
+    },
+};
+CONFIG.rabbitmq.exchangeNames = {
+    bot: "bot",
+};
+CONFIG.rabbitmq.topics = {
+    submit: "submit",
+};
+
 // config automation
 CONFIG.automation = {};
 CONFIG.automation.captchaToTextEndpoint = process.env.CAPTCHA_TO_TEXT_ENDPOINT;

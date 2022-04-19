@@ -5,7 +5,6 @@ const cors = require("cors");
 const http = require("http");
 const https = require("https");
 const express = require("express");
-const mongodb = require("mongodb");
 
 const LOGGER = require("./global/loggers/logger");
 const CONFIG = require("./global/configs/config");
@@ -16,57 +15,17 @@ const automationEntryRouter = require("./school/automation/routes/entry.router")
 const mongodbClient = require("./global/clients/mongodb.client");
 
 const EntryStatus = require("./school/automation/configs/entry-status");
-const automationUtils = require("./school/automation/utils/automation.utils");
 const botClient = require("./global/clients/bot.client");
 const faviconUtils = require("./global/utils/favicon.utils");
 const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
 const schoolAutomationRateLimit = require("./school/automation/middlewares/rate-limit");
+const rabbitmqClient = require("./global/clients/rabbitmq.client");
+const entryController = require("./school/automation/controllers/entry.controller");
+const loopAsync = require("./global/controllers/loop-async");
 
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.autoRegisterClasses, "dk-sis.hust.edu.vn/autoRegisterClasses");
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentProgram, "ctt-sis.hust.edu.vn/getStudentProgram");
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentTimetable, "ctt-sis.hust.edu.vn/getStudentTimetable");
-
-async function repeatProcessAutomationEntry() {
-    // phải sử dụng chung tab vì nếu 2 tab cùng mở ctt-sis sẽ đánh nhau
-    // phải cùng loop với execute vì nếu không cũng sẽ đánh nhau
-    const entriesCollection = mongodbClient.getEntriesCollection();
-    const historyCollection = mongodbClient.getHistoryCollection();
-    try {
-    // gọi check real account trước
-        const cursor = entriesCollection.find({
-            "timeToStart.n": {
-                $lt: Date.now(), // thời gian sắp tới
-            },
-            status: EntryStatus.READY,
-        });
-        // eslint-disable-next-line no-await-in-loop
-        while (await cursor.hasNext()) {
-            // eslint-disable-next-line no-await-in-loop
-            const entry = await cursor.next();
-            const { historyId } = entry;
-            // eslint-disable-next-line no-await-in-loop
-            const result = await botClient.send(entry);
-            const historyRecord = automationUtils.injectTimestampAt(result);
-            historyCollection.updateOne(
-                { _id: new mongodb.ObjectId(historyId) },
-                {
-                    $push: {
-                        details: historyRecord,
-                    },
-                },
-            );
-            entriesCollection.updateOne(
-                // eslint-disable-next-line no-underscore-dangle
-                { _id: new mongodb.ObjectId(entry._id) },
-                { $set: { status: EntryStatus.DONE } },
-            );
-        }
-    } catch (err) {
-    // có thể lỗi mất mạng
-        LOGGER.error(err);
-    }
-    setTimeout(repeatProcessAutomationEntry, CONFIG.automation.repeatProcessAfter);
-}
 
 async function main() {
     // init logger
@@ -80,8 +39,68 @@ async function main() {
     } else {
         LOGGER.log({ type: "WARN", data: "no database config found" });
     }
+    if (CONFIG.rabbitmq.connectionString) {
+        LOGGER.log({ type: "INFO", data: "connecting to message queue" });
+        await rabbitmqClient.prepare(CONFIG.rabbitmq.connectionString);
+        const channel0 = rabbitmqClient.channel;
+        // prepare response queue for bot to reply to
+        await channel0.assertQueue(CONFIG.rabbitmq.queueNames.school.automation.response);
+        await channel0.prefetch(1);
+        await channel0.consume(CONFIG.rabbitmq.queueNames.school.automation.response, async (msg) => {
+            try {
+                const result = JSON.parse(msg.content.toString());
+                entryController.processResult(result.data, result);
+                channel0.ack(msg);
+            } catch (err) {
+                LOGGER.error(err);
+                channel0.ack(msg);
+            }
+        }, { noAck: false });
+    } else {
+        LOGGER.log({ type: "WARN", data: "no message queue config found" });
+    }
     // can start process entry
-    repeatProcessAutomationEntry();
+    loopAsync.loopInfinity(async () => {
+    // phải sử dụng chung tab vì nếu 2 tab cùng mở ctt-sis sẽ đánh nhau
+        // phải cùng loop với execute vì nếu không cũng sẽ đánh nhau
+        const entriesCollection = mongodbClient.getEntriesCollection();
+        try {
+        // gọi check real account trước
+            const cursor = entriesCollection.find({
+                "timeToStart.n": {
+                    $lt: Date.now(), // thời gian sắp tới
+                },
+                status: EntryStatus.READY,
+            });
+            // eslint-disable-next-line no-await-in-loop
+            while (await cursor.hasNext()) {
+                // eslint-disable-next-line no-await-in-loop
+                const entry = await cursor.next();
+                const body = {
+                    jobId: botClient.getJobId(entry.actionId),
+                    data: entry,
+                };
+                if (rabbitmqClient.enabled) {
+                    rabbitmqClient.channel.publish(
+                        CONFIG.rabbitmq.exchangeNames.bot,
+                        CONFIG.rabbitmq.topics.submit,
+                        Buffer.from(JSON.stringify(body)),
+                        {
+                            replyTo: CONFIG.rabbitmq.queueNames.school.automation.response,
+                        },
+                    );
+                } else {
+                    // eslint-disable-next-line no-await-in-loop
+                    const result = await botClient.send(entry);
+                    // eslint-disable-next-line no-await-in-loop
+                    await entryController.processResult(result.data, result);
+                }
+            }
+        } catch (err) {
+        // có thể lỗi mất mạng
+            LOGGER.error(err);
+        }
+    }, CONFIG.automation.repeatProcessAfter);
     // init server
     const server = express();
     server.set("view engine", "ejs");
