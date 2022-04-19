@@ -45,7 +45,8 @@ module.exports = {
         const classes = await mongodbClient.getClassesCollection().find(filter)
             .limit(CONFIG.database.readLimit)
             .toArray();
-        return classes;
+        const result = classes.map((x) => schoolClassDTO.toClient(x));
+        return result;
     },
     /**
      * @param {String} semester
