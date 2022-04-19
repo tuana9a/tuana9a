@@ -3,7 +3,8 @@ const serverUtils = require("../../../global/utils/server.utils");
 const validation = require("../../../global/validations/validation");
 const schoolClassController = require("../controllers/school-class.controller");
 const semesterValidation = require("../validations/semester.validation");
-const SafeError = require("../../../global/exceptions/safe-error");
+const schoolClassDTO = require("../dto/school-class.dto");
+const arrayValidation = require("../../../global/validations/array.validation");
 
 async function find(req) {
     const { query } = req;
@@ -15,11 +16,15 @@ async function find(req) {
 }
 
 async function insert(req) {
-    const semester = stringDTO.format(req.query.semester);
-    const { file } = req;
-    semesterValidation.check(semester);
-    validation.checkNulOrUndefined(file);
-    throw new SafeError("not implemented");
+    validation.checkNulOrUndefined(req.body);
+    arrayValidation.isArray(req.body.classes);
+    const classes = req.body.classes.map((x) => {
+        const output = schoolClassDTO.toSchoolClassToInsert(x);
+        output.created = Date.now();
+        return output;
+    });
+    const result = await schoolClassController.insertMany(classes);
+    return result;
 }
 
 async function drop(req) {

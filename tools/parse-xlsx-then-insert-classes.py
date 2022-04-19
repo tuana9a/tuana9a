@@ -1,8 +1,8 @@
 import os
-import time
 import dotenv
-import pymongo
+import requests
 import openpyxl
+from data import SchoolClass
 
 dotenv.load_dotenv(dotenv.find_dotenv(filename=".xlsx.local.env", raise_error_if_not_found=True))
 
@@ -34,44 +34,17 @@ PROP_TABLE = {
     "GhiChu": -1,
 }
 
-class SchoolClass:
-    def __init__(self, row):
-        for key in PROP_TABLE:
-            self.__setattr__(key, row[PROP_TABLE[key]])
-        self.created = int(time.time() * 1000)
-        self.semester = SEMESTER
-        pass
-
-    def __str__(self) -> str:
-        result = ""
-        for key in PROP_TABLE:
-            result = result + key + ": " + \
-                str(self.__getattribute__(key)) + "|"
-        result += "semester: " + str(self.semester) + "|"
-        result += "created: " + str(self.created)
-        return result
-
-    def to_dict(self):
-        result = {}
-        for key in PROP_TABLE:
-            result[key] = self.__getattribute__(key)
-        result["created"] = self.created
-        result["semester"] = self.semester
-        return result
-
 SEMESTER = os.getenv("SEMESTER")
 print(f"semester={SEMESTER}")
-
-DATABASE_NAME = os.getenv("DATABASE_NAME")
-print(f"database_name={DATABASE_NAME}")
 
 XLSX_FILEPATH = os.getenv("XLSX_PATH")
 print(f"xlsx_path=${XLSX_FILEPATH}")
 
-CONNECTION_STRING = os.getenv("CONNECTION_STRING")
-print(f"connection_string={CONNECTION_STRING}")
+SECRET = os.getenv("SECRET")
+print(f"secret=${SECRET}")
 
-client = pymongo.MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+ENDPOINT = os.getenv("ENDPOINT")
+print(f"endpoint={ENDPOINT}")
 
 wb = openpyxl.load_workbook(XLSX_FILEPATH)
 ws = wb.active
@@ -91,7 +64,7 @@ def check_found_prop_table():
             return True
     return False
 
-school_classes_to_insert = []
+classes_to_insert = []
 classes_count = 0
 
 for row in ws.iter_rows(min_row=0, values_only=True):
@@ -115,10 +88,20 @@ for row in ws.iter_rows(min_row=0, values_only=True):
                 print(f'start_data_row = {current_row}')
     elif (prompt_to_process):
         classes_count = classes_count + 1
-        school_class = SchoolClass(row)
-        school_classes_to_insert.append(school_class.to_dict())
+        school_class = SchoolClass(row, PROP_TABLE, SEMESTER)
+        classes_to_insert.append(school_class.to_dict())
 
-if len(school_classes_to_insert) > 0:
-    result = client[DATABASE_NAME]["school.classes"].insert_many(school_classes_to_insert)
+if len(classes_to_insert) > 0:
+    headers = { 'secret': SECRET }
+    batch = []
+    batch_size = 0
+    for classs in classes_to_insert:
+        if batch_size > 10:
+            response = requests.post(url=ENDPOINT, headers=headers, json={ 'classes' : batch })
+            batch.clear()
+            batch_size = 0
+            print(f'response.status={response.status_code}', f'response.text={response.text}')
+        else:
+            batch.append(classs)
+            batch_size = batch_size + 1
     print('count =', classes_count)
-    print('inserted = ', len(result.inserted_ids))

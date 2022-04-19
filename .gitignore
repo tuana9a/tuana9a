@@ -106,3 +106,4 @@ dist
 # @tuana9a
 *.local*
 .venv/
+__pycache__/

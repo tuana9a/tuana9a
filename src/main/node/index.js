@@ -134,7 +134,7 @@ async function main() {
     server.put("/api/school/automation/entry/:entryId", automationEntryRouter.update);
     // school/register-preview
     server.get("/api/school/register-preview/classes", schoolClassesRouter.find);
-    server.post("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.find);
+    server.post("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.insert);
     server.delete("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.drop);
     LOGGER.log({ type: "INFO", data: `bind: ${CONFIG.bind}:${CONFIG.port}` });
     const { port } = CONFIG;

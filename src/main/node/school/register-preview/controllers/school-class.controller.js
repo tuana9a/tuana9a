@@ -48,6 +48,11 @@ module.exports = {
         const result = classes.map((x) => schoolClassDTO.toClient(x));
         return result;
     },
+    async insertMany(classes) {
+        const insertResult = await mongodbClient.getClassesCollection().insertMany(classes);
+        if (insertResult.insertedCount === 0) throw new SafeError("no classes inserted");
+        return insertResult.insertedCount;
+    },
     /**
      * @param {String} semester
      * @param {*} filter
