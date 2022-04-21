@@ -11,7 +11,8 @@ CONFIG.docsDir = process.env.DOCS_DIR;
 
 // config logging
 CONFIG.log = {};
-CONFIG.log.handlerName = process.env.LOG_DESTINATION;
+CONFIG.log.dest = process.env.LOG_DESTINATION;
+CONFIG.log.dir = "./logs/"; // hardcode
 
 // config ssl
 CONFIG.ssl = {};
@@ -31,6 +32,15 @@ CONFIG.database = {};
 CONFIG.database.connectionString = process.env.MONGODB_CONNECTION_STRING;
 CONFIG.database.name = process.env.MONGODB_DATABASE_NAME;
 CONFIG.database.readLimit = parseInt(process.env.MONGODB_READ_LIMIT) || 20;
+CONFIG.database.collectionNames = { // currently hardcode these value
+    school: {
+        classes: "school.classes",
+        automation: {
+            entries: "school.automation.entries",
+            history: "school.automation.history",
+        },
+    },
+};
 
 // config automation
 CONFIG.automation = {};

@@ -1,7 +1,6 @@
 const mongodb = require("mongodb");
 
 const CONFIG = require("../configs/config");
-const HARDCODE = require("../configs/hardcode");
 
 class MongoDBClient {
     constructor() {
@@ -17,17 +16,17 @@ class MongoDBClient {
 
     getClassesCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(HARDCODE.collection.school.classes);
+        return this.db.collection(CONFIG.database.collectionNames.school.classes);
     }
 
     getHistoryCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(HARDCODE.collection.school.automation.history);
+        return this.db.collection(CONFIG.database.collectionNames.school.automation.history);
     }
 
     getEntriesCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(HARDCODE.collection.school.automation.entries);
+        return this.db.collection(CONFIG.database.collectionNames.school.automation.entries);
     }
 
     close() {

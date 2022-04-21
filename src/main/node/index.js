@@ -32,7 +32,7 @@ async function repeatProcessAutomationEntry() {
     const entriesCollection = mongodbClient.getEntriesCollection();
     const historyCollection = mongodbClient.getHistoryCollection();
     try {
-    // gọi check real account trước
+        // gọi check real account trước
         const cursor = entriesCollection.find({
             "timeToStart.n": {
                 $lt: Date.now(), // thời gian sắp tới
@@ -62,7 +62,7 @@ async function repeatProcessAutomationEntry() {
             );
         }
     } catch (err) {
-    // có thể lỗi mất mạng
+        // có thể lỗi mất mạng
         LOGGER.error(err);
     }
     setTimeout(repeatProcessAutomationEntry, CONFIG.automation.repeatProcessAfter);
@@ -70,7 +70,7 @@ async function repeatProcessAutomationEntry() {
 
 async function main() {
     // init logger
-    LOGGER.use(CONFIG.log.handlerName);
+    LOGGER.use(CONFIG.log.dest);
     // init database
     if (CONFIG.database.connectionString) {
         LOGGER.log({ type: "INFO", data: "connecting to database" });
@@ -129,6 +129,7 @@ async function main() {
             entries,
         });
     });
+    // school/automation
     server.get("/api/school/automation/entry", automationEntryRouter.find);
     server.post("/api/school/automation/entry", schoolAutomationRateLimit.submitEntry, automationEntryRouter.insert);
     server.put("/api/school/automation/entry/:entryId", automationEntryRouter.update);
@@ -136,18 +137,18 @@ async function main() {
     server.get("/api/school/register-preview/classes", schoolClassesRouter.find);
     server.post("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.insert);
     server.delete("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.drop);
-    LOGGER.log({ type: "INFO", data: `bind: ${CONFIG.bind}:${CONFIG.port}` });
-    const { port } = CONFIG;
+    // create server
     if (CONFIG.ssl.enabled) {
-    // https
-        LOGGER.log({ type: "INFO", data: "mode: https" });
-        const key = fs.readFileSync(CONFIG.ssl.key);
-        const cert = fs.readFileSync(CONFIG.ssl.cert);
-        https.createServer({ key, cert }, server).listen(port, CONFIG.bind);
+        // https
+        LOGGER.log({ type: "INFO", data: `bind: https://${CONFIG.bind}:${CONFIG.port}` });
+        https.createServer({
+            key: fs.readFileSync(CONFIG.ssl.key),
+            cert: fs.readFileSync(CONFIG.ssl.cert),
+        }, server).listen(CONFIG.port, CONFIG.bind);
     } else {
-    // http
-        LOGGER.log({ type: "INFO", data: "mode: http" });
-        http.createServer(server).listen(port, CONFIG.bind);
+        // http
+        LOGGER.log({ type: "INFO", data: `bind: http://${CONFIG.bind}:${CONFIG.port}` });
+        http.createServer(server).listen(CONFIG.port, CONFIG.bind);
     }
 }
 
