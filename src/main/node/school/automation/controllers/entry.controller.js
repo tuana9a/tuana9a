@@ -110,4 +110,23 @@ module.exports = {
         );
         return "success";
     },
+    async processResult(entry, result) {
+        const entriesCollection = mongodbClient.getEntriesCollection();
+        const historyCollection = mongodbClient.getHistoryCollection();
+        const { historyId } = entry;
+        const historyRecord = automationUtils.injectTimestampAt(result);
+        await historyCollection.updateOne(
+            { _id: new mongodb.ObjectId(historyId) },
+            {
+                $push: {
+                    details: historyRecord,
+                },
+            },
+        );
+        await entriesCollection.updateOne(
+            // eslint-disable-next-line no-underscore-dangle
+            { _id: new mongodb.ObjectId(entry._id) },
+            { $set: { status: EntryStatus.DONE } },
+        );
+    },
 };
