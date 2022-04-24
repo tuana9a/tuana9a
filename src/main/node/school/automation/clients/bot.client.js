@@ -1,5 +1,5 @@
 const axios = require("axios").default.create();
-const CONFIG = require("../configs/config");
+const AUTOMATION_CONFIG = require("../configs/config");
 
 class BotClient {
     constructor() {
@@ -20,9 +20,9 @@ class BotClient {
             data: entry,
         };
         return axios
-            .post(CONFIG.automation.bot.url, body, {
+            .post(AUTOMATION_CONFIG.bot.endpoint, body, {
                 headers: {
-                    secret: CONFIG.automation.bot.secret,
+                    secret: AUTOMATION_CONFIG.bot.secret,
                 },
             })
             .then((res) => res.data);

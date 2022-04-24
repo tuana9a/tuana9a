@@ -10,23 +10,23 @@ class MongoDBClient {
     async prepare(connectionString) {
         this.enabled = true;
         this.client = await new mongodb.MongoClient(connectionString).connect();
-        this.db = this.client.db(CONFIG.database.name);
+        this.db = this.client.db(CONFIG.mongodb.name);
         return this.client;
     }
 
     getClassesCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(CONFIG.database.collectionNames.school.classes);
+        return this.db.collection(CONFIG.mongodb.collectionNames.school.classes);
     }
 
     getHistoryCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(CONFIG.database.collectionNames.school.automation.history);
+        return this.db.collection(CONFIG.mongodb.collectionNames.school.automation.history);
     }
 
     getEntriesCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(CONFIG.database.collectionNames.school.automation.entries);
+        return this.db.collection(CONFIG.mongodb.collectionNames.school.automation.entries);
     }
 
     close() {

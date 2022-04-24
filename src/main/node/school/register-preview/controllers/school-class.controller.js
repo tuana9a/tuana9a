@@ -43,7 +43,7 @@ module.exports = {
         if (!filter) throw new SafeError("wrong method");
         filter.semester = semester;
         const classes = await mongodbClient.getClassesCollection().find(filter)
-            .limit(CONFIG.database.readLimit)
+            .limit(CONFIG.mongodb.readLimit)
             .toArray();
         const result = classes.map((x) => schoolClassDTO.toClient(x));
         return result;

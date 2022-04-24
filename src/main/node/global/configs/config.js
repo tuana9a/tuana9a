@@ -1,6 +1,4 @@
 /* eslint-disable radix */
-require("dotenv").config();
-
 const CONFIG = {};
 
 // start assign value
@@ -28,11 +26,11 @@ CONFIG.security = {};
 CONFIG.security.secret = process.env.SECRET;
 
 // load config database
-CONFIG.database = {};
-CONFIG.database.connectionString = process.env.MONGODB_CONNECTION_STRING;
-CONFIG.database.name = process.env.MONGODB_DATABASE_NAME;
-CONFIG.database.readLimit = parseInt(process.env.MONGODB_READ_LIMIT) || 20;
-CONFIG.database.collectionNames = { // currently hardcode these value
+CONFIG.mongodb = {};
+CONFIG.mongodb.connectionString = process.env.MONGODB_CONNECTION_STRING;
+CONFIG.mongodb.name = process.env.MONGODB_DATABASE_NAME;
+CONFIG.mongodb.readLimit = parseInt(process.env.MONGODB_READ_LIMIT) || 20;
+CONFIG.mongodb.collectionNames = { // currently hardcode these value
     school: {
         classes: "school.classes",
         automation: {
@@ -58,17 +56,5 @@ CONFIG.rabbitmq.exchangeNames = {
 CONFIG.rabbitmq.topics = {
     submit: "submit",
 };
-
-// config automation
-CONFIG.automation = {};
-CONFIG.automation.captchaToTextEndpoint = process.env.CAPTCHA_TO_TEXT_ENDPOINT;
-// eslint-disable-next-line max-len
-CONFIG.automation.repeatProcessAfter = parseInt(process.env.REPEAT_PROCESS_ENTRY_AFFER) || 15000; // default 15s repeat process
-CONFIG.automation.maxTryCount = parseInt(process.env.MAX_TRY_COUNT) || 10;
-CONFIG.automation.maxTryCaptchaCount = parseInt(process.env.MAX_TRY_CAPTCHA_COUNT) || 10;
-
-CONFIG.automation.bot = {};
-CONFIG.automation.bot.url = process.env.BOT_URL;
-CONFIG.automation.bot.secret = process.env.BOT_SECRET;
 
 module.exports = CONFIG;

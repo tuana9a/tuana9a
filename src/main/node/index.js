@@ -5,6 +5,9 @@ const cors = require("cors");
 const http = require("http");
 const https = require("https");
 const express = require("express");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 const LOGGER = require("./global/loggers/logger");
 const CONFIG = require("./global/configs/config");
@@ -15,7 +18,7 @@ const automationEntryRouter = require("./school/automation/routes/entry.router")
 const mongodbClient = require("./global/clients/mongodb.client");
 
 const EntryStatus = require("./school/automation/configs/entry-status");
-const botClient = require("./global/clients/bot.client");
+const botClient = require("./school/automation/clients/bot.client");
 const faviconUtils = require("./global/utils/favicon.utils");
 const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
 const schoolAutomationRateLimit = require("./school/automation/middlewares/rate-limit");
@@ -30,17 +33,21 @@ botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentTimetable, "ctt-sis.hus
 async function main() {
     // init logger
     LOGGER.use(CONFIG.log.dest);
+    LOGGER.info(`log.dest: ${CONFIG.log.dest}`);
+
     // init database
-    if (CONFIG.database.connectionString) {
-        LOGGER.log({ type: "INFO", data: "connecting to database" });
-        await mongodbClient.prepare(CONFIG.database.connectionString);
+    if (CONFIG.mongodb.connectionString) {
+        LOGGER.info(`mongodb.connectionString: ${CONFIG.mongodb.connectionString}`);
+        await mongodbClient.prepare(CONFIG.mongodb.connectionString);
         // eslint-disable-next-line max-len
         mongodbClient.getClassesCollection().createIndex({ MaLop: 1 }); // init collection index for search faster
     } else {
-        LOGGER.log({ type: "WARN", data: "no database config found" });
+        LOGGER.warn("mongodb.connectionString is not set");
     }
+
+    // init rabbitmq
     if (CONFIG.rabbitmq.connectionString) {
-        LOGGER.log({ type: "INFO", data: "connecting to message queue" });
+        LOGGER.info(`rabbitmq.connectionString: ${CONFIG.rabbitmq.connectionString}`);
         await rabbitmqClient.prepare(CONFIG.rabbitmq.connectionString);
         const channel0 = rabbitmqClient.channel;
         // prepare response queue for bot to reply to
@@ -57,9 +64,11 @@ async function main() {
             }
         }, { noAck: false });
     } else {
-        LOGGER.log({ type: "WARN", data: "no message queue config found" });
+        LOGGER.warn("rabbitmq.connectionString is not set");
     }
+
     // can start process entry
+    LOGGER.info(`automation.repeatProcessAfter: ${AUTOMATION_CONFIG.repeatProcessAfter}`);
     loopAsync.loopInfinity(async () => {
     // phải sử dụng chung tab vì nếu 2 tab cùng mở ctt-sis sẽ đánh nhau
         // phải cùng loop với execute vì nếu không cũng sẽ đánh nhau
@@ -100,18 +109,24 @@ async function main() {
         // có thể lỗi mất mạng
             LOGGER.error(err);
         }
-    }, CONFIG.automation.repeatProcessAfter);
+    }, AUTOMATION_CONFIG.repeatProcessAfter);
+
     // init server
     const server = express();
     server.set("view engine", "ejs");
+
     // enable cors
+    LOGGER.info(`allowCors: ${CONFIG.allowCors}`);
     if (CONFIG.allowCors) {
-        LOGGER.log({ type: "INFO", data: `allow cors: ${CONFIG.allowCors}` });
         server.use(cors());
     }
+
+    // init handlers
     server.use(express.json());
     server.use(express.static(CONFIG.static, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
     server.use("/libs", express.static("./libs", { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
+
+    // docs
     server.use(
         "/docs",
         (req, res, next) => {
@@ -148,25 +163,28 @@ async function main() {
             entries,
         });
     });
+
     // school/automation
     server.get("/api/school/automation/entry", automationEntryRouter.find);
     server.post("/api/school/automation/entry", schoolAutomationRateLimit.submitEntry, automationEntryRouter.insert);
     server.put("/api/school/automation/entry/:entryId", automationEntryRouter.update);
+
     // school/register-preview
     server.get("/api/school/register-preview/classes", schoolClassesRouter.find);
     server.post("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.insert);
     server.delete("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.drop);
+
     // create server
     if (CONFIG.ssl.enabled) {
         // https
-        LOGGER.log({ type: "INFO", data: `bind: https://${CONFIG.bind}:${CONFIG.port}` });
+        LOGGER.info(`bind: https://${CONFIG.bind}:${CONFIG.port}`);
         https.createServer({
             key: fs.readFileSync(CONFIG.ssl.key),
             cert: fs.readFileSync(CONFIG.ssl.cert),
         }, server).listen(CONFIG.port, CONFIG.bind);
     } else {
         // http
-        LOGGER.log({ type: "INFO", data: `bind: http://${CONFIG.bind}:${CONFIG.port}` });
+        LOGGER.info(`bind: http://${CONFIG.bind}:${CONFIG.port}`);
         http.createServer(server).listen(CONFIG.port, CONFIG.bind);
     }
 }
