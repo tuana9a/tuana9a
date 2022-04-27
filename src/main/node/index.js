@@ -25,6 +25,7 @@ const schoolAutomationRateLimit = require("./school/automation/middlewares/rate-
 const rabbitmqClient = require("./global/clients/rabbitmq.client");
 const entryController = require("./school/automation/controllers/entry.controller");
 const loopAsync = require("./global/controllers/loop-async");
+const serverUtils = require("./global/utils/server.utils");
 
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.autoRegisterClasses, "dk-sis.hust.edu.vn/autoRegisterClasses");
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentProgram, "ctt-sis.hust.edu.vn/getStudentProgram");
@@ -139,7 +140,7 @@ async function main() {
         },
         express.static(CONFIG.docsDir, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */, dotfiles: "allow" }),
     );
-    server.get("/docs/*", (req, res) => {
+    server.get("/docs/*", serverUtils.makeSafeHandler((req, res) => {
         // this block of code is hard to understand
         // just run it for debug :)
         const prefix = "/docs";
@@ -162,7 +163,7 @@ async function main() {
             titleName: pathRequest,
             entries,
         });
-    });
+    }));
 
     // school/automation
     server.get("/api/school/automation/entry", automationEntryRouter.find);

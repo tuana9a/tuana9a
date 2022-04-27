@@ -4,9 +4,9 @@ const LOGGER = require("../loggers/logger");
 
 module.exports = {
     makeSafeHandler(handler) {
-        const safeHandler = async (req, resp) => {
+        const safeHandler = async (req, resp, next) => {
             try {
-                const data = await handler(req, resp);
+                const data = await handler(req, resp, next);
                 resp.setHeader("Content-Type", "application/json; charset=utf-8");
                 resp.send(new ResponseEntity(1, "success", data));
             } catch (err) {
