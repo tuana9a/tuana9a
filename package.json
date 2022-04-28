@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/main/node/index.js",
     "test:unit": "jest",
-    "dev:server": "nodemon --watch src/main/node/ src/main/node/index.js",
+    "dev:server": "nodemon src/main/node/index.js",
     "dev:webpack": "webpack --config webpack.dev.js",
     "prod:webpack": "webpack --config webpack.prod.js"
   },
