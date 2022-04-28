@@ -12,7 +12,7 @@ export default class App extends BaseComponent {
      */
     constructor(element) {
         super(element);
-        this.classList().add("Program");
+        this.classList().add("App");
     }
 
     /**

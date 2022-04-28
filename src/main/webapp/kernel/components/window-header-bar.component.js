@@ -41,12 +41,12 @@ export default class WindowHeaderBar extends BaseComponent {
     }
 
     setPID(pid) {
-        this.pid.innerText(pid);
+        this.pid.innerText(`PID = ${pid}`);
         return this;
     }
 
     setName(name) {
-        this.name.innerText(name);
+        this.name.innerText(`name = ${name}`);
         return this;
     }
 

@@ -5,53 +5,49 @@
 }
 
 .Window {
-    resize: both;
     overflow: auto;
-    padding: 5px;
-    min-width: 400px;
-    min-height: 200px;
-    max-width: 100%;
+    padding: 3px;
+    max-width: calc(100% - 12px); /* include border and padding */
     border: 1px solid black;
     background-color: whitesmoke;
-    box-shadow: -1px 1px 0px 0px black, -1px 2px 0px 0px black, -2px 3px 0px 0px black, -2px 4px 2px 0px black;
+    box-shadow: -1px 1px 0px 0px black, -1px 2px 0px 0px black, -2px 3px 0px 0px black;
 }
 
 .HeaderBar {
     /* background-color: white; */
     /* border: 1px solid black; */
     cursor: move;
-    padding: 5px 7px;
     background-color: black;
     color: white;
+    padding: 5px;
 }
 
-.HeaderBar span {
+.HeaderBar .PID {
     display: inline-block;
     padding: 2px 5px;
     margin: 0 5px;
 }
 
-.HeaderBar .PID {
-}
-
 .HeaderBar .Name {
+    display: inline-block;
+    padding: 2px 5px;
+    margin: 0 5px;
 }
 
-.CloseButton {
+.HeaderBar .CloseButton {
     margin-left: auto;
-}
-
-.CloseButton button {
-    background-color: transparent;
+    background-color: black;
     color: white;
     padding: 4px;
     border: 1px solid white;
-    box-shadow: -1px 1px 1px 1px white, -2px 2px 1px 1px white;
-    transform: translateX(2px) translateY(-2px);
     transition: 0.05s;
 }
 
-.CloseButton button:active {
-    box-shadow: none;
-    transform: translateX(0) translateY(0);
+.HeaderBar .CloseButton:hover {
+    background-color: white;
+    color: black;
+}
+
+.Window .Body {
+    overflow: auto;
 }

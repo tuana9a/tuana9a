@@ -74,7 +74,8 @@ export default class OS extends BaseComponent {
         makeDragToMove(window, window.headerBar, { boundComponent: this.windowManager });
         makeClickThenBringToFront(window);
         window.launch(launchOption, app);
-        window.appendChild(app);
+        window.body.appendChild(app);
+        window.moveTo(launchOption.x, launchOption.y);
         this.windowManager.appendChild(window);
         return window.id;
     }

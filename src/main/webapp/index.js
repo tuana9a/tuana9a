@@ -10,25 +10,35 @@ doUpgrade();
 
 // main init function
 async function main() {
-    const terminalOpts = {
+    const os = new OS(document.createElement("div"));
+    os.install("terminal", TerminalComponent, {
         dropFile: true,
-    };
-    const registerPreviewOpts = {
+        width: 500,
+        height: 400,
+        x: 0,
+        y: 0,
+    });
+    os.install("register-preview", SchoolRegisterPreviewComponent, {
         // bỏ đi các mốc thời gian sẽ không có thời khóa biểu
         // dropHours: new Set([0, 1, 2, 3, 4, 21, 22, 23]),
         dropHours: new Set([]),
         rowHeight: 29,
         maxSchoolClass: 10,
-    };
-    const os = new OS(document.createElement("div"));
-    document.body.appendChild(os.element);
-    os.install("terminal", TerminalComponent, terminalOpts);
-    os.install("register-preview", SchoolRegisterPreviewComponent, registerPreviewOpts);
-    os.install("school-admin", SchoolAdminComponent);
-    os.install("automation-form", AutomationFormComponent);
+        width: 1000,
+        height: 500,
+        x: 0,
+        y: 0,
+    });
+    os.install("school-admin", SchoolAdminComponent, {
+        width: 600,
+    });
+    os.install("automation-form", AutomationFormComponent, {
+        width: 700,
+    });
     // runMemoryLeakTest(os, "terminal", terminalOpts, 100, 200);
     // runMemoryLeakTest(os, "school-admin", terminalOpts, 75, 200);
     // runMemoryLeakTest(os, "automation-form", terminalOpts, 75, 200);
     // runMemoryLeakTest(os, "register-preview", registerPreviewOpts, 20, 500);
+    document.body.appendChild(os.element);
 }
 main();
