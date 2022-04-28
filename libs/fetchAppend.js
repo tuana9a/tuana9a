@@ -1,112 +1,110 @@
 class Entry {
-    constructor({ element, baseUrl, url, renderType, onLoad }) {
-        this.baseUrl = baseUrl;
+    constructor(element, baseUrl, url, renderType) {
         this.url = url;
+        this.baseUrl = baseUrl;
         this.element = element;
+        const preElement = document.createElement("pre");
+        this.preElement = preElement;
+        element.appendChild(preElement);
         this.renderType = renderType;
-        this.onLoad =
-            onLoad ||
-            function () {
-                this.render();
-            };
-        this.data = null;
+        this.renderHanlers = new Map();
+        this.renderHanlers.set("raw", (data) => {
+            // eslint-disable-next-line no-param-reassign
+            preElement.textContent = data;
+        });
+        this.renderHanlers.set("code", (data) => {
+            const codeElement = document.createElement("code");
+            codeElement.classList.add(element.getAttribute("data-prism").trim().split(/\s+/));
+            codeElement.textContent = data;
+            preElement.appendChild(codeElement);
+        });
+        this.renderHanlers.set("default", (data) => {
+            // eslint-disable-next-line no-param-reassign
+            preElement.innerHTML = data;
+        });
     }
+
     getFullUrl() {
-        const base = this.baseUrl;
-        const url = this.url;
-        if (!base) {
+        let { baseUrl, url } = this;
+        if (!baseUrl) {
             return url;
         }
-        if (base.endsWith("/")) {
-            base = base.slice(0, -1);
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.slice(0, -1);
         }
         if (url.startsWith("/")) {
             url = url.substring(1);
         }
-        return base + "/" + url;
+        return `${baseUrl}/${url}`;
     }
+
     startLoading() {
         this.element.classList.add("loading");
     }
+
     stopLoading() {
         this.element.classList.remove("loading");
     }
+
     async load() {
-        let url = this.getFullUrl();
-        const entry = this;
-        return fetch(url)
-            .then((res) => res.text())
-            .then((data) => {
-                entry.data = data;
-                entry.stopLoading();
-                entry.onLoad(data);
-            });
+        const url = this.getFullUrl();
+        const data = await fetch(url).then((res) => res.text());
+        this.stopLoading();
+        this.render(data);
     }
-    render() {
-        const preElement = document.createElement("pre");
-        const data = this.data;
-        if (this.renderType == "raw") {
-            preElement.innerText = data;
+
+    render(data) {
+        const renderHandler = this.renderHanlers.get(this.renderType);
+        const defaultHandler = this.renderHanlers.get("default");
+        if (renderHandler) {
+            renderHandler(data);
         } else {
-            preElement.innerHTML = data;
+            defaultHandler(data);
         }
-        this.element.appendChild(preElement);
+    }
+
+    remove() {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const key of this.renderHanlers.keys()) {
+            this.renderHanlers.delete(key);
+        }
     }
 }
 
-// Create new link Element
-let styleElement = document.createElement("style");
-styleElement.textContent = `
-.loading {
-    --size: 13px;
-    --ring-size: 3px;
-    border: var(--ring-size) solid #f3f3f3;
-    border-radius: 50%;
-    border-top: var(--ring-size) solid #3498db;
-    width: var(--size);
-    height: var(--size);
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
+async function main() {
+    // Create new link Element
+    const linkElement = document.createElement("link");
+    linkElement.type = "text/css";
+    linkElement.rel = "stylesheet";
+    linkElement.href = "/libs/fetchAppend.css";
+
+    // Append link element to HTML head
+    document.head.appendChild(linkElement);
+    // start load entry
+    const entries = Array.from(document.getElementsByClassName("fetchAppend")).map((element) => {
+        const url = element.getAttribute("data-url");
+        const baseUrl = null; // FETCH_APPEND_BASE_URL;
+        let renderType = "default";
+        if (element.classList.contains("raw")) {
+            renderType = "raw";
+        } else if (element.classList.contains("code")) {
+            renderType = "code";
+        }
+        const entry = new Entry(element, baseUrl, url, renderType);
+        entry.startLoading();
+        return entry;
+    });
+
+    setTimeout(async () => {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const entry of entries) {
+            // eslint-disable-next-line no-await-in-loop
+            await entry.load();
+        }
+        const prismScriptElement = document.createElement("script");
+        prismScriptElement.src = "/libs/prism.js";
+        document.body.appendChild(prismScriptElement);
+    }, 10);
 }
 
-/* Safari */
-@-webkit-keyframes spin {
-    0% {
-        -webkit-transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-`;
-// Append link element to HTML head
-document.head.appendChild(styleElement);
-// start load entry
-const entries = Array.from(document.getElementsByClassName("fetchAppend")).map(function (element) {
-    let url = element.getAttribute("data-url");
-    let baseUrl = null; // FETCH_APPEND_BASE_URL;
-    let opts = {};
-    opts.element = element;
-    opts.url = url;
-    opts.baseUrl = baseUrl;
-    if (element.classList.contains("raw")) {
-        opts.renderType = "raw";
-    }
-    const entry = new Entry(opts);
-    entry.startLoading();
-    return entry;
-});
-setTimeout(async function () {
-    for (const entry of entries) {
-        await entry.load();
-    }
-}, 10);
+main();
