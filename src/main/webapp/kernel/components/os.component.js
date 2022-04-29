@@ -9,6 +9,7 @@ import WindowManagerComponent from "./window-manager.component";
 import WindowComponent from "./window.component";
 import BaseComponent from "../../global/components/base.component";
 import EnvComponent from "./env.component";
+import CONFIG from "../configs/config";
 
 export default class OS extends BaseComponent {
     /**
@@ -16,7 +17,7 @@ export default class OS extends BaseComponent {
      */
     constructor(element) {
         super(element);
-        this.classList().add("OS");
+        this.getClassList().add("OS");
         this.windowManager = new WindowManagerComponent(document.createElement("div"));
         this.appendChild(this.windowManager);
         this.env = new EnvComponent();
@@ -31,18 +32,18 @@ export default class OS extends BaseComponent {
     install(name, AppClass, launchOption = {}) {
         this.apps.set(name, AppClass);
         const launcher = new BaseComponent(document.createElement("button"));
-        launcher.classList().add("display-flex", "align-items-center");
+        launcher.getClassList().add("display-flex", "align-items-center");
         const launcherIcon = new BaseComponent(document.createElement("img"));
         launcherIcon.style({ width: "20px", height: "20px", padding: "3px" });
         launcherIcon.getElement().src = `https://avatars.dicebear.com/api/identicon/${name}.svg`;
         const launcherName = new BaseComponent(document.createElement("span"));
-        launcherName.innerText(name);
+        launcherName.setInnerText(name);
         launcherName.style({ padding: "3px" });
         launcher.appendChild(launcherIcon, launcherName);
         // modify launch option
         launchOption.name = launchOption.name || name;
-        launchOption.width = launchOption.width || 500;
-        launchOption.height = launchOption.height || 300;
+        launchOption.width = launchOption.width || CONFIG.DEFAULT.WINDOW.MIN_WIDTH;
+        launchOption.height = launchOption.height || CONFIG.DEFAULT.WINDOW.MIN_HEIGHT;
         const thiss = this;
         launcher.addEventListener("click", () => {
             thiss.launch(name, launchOption);
@@ -71,7 +72,11 @@ export default class OS extends BaseComponent {
             throw new Error(`app "${AppClass}" is not a App`);
         }
         const window = new WindowComponent(document.createElement("div"));
-        makeDragToMove(window, window.headerBar, { boundComponent: this.windowManager });
+        makeDragToMove(window, window.headerBar, {
+            boundComponent: this.windowManager,
+            boundLeft: true,
+            boundTop: true,
+        });
         makeClickThenBringToFront(window);
         window.launch(launchOption, app);
         window.body.appendChild(app);

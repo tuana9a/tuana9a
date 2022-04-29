@@ -1,3 +1,7 @@
 @import url("./os.css");
 @import url("./window.css");
+@import url("./window-manager.css");
+@import url("./window-header-bar.css");
+@import url("./window-body.css");
+@import url("./window-resizer.css");
 @import url("./app.css");

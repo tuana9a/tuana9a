@@ -1,4 +1,5 @@
 import BaseComponent from "../../global/components/base.component";
+import WindowResizerComponent from "./window-resizer.component";
 
 export default class WindowHeaderBar extends BaseComponent {
     /**
@@ -6,18 +7,19 @@ export default class WindowHeaderBar extends BaseComponent {
      */
     constructor(element) {
         super(element);
-        this.classList().add("HeaderBar", "display-flex", "align-items-center");
+        this.getClassList().add("HeaderBar", "display-flex", "align-items-center");
         // init
         this.icon = new BaseComponent(document.createElement("img"));
         this.pid = new BaseComponent(document.createElement("span"));
         this.name = new BaseComponent(document.createElement("span"));
+        this.resizer = new WindowResizerComponent(document.createElement("div"));
         this.close = new BaseComponent(document.createElement("button"));
         // class
-        this.pid.classList().add("PID");
-        this.name.classList().add("Name");
-        this.close.classList().add("CloseButton");
+        this.pid.getClassList().add("PID");
+        this.name.getClassList().add("Name");
+        this.close.getClassList().add("CloseButton");
         // text
-        this.close.innerText("CLOSE");
+        this.close.setInnerText("CLOSE");
         // other
         this.icon.style({ width: "20px", height: "20px", padding: "3px" });
         // event
@@ -33,20 +35,24 @@ export default class WindowHeaderBar extends BaseComponent {
         this.close.addEventListener("click", () => {
             thiss.notifyParent("close");
         });
+        this.resizer.addEventListener("mousedown", (e) => {
+            e.stopPropagation();
+        });
         // append
         this.appendChild(this.icon);
         this.appendChild(this.pid);
         this.appendChild(this.name);
+        this.appendChild(this.resizer);
         this.appendChild(this.close);
     }
 
     setPID(pid) {
-        this.pid.innerText(`PID = ${pid}`);
+        this.pid.setInnerText(`PID = ${pid}`);
         return this;
     }
 
     setName(name) {
-        this.name.innerText(`name = ${name}`);
+        this.name.setInnerText(`name = ${name}`);
         return this;
     }
 

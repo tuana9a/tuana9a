@@ -42,17 +42,25 @@ export default function makeDragToMoveWithTouch(component, dragChild, opts) {
             const minY = 0;
             const maxX = boundElement.offsetWidth;
             const maxY = boundElement.offsetHeight;
-            if (element.offsetLeft + element.offsetWidth + deltaX > maxX) {
-                newX = maxX - element.offsetWidth;
+            if (opts.boundRight) {
+                if (element.offsetLeft + element.offsetWidth + deltaX > maxX) {
+                    newX = maxX - element.offsetWidth;
+                }
             }
-            if (element.offsetTop + element.offsetHeight + deltaY > maxY) {
-                newY = maxY - element.offsetHeight;
+            if (opts.boundBottom) {
+                if (element.offsetTop + element.offsetHeight + deltaY > maxY) {
+                    newY = maxY - element.offsetHeight;
+                }
             }
-            if (element.offsetLeft + deltaX < minX) {
-                newX = minX;
+            if (opts.boundLeft) {
+                if (element.offsetLeft + deltaX < minX) {
+                    newX = minX;
+                }
             }
-            if (element.offsetTop + deltaY < minY) {
-                newY = minY;
+            if (opts.boundTop) {
+                if (element.offsetTop + deltaY < minY) {
+                    newY = minY;
+                }
             }
         }
         component.style({ top: `${newY}px`, left: `${newX}px` });

@@ -10,13 +10,22 @@ export default class WindowComponent extends BaseComponent {
      */
     constructor(element) {
         super(element);
+        this.getClassList().add("Window");
+        this.isFocusing = false;
         this.headerBar = new WindowHeaderBar(document.createElement("div"));
         this.body = new WindowBody(document.createElement("div"));
-        this.classList().add("Window");
+        // event
         const thiss = this;
         this.addNotifyListener("close", () => {
             thiss.close();
         });
+        this.headerBar.resizer.width.input.bind((value) => {
+            thiss.resizeBodyWidth(value);
+        });
+        this.headerBar.resizer.height.input.bind((value) => {
+            thiss.resizeBodyHeight(value);
+        });
+        this.addEventListener("click", () => thiss.onFocus());
         this.appendChild(this.headerBar);
         this.appendChild(this.body);
     }
@@ -28,7 +37,13 @@ export default class WindowComponent extends BaseComponent {
         this.headerBar.setPID(this.id);
         this.headerBar.setName(launchOption.name);
         this.headerBar.setIconSrcByName(launchOption.name);
-        this.body.style({ width: `${launchOption.width}px`, height: `${launchOption.height}px` });
+        // this.resizeBody(launchOption.width, launchOption.height);
+        this.headerBar.resizer.width.input.setValue(launchOption.width);
+        this.headerBar.resizer.height.input.setValue(launchOption.height);
+    }
+
+    onFocus() {
+        this.isFocusing = true;
     }
 
     close() {
@@ -40,13 +55,29 @@ export default class WindowComponent extends BaseComponent {
         // TODO
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    // eslint-disable-next-line no-unused-vars
-    resize(w, h) {
-        this.style({ width: `${w}px`, height: `${h}px` });
+    resizeBody(w, h) {
+        this.resizeBodyWidth(w);
+        this.resizeBodyHeight(h);
+    }
+
+    resizeBodyWidth(w) {
+        this.body.style({ width: `${w}px` });
+    }
+
+    resizeBodyHeight(h) {
+        this.body.style({ height: `${h}px` });
     }
 
     moveTo(x, y) {
-        this.style({ left: `${x}px`, top: `${y}px` });
+        this.moveToX(x);
+        this.moveToY(y);
+    }
+
+    moveToX(x) {
+        this.style({ left: `${x}px` });
+    }
+
+    moveToY(y) {
+        this.style({ top: `${y}px` });
     }
 }
