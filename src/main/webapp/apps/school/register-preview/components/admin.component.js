@@ -23,8 +23,8 @@ export default class AdminComponent extends App {
         this.inputSemester.setPlaceHolder("Semester");
         this.inputSecret.setPlaceHolder("Secret");
         // text
-        this.insertClassesButton.innerText("Insert Classes");
-        this.deleteClassesButton.innerText("Delete Classes");
+        this.insertClassesButton.setInnerText("Insert Classes");
+        this.deleteClassesButton.setInnerText("Delete Classes");
         // event listener
         this.insertClassesButton.addEventListener("click", () => thiss.insertClasses());
         this.deleteClassesButton.addEventListener("click", () => thiss.deleteClasses());
@@ -37,17 +37,17 @@ export default class AdminComponent extends App {
     }
 
     async insertClasses() {
-        const semester = this.inputSemester.value();
-        const file = this.inputFile.value();
-        const secret = this.inputSecret.value();
+        const semester = this.inputSemester.getValue();
+        const file = this.inputFile.getValue();
+        const secret = this.inputSecret.getValue();
         const response = await classesApis.insert({ semester, file, secret });
         console.log(response);
         // TODO: do something with response
     }
 
     async deleteClasses() {
-        const semester = this.inputSemester.value();
-        const secret = this.inputSecret.value();
+        const semester = this.inputSemester.getValue();
+        const secret = this.inputSecret.getValue();
         const response = await classesApis.delete({ semester, secret });
         console.log(response);
         // TODO: do somthing with the respone

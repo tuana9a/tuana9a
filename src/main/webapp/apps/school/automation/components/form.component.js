@@ -13,7 +13,7 @@ export default class FormComponent extends App {
     constructor(element, launchOption) {
         super(element, launchOption);
         const thiss = this;
-        this.classList().add("Form");
+        this.getClassList().add("Form");
         this.inputEntryId = new InputComponent();
         this.inputUsername = new InputComponent();
         this.inputPassword = new InputComponent();
@@ -34,10 +34,10 @@ export default class FormComponent extends App {
         this.inputUsername.setPlaceHolder("User Name");
         this.inputPassword.setPlaceHolder("Password");
         this.inputClassIds.setPlaceHolder("Class Ids");
-        this.inputTimeToStartLabel.innerText("Time To Start:");
-        this.submitAutoRegisterClassesButton.innerText("Submit Auto Register Classes");
-        this.submitGetStudentTimetableButton.innerText("Submit Get Student Timetable");
-        this.submitCancelButton.innerText("Cancel");
+        this.inputTimeToStartLabel.setInnerText("Time To Start:");
+        this.submitAutoRegisterClassesButton.setInnerText("Submit Auto Register Classes");
+        this.submitGetStudentTimetableButton.setInnerText("Submit Get Student Timetable");
+        this.submitCancelButton.setInnerText("Cancel");
 
         this.submitAutoRegisterClassesButton.addEventListener("click", () => {
             thiss.onSubmitAutoRegisterClasses();

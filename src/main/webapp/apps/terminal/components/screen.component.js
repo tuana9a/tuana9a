@@ -6,7 +6,7 @@ export default class ScreenComponent extends BaseComponent {
      */
     constructor(element) {
         super(element);
-        this.classList().add("TerminalScreen");
+        this.getClassList().add("TerminalScreen");
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -28,16 +28,16 @@ export default class ScreenComponent extends BaseComponent {
     appendCommand(value) {
         const { element } = this;
         const commandComponent = new BaseComponent(document.createElement("div"));
-        commandComponent.classList().add("CommandMessage");
+        commandComponent.getClassList().add("CommandMessage");
         const messageTime = new BaseComponent(document.createElement("span"));
         messageTime.innerText(this.prefixNow());
-        messageTime.classList().add("MessageTime");
+        messageTime.getClassList().add("MessageTime");
         const messageContent = new BaseComponent(document.createElement("span"));
         messageContent.innerText(value);
-        messageContent.classList().add("MessageContent");
+        messageContent.getClassList().add("MessageContent");
         const copyButton = new BaseComponent(document.createElement("button"));
         copyButton.innerText("copy");
-        copyButton.classList().add("CopyButton");
+        copyButton.getClassList().add("CopyButton");
         copyButton.addEventListener("click", () => {
             navigator.clipboard.writeText(value);
         });

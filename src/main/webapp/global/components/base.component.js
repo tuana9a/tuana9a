@@ -46,16 +46,16 @@ export default class BaseComponent {
         this.parentComponent = component;
     }
 
-    classList() {
+    getClassList() {
         return this.element.classList;
     }
 
-    innerText(text) {
+    setInnerText(text) {
         this.element.innerText = text;
         return this;
     }
 
-    innerHTML(html) {
+    setInnerHTML(html) {
         this.element.innerHTML = html;
         return this;
     }

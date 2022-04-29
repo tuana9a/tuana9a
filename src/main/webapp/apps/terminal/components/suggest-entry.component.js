@@ -9,11 +9,11 @@ export default class SuggestEntryComponent extends BaseComponent {
         this.value = value || "";
         this.isEnable = false;
         // element
-        this.classList().add("SuggestEntry", "display-flex", "align-items-center");
+        this.getClassList().add("SuggestEntry", "display-flex", "align-items-center");
         // text element
         this.text = new BaseComponent(document.createElement("span"));
-        this.text.classList().add("SuggestEntryValue");
-        this.text.innerText(value);
+        this.text.getClassList().add("SuggestEntryValue");
+        this.text.setInnerText(value);
         this.appendChild(this.text);
     }
 

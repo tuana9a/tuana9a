@@ -58,8 +58,8 @@ export default class RegisterPreviewComponent extends App {
     }
 
     async onsearch() {
-        const semester = this.inputSemester.value();
-        const classIds = this.inputSearchClassIds.value().trim().split(/\s+/);
+        const semester = this.inputSemester.getValue();
+        const classIds = this.inputSearchClassIds.getValue().trim().split(/\s+/);
         const response = await classesApis.findByRange({
             semester,
             classIds,
@@ -71,8 +71,8 @@ export default class RegisterPreviewComponent extends App {
     }
 
     async onselected() {
-        const semester = this.inputSemester.value();
-        const classIds = this.selectedClassIds.value().trim().split(/\s+/);
+        const semester = this.inputSemester.getValue();
+        const classIds = this.selectedClassIds.getValue().trim().split(/\s+/);
         const response = await classesApis.findWithMatch({
             semester,
             classIds,
@@ -107,6 +107,6 @@ export default class RegisterPreviewComponent extends App {
     }
 
     prepareRenderOpts() {
-        return prepareRenderOpts({ currentWeekPreview: this.inputWeek.value() });
+        return prepareRenderOpts({ currentWeekPreview: this.inputWeek.getValue() });
     }
 }

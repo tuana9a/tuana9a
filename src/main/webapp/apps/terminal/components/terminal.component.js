@@ -13,7 +13,7 @@ export default class TerminalComponent extends App {
     constructor(element) {
         super(element);
         const thiss = this;
-        this.classList().add("Terminal");
+        this.getClassList().add("Terminal");
         // create screen component and typing
         this.screen = new ScreenComponent(document.createElement("div"));
         this.appendChild(this.screen);

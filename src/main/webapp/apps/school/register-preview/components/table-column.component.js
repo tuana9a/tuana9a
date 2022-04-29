@@ -23,17 +23,17 @@ export default class TableColumnComponent extends BaseComponent {
     constructor(dayOfWeek, opts = defaulColumnOpts) {
         super(document.createElement("div"));
         this.dayOfWeek = dayOfWeek;
-        this.classList().add("TableColumn", "position-relative", "DayOfWeek");
-        if (opts.isIndexHourColumn) this.classList().add("IndexHour");
-        else this.classList().add(CONSTANTS.dayOfWeekSwitch.get(dayOfWeek).className);
+        this.getClassList().add("TableColumn", "position-relative", "DayOfWeek");
+        if (opts.isIndexHourColumn) this.getClassList().add("IndexHour");
+        else this.getClassList().add(CONSTANTS.dayOfWeekSwitch.get(dayOfWeek).className);
 
         this.tableColumnName = new BaseComponent(document.createElement("div"));
         this.tableColumnName
-            .classList()
+            .getClassList()
             .add("TableColumnName", "display-flex", "justify-content-center", "align-items-center");
         this.tableColumnName.getElement().style.height = `${opts.rowHeight}px`;
         const columnName = opts.showDowName ? CONSTANTS.dayOfWeekSwitch.get(dayOfWeek).displayName : "&zwnj;";
-        this.tableColumnName.innerHTML(`<span>${columnName}</span>`);
+        this.tableColumnName.setInnerHTML(`<span>${columnName}</span>`);
         this.appendChild(this.tableColumnName);
 
         this.hourComponents = [];
@@ -43,16 +43,16 @@ export default class TableColumnComponent extends BaseComponent {
             }
             const hourComponent = new BaseComponent(document.createElement("div"));
             hourComponent
-                .classList()
+                .getClassList()
                 .add("Hour", `_${i}h`, "display-flex", "justify-content-center", "align-items-center");
             if (CONSTANTS.comeHomeHours.has(i)) {
-                hourComponent.classList().add("ComeHomeHour");
+                hourComponent.getClassList().add("ComeHomeHour");
             }
             if (opts.dropHours.has(i)) {
                 hourComponent.getElement().style.display = "none";
             }
             hourComponent.getElement().style.height = `${opts.rowHeight}px`;
-            hourComponent.innerHTML(`<span>${opts.showHourNumber ? i : "&zwnj;"}</span>`);
+            hourComponent.setInnerHTML(`<span>${opts.showHourNumber ? i : "&zwnj;"}</span>`);
             this.hourComponents.push(hourComponent);
             this.appendChild(hourComponent);
         }

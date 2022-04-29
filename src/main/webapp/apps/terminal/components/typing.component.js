@@ -7,14 +7,14 @@ export default class TypingComponent extends BaseComponent {
      */
     constructor(element) {
         super(element);
-        this.classList().add("TypingCommand", "display-flex", "align-items-center");
+        this.getClassList().add("TypingCommand", "display-flex", "align-items-center");
 
         this.container = new BaseComponent(document.createElement("div"));
-        this.container.classList().add("TypingCommandContainer", "position-relative");
+        this.container.getClassList().add("TypingCommandContainer", "position-relative");
         this.appendChild(this.container);
 
         this.input = new BaseComponent(document.createElement("input"));
-        this.input.classList().add("TypingCommandValue", "position-relative");
+        this.input.getClassList().add("TypingCommandValue", "position-relative");
         this.input.element.autocomplete = "off";
         this.input.element.type = "text";
         this.input.element.placeholder = "type here";

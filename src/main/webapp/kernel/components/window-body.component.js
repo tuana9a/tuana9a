@@ -6,6 +6,6 @@ export default class WindowBody extends BaseComponent {
      */
     constructor(element) {
         super(element);
-        this.classList().add("Body");
+        this.getClassList().add("Body");
     }
 }

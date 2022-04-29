@@ -13,9 +13,9 @@ export default class SchoolClassComponent extends BaseComponent {
         super(document.createElement("div"));
         this.schoolClass = schoolClass;
         // create element bind to this class
-        this.classList().add("SchoolClassElement", "position-absolute");
+        this.getClassList().add("SchoolClassElement", "position-absolute");
         this.detail = new BaseComponent(document.createElement("div"));
-        this.detail.classList().add("ThongTinLop");
+        this.detail.getClassList().add("ThongTinLop");
         this.appendChild(this.detail);
         // other info
         this.isEnabled = true;
@@ -61,7 +61,7 @@ export default class SchoolClassComponent extends BaseComponent {
         html += `<b>${`${timeStart} - ${timeStop}`}</b>`;
         html += " | ";
         html += `${this.schoolClass.PhongHoc}`;
-        this.detail.innerHTML(html);
+        this.detail.setInnerHTML(html);
 
         const tuanHoc = this.schoolClass.HocVaoCacTuan;
         if (timeUtils.isContainWeek(tuanHoc, opts.currentWeekPreview)) {

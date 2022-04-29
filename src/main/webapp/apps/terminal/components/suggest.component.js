@@ -4,7 +4,7 @@ import SuggestEntryComponent from "./suggest-entry.component";
 export default class SuggestComponent extends BaseComponent {
     constructor(opts = { maxEntryCount: 10, onchoose: null }) {
         super(document.createElement("div"));
-        this.classList().add("TypingSuggest", "position-absolute");
+        this.getClassList().add("TypingSuggest", "position-absolute");
         this.selectingIndex = 0;
         this.maxEntryCount = opts.maxEntryCount;
         this.wordDict = new Map();
@@ -148,13 +148,13 @@ export default class SuggestComponent extends BaseComponent {
         // make default select first entry
         this.selectingIndex = 0;
         const firstEntry = this.entries[0];
-        firstEntry.getElement().classList.add("isSelecting");
+        firstEntry.getClassList().add("isSelecting");
     }
 
     reset() {
         // eslint-disable-next-line no-restricted-syntax
         for (const entry of this.entries) {
-            entry.getElement().classList.remove("isSelecting");
+            entry.getClassList().remove("isSelecting");
             entry.disable();
         }
     }
@@ -172,11 +172,11 @@ export default class SuggestComponent extends BaseComponent {
         if (!newSelectingEntry || !newSelectingEntry.isEnable) {
             return;
         }
-        newSelectingEntry.getElement().classList.add("isSelecting");
+        newSelectingEntry.getClassList().add("isSelecting");
         this.selectingIndex = newSelectingIndex;
         // remove previous selecting index
         const oldSelectingEntry = this.entries[oldSelectingIndex];
-        oldSelectingEntry?.getElement().classList.remove("isSelecting");
+        oldSelectingEntry?.getClassList().remove("isSelecting");
         // scroll selection to selecting entry
         const childStart = newSelectingEntry.offsetTop;
         // eslint-disable-next-line max-len

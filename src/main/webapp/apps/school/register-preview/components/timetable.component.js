@@ -14,9 +14,9 @@ export default class TimeTableComponent extends BaseComponent {
         super(element);
         // TODO: make timetable reactive with opts by adding setter getter
         this.opts = opts;
-        this.classList().add("RenderContainer");
+        this.getClassList().add("RenderContainer");
         this.table = new BaseComponent(document.createElement("div"));
-        this.table.classList().add("RenderTable", "position-relative", "display-flex", "text-align-center");
+        this.table.getClassList().add("RenderTable", "position-relative", "display-flex", "text-align-center");
         this.appendChild(this.table);
         this.tableColumnMapper = new Map();
         // init index column
