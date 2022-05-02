@@ -29,6 +29,10 @@ export default class InputComponent extends BaseComponent {
         this.element.step = step;
     }
 
+    /**
+     * @deprecated
+     * @param {*} value
+     */
     value(value) {
         LOGGER.warn("InputComponent.value() is deprecated. Use InputComponent.setValue() instead.");
         if (value) {
