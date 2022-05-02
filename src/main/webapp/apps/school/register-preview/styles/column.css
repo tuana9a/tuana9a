@@ -2,6 +2,7 @@
     min-width: 100px;
     width: 14%;
 }
+
 .TableColumn.IndexHour {
     min-width: 30px;
     width: 2%;
@@ -9,43 +10,22 @@
     /* left: 0; */
     /* z-index: 2; */
 }
-.TableColumn.NowDayWeek {
-    background-color: var(--color-now-dayweek);
-}
 
-.TableColumn .Hour {
-    border: 1px solid var(--green-neon);
-
-    background-color: #dbffcf74;
+.TableColumn .Hour, .TableColumnName {
+    border: 1px solid black;
+    background-color: white;
     box-sizing: border-box;
 }
+
 .TableColumn .ComeHomeHour {
-    background-color: #c6ffc9;
-}
-.TableColumn.IndexHour .Hour {
-    background-color: var(--black-neon);
-    color: var(--green-neon);
-}
-.TableColumn.NowDayWeek .Hour {
-    background-color: var(--color-now-dayweek);
-}
-.TableColumn.Weekend .Hour {
-    background-color: #c6ffc9;
+    background-color: whitesmoke;
 }
 
-/* table column name */
-.TableColumnName {
-    box-sizing: border-box;
-    /* position: sticky; */
-    /* top: 0; */
-    /* z-index: 1; */
-    border: 1px solid var(--green-neon);
-    /* background-color:var(--green-neon); */
-    /* color:var(--black-neon); */
-    background-color: var(--black-neon);
-    color: var(--green-neon);
+.TableColumn.IndexHour .Hour {
+    /* background-color: black; */
+    /* color: white; */
 }
-.TableColumn.NowDayWeek .TableColumnName {
-    background-color: var(--color-now-dayweek);
-    color: var(--black-neon);
+
+.TableColumn.Weekend .Hour {
+    /* background-color: #c6ffc9; */
 }

@@ -1,3 +1,5 @@
+import CONFIG from "../configs/config";
+
 const baseUrl = "/api/school/automation/entry";
 
 export default {
@@ -14,12 +16,12 @@ export default {
     },
     async insertAutoRegisterClasses(params = { entry: {} }) {
         // eslint-disable-next-line no-param-reassign
-        params.entry.actionId = "autoRegisterClasses";
+        params.entry.actionId = CONFIG.ACTION_IDS.AUTO_REGISTER_CLASSES;
         return this.insert(params);
     },
     async insertGetStudentTimetable(params = { entry: {} }) {
         // eslint-disable-next-line no-param-reassign
-        params.entry.actionId = "getStudentTimetable";
+        params.entry.actionId = CONFIG.ACTION_IDS.GET_STUDENT_TIMETABLE;
         return this.insert(params);
     },
     async update(params = { entryId: "", entry: {} }) {

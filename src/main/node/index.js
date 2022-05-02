@@ -57,9 +57,9 @@ async function main() {
             try {
                 const result = JSON.parse(msg.content.toString());
                 entryController.processResult(result.data, result);
-                channel0.ack(msg);
             } catch (err) {
                 LOGGER.error(err);
+            } finally {
                 channel0.ack(msg);
             }
         }, { noAck: false });

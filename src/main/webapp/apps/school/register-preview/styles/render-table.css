@@ -6,6 +6,6 @@
     vì nó làm mất cái sticky của hourIndex */
     /* width: max-content; */
     /* min-width: 100%; */
-    background: #ffffff;
-    color: black;
+    border: 1px solid black;
+    margin: 3px 0;
 }

@@ -16,6 +16,7 @@ module.exports = {
             .pipe(transforms.pickProp.classToInsert)
             .pipe(transforms.normalize.MaLop)
             .pipe(transforms.normalize.MaLopKem)
+            .pipe(transforms.normalize.TenHocPhan)
             .pipe(transforms.normalize.LoaiLop)
             .pipe(transforms.normalize.BuoiHocSo)
             .pipe(transforms.normalize.HocVaoThu)

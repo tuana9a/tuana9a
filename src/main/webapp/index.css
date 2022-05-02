@@ -10,31 +10,13 @@
     margin: 0;
     padding: 0;
 }
+
 html {
     min-height: 100%;
 }
+
 body {
     background-color: var(--web-background);
     overflow: auto;
     height: 100vh;
-}
-
-/* SECTION: RESPONSIVE*/
-@media screen and (orientation: portrait) {
-    .RenderContainer {
-        grid-column: 1 / span 10;
-    }
-
-    .Terminal {
-        grid-column: 1 / span 10;
-    }
-}
-@media screen and (max-width: 1080px) {
-    .RenderContainer {
-        grid-column: 1 / span 10;
-    }
-
-    .Terminal {
-        grid-column: 1 / span 10;
-    }
 }

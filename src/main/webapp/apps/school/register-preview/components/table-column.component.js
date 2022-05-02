@@ -5,6 +5,7 @@ import CONSTANTS from "../configs/constants";
 import BaseComponent from "../../../../global/components/base.component";
 import SchoolClassComponent from "./school-class.component";
 import SchoolClass from "../data/school-class.data";
+import LOGGER from "../../../../global/loggers/logger";
 
 const defaulColumnOpts = {
     dropHours: new Set(),
@@ -80,7 +81,7 @@ export default class TableColumnComponent extends BaseComponent {
         // not found any isEnabled = false
         if (!schoolClassComponentToBeReplaced) {
             const message = `maximum classes count: ${this.maxSchoolClass} per day reach on dow: ${this.dayOfWeek}`;
-            console.warn(message);
+            LOGGER.warn(message);
             response.code = 0;
             response.message = message;
             return response;

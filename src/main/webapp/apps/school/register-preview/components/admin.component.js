@@ -2,6 +2,7 @@ import App from "../../../../kernel/components/app.component";
 import InputComponent from "../../../../global/components/input.component";
 import BaseComponent from "../../../../global/components/base.component";
 import classesApis from "../apis/classes.apis";
+import LOGGER from "../../../../global/loggers/logger";
 
 export default class AdminComponent extends App {
     /**
@@ -41,7 +42,7 @@ export default class AdminComponent extends App {
         const file = this.inputFile.getValue();
         const secret = this.inputSecret.getValue();
         const response = await classesApis.insert({ semester, file, secret });
-        console.log(response);
+        LOGGER.info(response);
         // TODO: do something with response
     }
 
@@ -49,7 +50,7 @@ export default class AdminComponent extends App {
         const semester = this.inputSemester.getValue();
         const secret = this.inputSecret.getValue();
         const response = await classesApis.delete({ semester, secret });
-        console.log(response);
+        LOGGER.info(response);
         // TODO: do somthing with the respone
     }
 }

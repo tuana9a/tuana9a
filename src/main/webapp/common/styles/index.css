@@ -4,6 +4,7 @@
 @import url("./justify-content.css");
 @import url("./width.css");
 @import url("./min-width.css");
+@import url("./flex-wrap.css");
 
 html {
     scroll-behavior: smooth;

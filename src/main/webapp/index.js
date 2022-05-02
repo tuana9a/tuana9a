@@ -3,7 +3,7 @@ import OS from "./kernel/components/os.component";
 import SchoolAdminComponent from "./apps/school/register-preview/components/admin.component";
 import TerminalComponent from "./apps/terminal/components/terminal.component";
 import SchoolRegisterPreviewComponent from "./apps/school/register-preview/components/register-preview.component";
-import AutomationFormComponent from "./apps/school/automation/components/form.component";
+import AutomationManagerComponent from "./apps/school/automation/components/automation-manager.component";
 // import runMemoryLeakTest from "./tests/memory-leak.test";
 
 doUpgrade();
@@ -32,7 +32,7 @@ async function main() {
     os.install("school-admin", SchoolAdminComponent, {
         width: 600,
     });
-    os.install("automation-form", AutomationFormComponent, {
+    os.install("automation-manager", AutomationManagerComponent, {
         width: 700,
     });
     // runMemoryLeakTest(os, "terminal", terminalOpts, 100, 200);

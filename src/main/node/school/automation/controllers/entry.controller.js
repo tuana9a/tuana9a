@@ -126,7 +126,7 @@ module.exports = {
         await entriesCollection.updateOne(
             // eslint-disable-next-line no-underscore-dangle
             { _id: new mongodb.ObjectId(entry._id) },
-            { $set: { status: EntryStatus.DONE } },
+            { $set: { status: result.isBreak ? EntryStatus.FAILED : EntryStatus.DONE } },
         );
     },
 };

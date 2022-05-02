@@ -1,3 +1,4 @@
+import LOGGER from "../loggers/logger";
 import BaseComponent from "./base.component";
 
 export default class InputComponent extends BaseComponent {
@@ -26,6 +27,15 @@ export default class InputComponent extends BaseComponent {
 
     setStep(step) {
         this.element.step = step;
+    }
+
+    value(value) {
+        LOGGER.warn("InputComponent.value() is deprecated. Use InputComponent.setValue() instead.");
+        if (value) {
+            this.element.value = value;
+            return this;
+        }
+        return this.element.value;
     }
 
     getValue() {

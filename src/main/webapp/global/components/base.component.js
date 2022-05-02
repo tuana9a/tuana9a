@@ -2,6 +2,8 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 
+import LOGGER from "../loggers/logger";
+
 let epoch = 0;
 
 export default class BaseComponent {
@@ -44,6 +46,34 @@ export default class BaseComponent {
      */
     setParentComponent(component) {
         this.parentComponent = component;
+    }
+
+    /**
+     * @deprecated
+     */
+    classList() {
+        LOGGER.warn("BaseComponent.classList() is deprecated. Use BaseComponent.getClassList() instead.");
+        return this.element.classList;
+    }
+
+    /**
+     * @deprecated
+     * @param {String} text
+     */
+    innerText(text) {
+        LOGGER.warn("BaseComponent.innerText() is deprecated. Use BaseComponent.setInnerText() instead.");
+        this.element.innerText = text;
+        return this;
+    }
+
+    /**
+     * @deprecated
+     * @param {String} html
+     */
+    innerHTML(html) {
+        LOGGER.warn("BaseComponent.innerHTML() is deprecated. Use BaseComponent.setInnerHTML() instead.");
+        this.element.innerHTML = html;
+        return this;
     }
 
     getClassList() {

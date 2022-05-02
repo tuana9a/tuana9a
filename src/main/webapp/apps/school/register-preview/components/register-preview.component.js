@@ -1,4 +1,6 @@
-import InputComponent from "../../../../global/components/input.component";
+import BaseComponent from "../../../../global/components/base.component";
+import LabeledInputComponent from "../../../../global/components/labeled-input.component";
+import LOGGER from "../../../../global/loggers/logger";
 import App from "../../../../kernel/components/app.component";
 import classesApis from "../apis/classes.apis";
 import CONSTANTS from "../configs/constants";
@@ -21,58 +23,41 @@ export default class RegisterPreviewComponent extends App {
     constructor(element) {
         super(element);
         const thiss = this;
-        this.inputSemester = new InputComponent();
-        this.inputWeek = new InputComponent();
-        this.inputSearchClassIds = new InputComponent();
-        this.selectedClassIds = new InputComponent();
+        this.semester = new LabeledInputComponent(document.createElement("div"));
+        this.currentWeek = new LabeledInputComponent(document.createElement("div"));
+        this.selectedClassIds = new LabeledInputComponent(document.createElement("div"));
         this.timetable = new TimeTableComponent(document.createElement("div"));
         // set input type
-        this.inputSemester.setType("text");
-        this.inputWeek.setType("text");
-        this.inputSearchClassIds.setType("text");
-        this.selectedClassIds.setType("text");
+        this.semester.input.setType("text");
+        this.currentWeek.input.setType("text");
+        this.selectedClassIds.input.setType("text");
         // set place holder
-        this.inputSemester.setPlaceHolder("Semester");
-        this.inputWeek.setPlaceHolder("Week");
-        this.inputSearchClassIds.setPlaceHolder("Search Class");
-        this.selectedClassIds.setPlaceHolder("Selected Class Ids");
+        this.semester.setName("semester=");
+        this.currentWeek.setName("week=");
+        this.selectedClassIds.setName("selected");
+        this.selectedClassIds.input.setPlaceHolder("Eg: 123456 123457");
         // init event listener
-        this.inputSemester.addEventListener("input", () => {
+        this.semester.input.addEventListener("input", () => {
             // TODO: handle semester change
         });
-        this.inputWeek.addEventListener("input", () => {
+        this.currentWeek.input.addEventListener("input", () => {
             thiss.onweekchange();
-        });
-        this.inputSearchClassIds.addEventListener("input", () => {
-            thiss.onsearch();
         });
         this.selectedClassIds.addEventListener("input", () => {
             thiss.onselected();
         });
         // append to parent
-        this.appendChild(this.inputSemester);
-        this.appendChild(this.inputWeek);
-        this.appendChild(this.inputSearchClassIds);
-        this.appendChild(this.selectedClassIds);
+        this.appendChild(new BaseComponent(document.createElement("div"))
+            .style({ display: "flex" })
+            .appendChild(this.semester)
+            .appendChild(this.currentWeek)
+            .appendChild(this.selectedClassIds));
         this.appendChild(this.timetable);
     }
 
-    async onsearch() {
-        const semester = this.inputSemester.getValue();
-        const classIds = this.inputSearchClassIds.getValue().trim().split(/\s+/);
-        const response = await classesApis.findByRange({
-            semester,
-            classIds,
-        });
-        const classes = response.data;
-        classes.forEach((schoolClass) => {
-            console.log(schoolClass);
-        });
-    }
-
     async onselected() {
-        const semester = this.inputSemester.getValue();
-        const classIds = this.selectedClassIds.getValue().trim().split(/\s+/);
+        const semester = this.semester.input.getValue();
+        const classIds = this.selectedClassIds.input.getValue().trim().split(/\s+/).map((x) => parseInt(x, 10));
         const response = await classesApis.findWithMatch({
             semester,
             classIds,
@@ -96,7 +81,7 @@ export default class RegisterPreviewComponent extends App {
             try {
                 this.timetable.addSchoolClass(schoolClass);
             } catch (err) {
-                console.error(err);
+                LOGGER.error(err);
             }
         }
         this.timetable.render(this.prepareRenderOpts());
@@ -107,6 +92,6 @@ export default class RegisterPreviewComponent extends App {
     }
 
     prepareRenderOpts() {
-        return prepareRenderOpts({ currentWeekPreview: this.inputWeek.getValue() });
+        return prepareRenderOpts({ currentWeekPreview: this.currentWeek.input.getValue() });
     }
 }
