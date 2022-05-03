@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/tuana9a/tuana9a#readme",
   "dependencies": {
+    "amqplib": "0.8.0",
     "axios": "0.25.0",
     "cors": "2.8.5",
     "dotenv": "16.0.0",
@@ -29,8 +30,7 @@
     "express-rate-limit": "5.5.1",
     "form-data": "3.0.0",
     "mongodb": "4.3.1",
-    "multer": "1.4.4",
-    "amqplib": "0.8.0"
+    "multer": "1.4.4"
   },
   "devDependencies": {
     "css-loader": "6.7.1",
