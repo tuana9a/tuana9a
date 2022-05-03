@@ -30,31 +30,9 @@ CONFIG.mongodb = {};
 CONFIG.mongodb.connectionString = process.env.MONGODB_CONNECTION_STRING;
 CONFIG.mongodb.name = process.env.MONGODB_DATABASE_NAME;
 CONFIG.mongodb.readLimit = parseInt(process.env.MONGODB_READ_LIMIT) || 20;
-CONFIG.mongodb.collectionNames = { // currently hardcode these value
-    school: {
-        classes: "school.classes",
-        automation: {
-            entries: "school.automation.entries",
-            history: "school.automation.history",
-        },
-    },
-};
 
 // load message queue config
 CONFIG.rabbitmq = {};
 CONFIG.rabbitmq.connectionString = process.env.RABBITMQ_CONNECTION_STRING;
-CONFIG.rabbitmq.queueNames = {
-    school: {
-        automation: {
-            response: "tuana9a.school.automation.response",
-        },
-    },
-};
-CONFIG.rabbitmq.exchangeNames = {
-    bot: "bot",
-};
-CONFIG.rabbitmq.topics = {
-    submit: "submit",
-};
 
 module.exports = CONFIG;

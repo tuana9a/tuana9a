@@ -31,6 +31,10 @@ botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentProgram, "ctt-sis.hust.
 botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentTimetable, "ctt-sis.hust.edu.vn/getStudentTimetable");
 
 async function main() {
+    const BOT_EXCHANGE_NAME = "bot";
+    const ENTRY_CREATED_TOPIC = "entry.created";
+    const AUTOMATION_RESULTS_QUEUE_NAME = "tuana9a:school:automation-results";
+
     // init logger
     LOGGER.use(CONFIG.log.dest);
     LOGGER.info(`log.dest: ${CONFIG.log.dest}`);
@@ -51,9 +55,9 @@ async function main() {
         await rabbitmqClient.prepare(CONFIG.rabbitmq.connectionString);
         const channel0 = rabbitmqClient.channel;
         // prepare response queue for bot to reply to
-        await channel0.assertQueue(CONFIG.rabbitmq.queueNames.school.automation.response);
+        await channel0.assertQueue(AUTOMATION_RESULTS_QUEUE_NAME);
         await channel0.prefetch(1);
-        await channel0.consume(CONFIG.rabbitmq.queueNames.school.automation.response, async (msg) => {
+        await channel0.consume(AUTOMATION_RESULTS_QUEUE_NAME, async (msg) => {
             try {
                 const result = JSON.parse(msg.content.toString());
                 entryController.processResult(result.data, result);
@@ -91,11 +95,11 @@ async function main() {
                 };
                 if (rabbitmqClient.enabled) {
                     rabbitmqClient.channel.publish(
-                        CONFIG.rabbitmq.exchangeNames.bot,
-                        CONFIG.rabbitmq.topics.submit,
+                        BOT_EXCHANGE_NAME,
+                        ENTRY_CREATED_TOPIC,
                         Buffer.from(JSON.stringify(body)),
                         {
-                            replyTo: CONFIG.rabbitmq.queueNames.school.automation.response,
+                            replyTo: AUTOMATION_RESULTS_QUEUE_NAME,
                         },
                     );
                 } else {

@@ -2,6 +2,10 @@ const mongodb = require("mongodb");
 
 const CONFIG = require("../configs/config");
 
+const CLASSES_COLLECTION_NAME = "schoolClasses";
+const AUTOMATION_ENTRIES_COLLECTION_NAME = "schoolAutomationEntries";
+const AUTOMATION_HISTORY_COLLECTION_NAME = "schoolAutomationHistory";
+
 class MongoDBClient {
     constructor() {
         this.enabled = false;
@@ -16,17 +20,17 @@ class MongoDBClient {
 
     getClassesCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(CONFIG.mongodb.collectionNames.school.classes);
+        return this.db.collection(CLASSES_COLLECTION_NAME);
     }
 
     getHistoryCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(CONFIG.mongodb.collectionNames.school.automation.history);
+        return this.db.collection(AUTOMATION_HISTORY_COLLECTION_NAME);
     }
 
     getEntriesCollection() {
         if (!this.enabled) throw new Error("MongoDBClient is not enabled");
-        return this.db.collection(CONFIG.mongodb.collectionNames.school.automation.entries);
+        return this.db.collection(AUTOMATION_ENTRIES_COLLECTION_NAME);
     }
 
     close() {
