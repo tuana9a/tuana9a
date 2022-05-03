@@ -6,9 +6,10 @@ module.exports = {
     normalize: {
         MaLop: NormalizeIntProp("MaLop"),
         MaLopKem: NormalizeIntProp("MaLopKem"),
-        TenHocPhan: NormalizeIntProp("TenHocPhan"),
+        MaHocPhan: NormalizeStringProp("MaHocPhan"),
+        TenHocPhan: NormalizeStringProp("TenHocPhan"),
         LoaiLop: NormalizeStringProp("LoaiLop"),
-        BuoiHocSo: NormalizeStringProp("BuoiHocSo"),
+        BuoiHocSo: NormalizeIntProp("BuoiHocSo"),
         HocVaoThu: NormalizeIntProp("HocVaoThu"),
         ThoiGianHoc: NormalizeStringProp("ThoiGianHoc"),
         PhongHoc: NormalizeStringProp("PhongHoc"),
@@ -21,6 +22,7 @@ module.exports = {
         classToInsert: PickProp([
             "MaLop",
             "MaLopKem",
+            "MaHocPhan",
             "TenHocPhan",
             "LoaiLop",
             "BuoiHocSo",
@@ -30,6 +32,7 @@ module.exports = {
             "HocVaoCacTuan",
             "GhiChu",
             "semester",
+            "created",
         ]),
     },
 };

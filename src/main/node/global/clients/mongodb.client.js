@@ -2,9 +2,9 @@ const mongodb = require("mongodb");
 
 const CONFIG = require("../configs/config");
 
-const CLASSES_COLLECTION_NAME = "schoolClasses";
-const AUTOMATION_ENTRIES_COLLECTION_NAME = "schoolAutomationEntries";
-const AUTOMATION_HISTORY_COLLECTION_NAME = "schoolAutomationHistory";
+const CLASSES_COLLECTION_NAME = "schoolclasses";
+const AUTOMATION_ENTRIES_COLLECTION_NAME = "schoolautomationentries";
+const AUTOMATION_HISTORY_COLLECTION_NAME = "schoolautomationhistory";
 
 class MongoDBClient {
     constructor() {
