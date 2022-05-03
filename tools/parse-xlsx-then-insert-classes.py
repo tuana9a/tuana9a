@@ -94,7 +94,7 @@ def run(semester, xlsx_file_path):
     if len(classes_to_insert) > 0:
         headers = { 'secret': SECRET }
         batch = []
-        max_batch_size = 50
+        max_batch_size = 100
         for classs in classes_to_insert:
             if len(batch) > max_batch_size:
                 response = requests.post(url=ENDPOINT, headers=headers, json={ 'classes' : batch })
