@@ -30,13 +30,13 @@ export default class ScreenComponent extends BaseComponent {
         const commandComponent = new BaseComponent(document.createElement("div"));
         commandComponent.getClassList().add("CommandMessage");
         const messageTime = new BaseComponent(document.createElement("span"));
-        messageTime.innerText(this.prefixNow());
+        messageTime.setInnerText(this.prefixNow());
         messageTime.getClassList().add("MessageTime");
         const messageContent = new BaseComponent(document.createElement("span"));
-        messageContent.innerText(value);
+        messageContent.setInnerText(value);
         messageContent.getClassList().add("MessageContent");
         const copyButton = new BaseComponent(document.createElement("button"));
-        copyButton.innerText("copy");
+        copyButton.setInnerText("copy");
         copyButton.getClassList().add("CopyButton");
         copyButton.addEventListener("click", () => {
             navigator.clipboard.writeText(value);
