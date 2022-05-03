@@ -12,6 +12,11 @@ class RabbitMQClient {
         return this;
     }
 
+    getChannel() {
+        if (!this.enabled) throw new Error("RabbitMQClient is not enabled");
+        return this.channel;
+    }
+
     close() {
         if (!this.enabled) throw new Error("RabbitMQClient is not enabled");
         return this.client.close();

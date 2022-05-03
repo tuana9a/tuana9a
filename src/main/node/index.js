@@ -18,17 +18,12 @@ const automationEntryRouter = require("./school/automation/routes/entry.router")
 const mongodbClient = require("./global/clients/mongodb.client");
 
 const EntryStatus = require("./school/automation/configs/entry-status");
-const botClient = require("./school/automation/clients/bot.client");
 const faviconUtils = require("./global/utils/favicon.utils");
 const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
 const schoolAutomationRateLimit = require("./school/automation/middlewares/rate-limit");
 const rabbitmqClient = require("./global/clients/rabbitmq.client");
 const entryController = require("./school/automation/controllers/entry.controller");
 const loopAsync = require("./global/controllers/loop-async");
-
-botClient.setJobId(AUTOMATION_CONFIG.actionIds.autoRegisterClasses, "dk-sis.hust.edu.vn/autoRegisterClasses");
-botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentProgram, "ctt-sis.hust.edu.vn/getStudentProgram");
-botClient.setJobId(AUTOMATION_CONFIG.actionIds.getStudentTimetable, "ctt-sis.hust.edu.vn/getStudentTimetable");
 
 async function main() {
     const BOT_EXCHANGE_NAME = "bot";
@@ -53,7 +48,7 @@ async function main() {
     if (CONFIG.rabbitmq.connectionString) {
         LOGGER.info(`rabbitmq.connectionString: ${CONFIG.rabbitmq.connectionString}`);
         await rabbitmqClient.prepare(CONFIG.rabbitmq.connectionString);
-        const channel0 = rabbitmqClient.channel;
+        const channel0 = rabbitmqClient.getChannel();
         // prepare response queue for bot to reply to
         await channel0.assertQueue(AUTOMATION_RESULTS_QUEUE_NAME);
         await channel0.prefetch(1);
@@ -74,11 +69,11 @@ async function main() {
     // can start process entry
     LOGGER.info(`automation.repeatProcessAfter: ${AUTOMATION_CONFIG.repeatProcessAfter}`);
     loopAsync.loopInfinity(async () => {
-    // phải sử dụng chung tab vì nếu 2 tab cùng mở ctt-sis sẽ đánh nhau
+        // phải sử dụng chung tab vì nếu 2 tab cùng mở ctt-sis sẽ đánh nhau
         // phải cùng loop với execute vì nếu không cũng sẽ đánh nhau
         const entriesCollection = mongodbClient.getEntriesCollection();
         try {
-        // gọi check real account trước
+            // gọi check real account trước
             const cursor = entriesCollection.find({
                 "timeToStart.n": {
                     $lt: Date.now(), // thời gian sắp tới
@@ -90,27 +85,20 @@ async function main() {
                 // eslint-disable-next-line no-await-in-loop
                 const entry = await cursor.next();
                 const body = {
-                    jobId: botClient.getJobId(entry.actionId),
+                    jobId: AUTOMATION_CONFIG.jobIdMappers.get(entry.actionId),
                     data: entry,
                 };
-                if (rabbitmqClient.enabled) {
-                    rabbitmqClient.channel.publish(
-                        BOT_EXCHANGE_NAME,
-                        ENTRY_CREATED_TOPIC,
-                        Buffer.from(JSON.stringify(body)),
-                        {
-                            replyTo: AUTOMATION_RESULTS_QUEUE_NAME,
-                        },
-                    );
-                } else {
-                    // eslint-disable-next-line no-await-in-loop
-                    const result = await botClient.send(entry);
-                    // eslint-disable-next-line no-await-in-loop
-                    await entryController.processResult(result.data, result);
-                }
+                rabbitmqClient.getChannel().publish(
+                    BOT_EXCHANGE_NAME,
+                    ENTRY_CREATED_TOPIC,
+                    Buffer.from(JSON.stringify(body)),
+                    {
+                        replyTo: AUTOMATION_RESULTS_QUEUE_NAME,
+                    },
+                );
             }
         } catch (err) {
-        // có thể lỗi mất mạng
+            // có thể lỗi mất mạng
             LOGGER.error(err);
         }
     }, AUTOMATION_CONFIG.repeatProcessAfter);
