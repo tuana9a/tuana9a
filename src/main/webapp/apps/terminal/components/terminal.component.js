@@ -5,6 +5,9 @@ import TypingComponent from "./typing.component";
 // eslint-disable-next-line no-unused-vars
 import LaunchOption from "../../../kernel/data/launch.option";
 import App from "../../../kernel/components/app.component";
+import OutputComponent from "./output.component";
+import { dce } from "../../../global/utils/dom.utils";
+import LOGGER from "../../../global/loggers/logger";
 
 export default class TerminalComponent extends App {
     /**
@@ -14,19 +17,24 @@ export default class TerminalComponent extends App {
         super(element);
         const thiss = this;
         this.getClassList().add("Terminal");
-        // create screen component and typing
+
         this.screen = new ScreenComponent(document.createElement("div"));
-        this.appendChild(this.screen);
-        // init typing component
+        this.console = new OutputComponent(dce("div"));
         this.typing = new TypingComponent(document.createElement("div"));
+
+        this.console.getClassList().add("Console");
         this.typing.input.addEventListener("keydown", (e) => thiss.onKeyDown(e));
-        this.appendChild(this.typing);
-        // init event on terminal
+        this.screen.addEventListener("click", () => thiss.typing.input.focus(), { capture: true });
+
         this.onkeydownHandlers = new Map();
         this.onkeydownHandlers.set("Enter", (e) => thiss.onPressEnter(e));
         this.onkeydownHandlers.set("Tab", (e) => thiss.onPressTab(e));
         this.onkeydownHandlers.set("ArrowUp", (e) => thiss.onPressArrowUp(e));
         this.onkeydownHandlers.set("ArrowDown", (e) => thiss.onPressArrowDown(e));
+
+        this.screen.appendChild(this.console);
+        this.screen.appendChild(this.typing);
+        this.appendChild(this.screen);
     }
 
     /**
@@ -37,77 +45,14 @@ export default class TerminalComponent extends App {
         if (launchOption.dropFile) {
             const thiss = this;
             // prevent default drop effect
-            // window.addEventListener("dragover", (e) => e.preventDefault());
-            // handler drop effect
-            this.addEventListener("drop", (e) => thiss.ondrop(e));
+            this.addEventListener("dragover", (e) => {
+                e.preventDefault();
+            });
+            this.addEventListener("drop", (e) => {
+                e.preventDefault();
+                thiss.ondrop(e);
+            });
         }
-    }
-
-    /**
-     * @param {String} bin
-     */
-    // eslint-disable-next-line no-console
-    addCommand(bin, executable = { execute: (command, opts = { bin: "", args: [""] }) => console.log(command, opts) }) {
-        this.bash.getPath().set(bin, executable);
-    }
-
-    initBaseCommand() {
-        const thiss = this;
-        // base terminal commands
-        this.addCommand("set", {
-            execute(_, { args }) {
-                const key = args[0];
-                const value = args.slice(1).join(" ");
-                thiss.env.set(key, value);
-            },
-        });
-        this.addCommand("get", {
-            execute(_, { args }) {
-                const key = args[0];
-                const value = thiss.env.get(key);
-                thiss.screen.appendResponse(value);
-            },
-        });
-        this.addCommand("env", {
-            execute() {
-                const tree = thiss.env.tree();
-                let msg = "";
-                for (const key in tree) {
-                    let value = tree[key];
-                    if (key === "file") {
-                        value = value.name;
-                    } else if (key === "files") {
-                        value = value.map((x) => x.name);
-                    } else if (key === "classIds") {
-                        value = Array.from(value);
-                    }
-                    msg += `<span class="color-violet">${key}</span> = ${value}<br/>`;
-                }
-                thiss.screen.appendResponse(msg);
-            },
-        });
-        this.addCommand("cls", {
-            execute() {
-                thiss.screen.cls();
-            },
-        });
-        this.addCommand("help", {
-            execute() {
-                const { tree } = thiss.bash;
-                let msg = "";
-                for (const key in tree) {
-                    msg += `${key}\n`;
-                }
-                thiss.screen.appendResponse(msg);
-            },
-        });
-    }
-
-    /**
-     * @param {String} bin
-     */
-    getCommand(bin) {
-        return this.bash.getPath().get(bin);
     }
 
     /**
@@ -131,7 +76,7 @@ export default class TerminalComponent extends App {
         // if not, render other thing
         const thiss = this;
         setTimeout(() => {
-            const typingValue = thiss.typing.value();
+            const typingValue = thiss.typing.getValue();
             const args = thiss.getComandArgs(typingValue);
             thiss.typing.suggest.reset();
             thiss.typing.suggest.render(args, typingValue);
@@ -143,26 +88,34 @@ export default class TerminalComponent extends App {
      */
     onPressEnter(e) {
         e.preventDefault();
-        const typingComponent = this.typing;
-        const screenComponent = this.screen;
-        const command = typingComponent.value();
-        typingComponent.suggest.reset();
-        typingComponent.set("");
+        const command = this.typing.getValue();
+        this.typing.suggest.reset();
+        this.typing.setValue("");
         // check if empty command
         if (command.match(/^\s*$/)) {
             return;
         }
-        screenComponent.appendCommand(command);
-        const response = this.bash.execute(command);
-        // if response is succes then no need to append message feed back
-        if (response) {
-            // has error message
-            screenComponent.appendResponse(response);
-            return;
+        this.console.appendCommand(this.typing.prefixContainer.getInnerText(), command);
+        try {
+            const outputs = this.notifyParent("i:bash:execute", { command });
+            if (outputs) {
+                if (!Array.isArray(outputs)) {
+                    throw new Error("i:bash:execute must return an array");
+                }
+                if (outputs.length > 1) {
+                    LOGGER.warn("i:bash:execute return an array with more than one element");
+                }
+                for (const output of outputs) {
+                    this.console.appendOutput(output);
+                }
+            }
+        } catch (err) {
+            LOGGER.error(err);
+            this.console.appendOutput(err.message);
         }
-        typingComponent.suggest.addHistory(command);
+        this.typing.suggest.addHistory(command);
         for (const word of command.split(/\s+/)) {
-            typingComponent.suggest.addWord(word);
+            this.typing.suggest.addWord(word);
         }
     }
 
@@ -171,11 +124,10 @@ export default class TerminalComponent extends App {
      */
     onPressTab(e) {
         e.preventDefault();
-        const typingComponent = this.typing;
-        const value = typingComponent.suggest.choose();
+        const value = this.typing.suggest.choose();
         if (!value) return;
-        typingComponent.set(value);
-        typingComponent.suggest.reset();
+        this.typing.setValue(value);
+        this.typing.suggest.reset();
     }
 
     /**
@@ -194,21 +146,16 @@ export default class TerminalComponent extends App {
     /**
      * @param {Event} e
      */
-    async ondrop(e) {
+    ondrop(e) {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
-        this.env.set("files", files);
+        this.notifyParent("i:env:set", { key: "files", value: files });
         const file = files[0];
         if (!file) {
-            this.screen.appendResponse("no file droped");
+            this.console.appendOutput("no file droped");
             return;
         }
-        this.env.set("file", file);
-        if (file.name.endsWith(".json")) {
-            const fileJson = JSON.parse(await file.text());
-            this.env.set("file-json", fileJson);
-        }
         const fileNames = files.map((x) => x.name);
-        this.screen.appendResponse(`drop: ${fileNames}`);
+        this.console.appendOutput(`drop: ${fileNames}`);
     }
 }

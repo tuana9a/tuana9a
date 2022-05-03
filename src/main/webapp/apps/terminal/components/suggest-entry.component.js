@@ -22,7 +22,7 @@ export default class SuggestEntryComponent extends BaseComponent {
     }
 
     render() {
-        this.text.innerHTML(this.value.replace(/\s/g, "&nbsp;"));
+        this.text.setInnerHTML(this.value.replace(/\s/g, "&nbsp;"));
     }
 
     choose() {

@@ -4,6 +4,7 @@ import SchoolAdminComponent from "./apps/school/register-preview/components/admi
 import TerminalComponent from "./apps/terminal/components/terminal.component";
 import SchoolRegisterPreviewComponent from "./apps/school/register-preview/components/register-preview.component";
 import AutomationManagerComponent from "./apps/school/automation/components/automation-manager.component";
+import EnvExec from "./kernel/executables/env.exec";
 // import runMemoryLeakTest from "./tests/memory-leak.test";
 
 doUpgrade();
@@ -11,6 +12,7 @@ doUpgrade();
 // main init function
 async function main() {
     const os = new OS(document.createElement("div"));
+    os.addBin("env", EnvExec);
     os.install("terminal", TerminalComponent, {
         dropFile: true,
         width: 500,
@@ -39,6 +41,6 @@ async function main() {
     // runMemoryLeakTest(os, "school-admin", terminalOpts, 75, 200);
     // runMemoryLeakTest(os, "automation-form", terminalOpts, 75, 200);
     // runMemoryLeakTest(os, "register-preview", registerPreviewOpts, 20, 500);
-    document.body.appendChild(os.element);
+    document.body.appendChild(os.getElement());
 }
 main();

@@ -16,6 +16,7 @@ export default class WindowComponent extends BaseComponent {
         this.body = new WindowBody(document.createElement("div"));
         // event
         const thiss = this;
+        this.addNotifyListener("i:bash:execute", (data) => thiss.notifyParent("i:bash:execute", data));
         this.addNotifyListener("close", () => {
             thiss.close();
         });
@@ -40,6 +41,10 @@ export default class WindowComponent extends BaseComponent {
         // this.resizeBody(launchOption.width, launchOption.height);
         this.headerBar.resizer.width.input.setValue(launchOption.width);
         this.headerBar.resizer.height.input.setValue(launchOption.height);
+    }
+
+    addApp(app) {
+        this.body.appendChild(app);
     }
 
     onFocus() {

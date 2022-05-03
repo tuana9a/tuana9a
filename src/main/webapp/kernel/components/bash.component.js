@@ -1,41 +1,13 @@
-// eslint-disable-next-line no-unused-vars
-import EnvComponent from "./env.component";
-
-const PATH_NAME = "PATH";
-
 export default class BashComponent {
-    /**
-     * @param {EnvComponent} env
-     */
-    constructor(env) {
-        this.env = env;
-        this.env.set(PATH_NAME, new Map());
-    }
-
-    /**
-     * @param {String} command
-     */
-    execute(command) {
-        const args = command.split(/\s+/);
-        const bin = args[0];
-        const PATH = this.env.get(PATH_NAME);
-        const executable = PATH.get(bin);
-        if (!executable) {
-            throw new Error(`command not found: "${command}"`);
+    // eslint-disable-next-line class-methods-use-this
+    execute({ bin, command, os }) {
+        const Executable = bin;
+        if (!Executable) {
+            return `command not found: "${command}"`;
         }
-        const opts = {
-            bin,
-            args,
-        };
-        const output = executable.execute(command, opts);
+        const exec = new Executable({ command, os });
+        const output = exec.execute(command);
+        exec.exit();
         return output;
-    }
-
-    getEnv() {
-        return this.env;
-    }
-
-    getPath() {
-        return this.env.get(PATH_NAME);
     }
 }

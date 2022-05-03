@@ -1,4 +1,6 @@
 import BaseComponent from "../../../global/components/base.component";
+import SpanInputComponent from "../../../global/components/span.input.component";
+import { dce } from "../../../global/utils/dom.utils";
 import SuggestComponent from "./suggest.component";
 
 export default class TypingComponent extends BaseComponent {
@@ -7,36 +9,49 @@ export default class TypingComponent extends BaseComponent {
      */
     constructor(element) {
         super(element);
-        this.getClassList().add("TypingCommand", "display-flex", "align-items-center");
+        this.getClassList().add("Typing", "display-flex", "align-items-center", "position-relative");
 
-        this.container = new BaseComponent(document.createElement("div"));
-        this.container.getClassList().add("TypingCommandContainer", "position-relative");
-        this.appendChild(this.container);
+        this.username = new BaseComponent(dce("span")).setInnerText("root");
+        this.hostname = new BaseComponent(dce("span")).setInnerText("localhost");
+        this.cwd = new BaseComponent(dce("span")).setInnerText("~");
+        this.commandSign = new BaseComponent(dce("span")).setInnerText("$");
+        this.prefixContainer = new BaseComponent(dce("div"));
+        this.prefixContainer.getClassList().add("PrefixContainer");
 
-        this.input = new BaseComponent(document.createElement("input"));
-        this.input.getClassList().add("TypingCommandValue", "position-relative");
-        this.input.element.autocomplete = "off";
-        this.input.element.type = "text";
-        this.input.element.placeholder = "type here";
-
-        this.container.appendChild(this.input);
+        this.input = new SpanInputComponent();
         const thiss = this;
         this.suggest = new SuggestComponent({
             maxEntryCount: 20,
             onchoose(value) {
-                thiss.set(value);
+                thiss.setValue(value);
             },
         });
-        this.container.appendChild(this.suggest);
+        this.inputContainer = new BaseComponent(dce("div"));
+        this.inputContainer.getClassList().add("InputContainer");
+        this.input.getClassList().add("InputCommand");
+        this.input.getElement().autocomplete = "off";
+
+        this.prefixContainer.appendChild(
+            this.username,
+            new BaseComponent(dce("span")).setInnerText("@"),
+            this.hostname,
+            new BaseComponent(dce("span")).setInnerText(":"),
+            this.cwd,
+            this.commandSign,
+        );
+        this.inputContainer.appendChild(this.input);
+        this.appendChild(this.prefixContainer);
+        this.appendChild(this.inputContainer);
+        this.appendChild(this.suggest);
     }
 
-    set(value = "") {
-        this.input.element.value = value;
+    setValue(value = "") {
+        this.input.setValue(value);
     }
 
-    value() {
+    getValue() {
         // eslint-disable-next-line prefer-destructuring
-        const value = this.input.element.value;
+        const value = this.input.getValue();
         return value;
     }
 }

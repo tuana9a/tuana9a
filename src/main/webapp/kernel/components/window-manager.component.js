@@ -9,8 +9,7 @@ export default class WindowManagerComponent extends BaseComponent {
         this.windows = new Map();
         this.getClassList().add("WindowManager");
         const thiss = this;
-        this.addNotifyListener("close", ({ id }) => {
-            thiss.removeChildById(id);
-        });
+        this.addNotifyListener("close", (data) => thiss.notifyParent("close", data));
+        this.addNotifyListener("i:bash:execute", (data) => thiss.notifyParent("i:bash:execute", data));
     }
 }

@@ -1,53 +1,29 @@
 .TerminalScreen {
-    height: 80vh;
-    min-height: 200px;
-    max-height: 300px;
-    overflow: auto;
-    padding: 4px;
-    padding-bottom: 0;
+    min-height: 100%;
+    padding-bottom: 400px;
+    /* background-color: #000000; */
 }
 
 .TerminalScreen span {
     display: inline-block;
 }
 
-.TerminalScreen .MessageTime {
-    background-color: #ffffff;
-    color: black;
-    padding: 5px;
-    height: fit-content;
-}
-
-.TerminalScreen .CopyButton {
-    padding: 5px;
-}
-
-.TerminalScreen .CommandMessage {
-    color: white;
-    margin: 3px;
+.TerminalScreen .Command {
     display: flex;
     justify-content: flex-start;
+    font-family: monospace;
 }
 
-.TerminalScreen .ResponseMessage {
+.TerminalScreen .Command .Prefix {
+    background-color: black;
     color: white;
-    margin: 3px;
-    display: flex;
-    justify-content: flex-start;
-    /* justify-content: flex-end; */
+    margin-right: 3px;
 }
 
-.TerminalScreen .MessageContent {
-    background-color: #2e2e2e;
-    margin: 0 3px;
-    padding: 5px;
-    overflow-x: auto;
-    /* cursor: pointer; */
+.TerminalScreen .Command .Content {
+    /* background-color: black; */
 }
 
-.TerminalScreen .ResponseMessage .MessageContent {
-    /* background-color: #2a63ff; */
-    /* background-color: #4A4A4A; */
-    background-color: #1d3c78;
-    font-size: 16px;
+.TerminalScreen .Output {
+    margin-bottom: 10px;
 }

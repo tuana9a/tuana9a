@@ -21,8 +21,17 @@ export default class OS extends BaseComponent {
         this.windowManager = new WindowManagerComponent(document.createElement("div"));
         this.appendChild(this.windowManager);
         this.env = new EnvComponent();
+        this.env.set("PATH", new Map());
         this.bash = new BashComponent(this.env);
         this.apps = new Map();
+        const thiss = this;
+        this.addNotifyListener("close", ({ id }) => thiss.kill(id));
+        this.addNotifyListener("i:env:get", ({ key }) => thiss.env.get(key));
+        this.addNotifyListener("i:env:set", ({ key, value }) => thiss.env.set(key, value));
+        this.addNotifyListener("i:bash:execute", ({ command }) => {
+            const bin = thiss.getBin(command.trim().split(/\s+/)[0]);
+            return thiss.bash.execute({ os: thiss, command, bin });
+        });
     }
 
     /**
@@ -65,24 +74,27 @@ export default class OS extends BaseComponent {
             throw new Error(`app not found: "${name}"`);
         }
         const app = new AppClass(document.createElement("div"));
-        app.setEnv(this.env);
-        app.setBash(this.bash);
-        app.launch(launchOption);
         if (!(app instanceof App)) {
             throw new Error(`app "${AppClass}" is not a App`);
         }
         const window = new WindowComponent(document.createElement("div"));
-        makeDragToMove(window, window.headerBar, {
-            boundComponent: this.windowManager,
-            boundLeft: true,
-            boundTop: true,
-        });
-        makeClickThenBringToFront(window);
-        window.launch(launchOption, app);
-        window.body.appendChild(app);
+        app.launch(launchOption);
+        window.launch(launchOption);
         window.moveTo(launchOption.x, launchOption.y);
+        window.addApp(app);
+        // eslint-disable-next-line max-len
+        makeDragToMove(window, window.headerBar, { boundComponent: this.windowManager, boundLeft: true, boundTop: true });
+        makeClickThenBringToFront(window);
         this.windowManager.appendChild(window);
         return window.id;
+    }
+
+    getBin(bin) {
+        return this.env.get("PATH").get(bin);
+    }
+
+    addBin(bin, executable) {
+        this.env.get("PATH").set(bin, executable);
     }
 
     kill(id) {

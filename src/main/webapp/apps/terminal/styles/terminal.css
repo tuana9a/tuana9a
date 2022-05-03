@@ -1,15 +1,6 @@
 .Terminal {
     /* box-shadow: 0 0 10px 1px black; */
-    overflow: visible;
-    background-color: #000000;
-    height: fit-content;
+    height: 100%;
     width: 100%;
     max-width: 1280px;
-}
-
-.TerminalTitle {
-    padding: 2px 4px;
-    background-color: #ffffff;
-    color: black;
-    font-size: 17px;
 }

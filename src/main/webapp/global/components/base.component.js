@@ -85,9 +85,26 @@ export default class BaseComponent {
         return this;
     }
 
+    setTextContent(text) {
+        this.element.textContent = text;
+        return this;
+    }
+
     setInnerHTML(html) {
         this.element.innerHTML = html;
         return this;
+    }
+
+    getInnerText() {
+        return this.element.innerText;
+    }
+
+    getTextContent() {
+        return this.element.textContent;
+    }
+
+    focus() {
+        this.element.focus();
     }
 
     /**
@@ -134,8 +151,9 @@ export default class BaseComponent {
 
     notifyParent(eventName, data) {
         if (this.parentComponent) {
-            this.parentComponent.onNotify(eventName, data);
+            return this.parentComponent.onNotify(eventName, data);
         }
+        return null;
     }
 
     onNotify(eventName, data) {
@@ -143,11 +161,14 @@ export default class BaseComponent {
         if (!handlers) {
             // eslint-disable-next-line no-console
             console.warn(`${this}: No handler for event: ${eventName}`);
-            return;
+            return [];
         }
+        const outputs = [];
         for (const handler of handlers) {
-            handler(data);
+            const output = handler(data);
+            outputs.push(output);
         }
+        return outputs;
     }
 
     // eslint-disable-next-line no-console
