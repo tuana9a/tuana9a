@@ -9,7 +9,7 @@ COPY package-lock.json .
 
 RUN npm install --only=production
 
-COPY src/ src/
+COPY src/main/node/ src/
 
 COPY static.local/ static.local/
 
@@ -17,4 +17,4 @@ COPY libs/ libs/
 
 COPY views/ views/
 
-CMD ["node", "src/main/node/index.js"]
+CMD ["node", "src/index.js"]
