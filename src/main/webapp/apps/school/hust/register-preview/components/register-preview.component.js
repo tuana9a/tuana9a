@@ -76,6 +76,7 @@ export default class RegisterPreviewComponent extends App {
                 classesMap.set(key, schoolClass);
             }
         }
+        this.timetable.clearSchoolClasses();
         // eslint-disable-next-line no-restricted-syntax
         for (const schoolClass of classesMap.values()) {
             try {
