@@ -10,17 +10,17 @@ dotenv.config();
 
 const LOGGER = require("./global/loggers/logger");
 const CONFIG = require("./global/configs/config");
-const AUTOMATION_CONFIG = require("./school/automation/configs/config");
+const AUTOMATION_CONFIG = require("./school/hust/automation/configs/config");
 
-const schoolClassesRouter = require("./school/register-preview/routes/school-class.router");
-const automationEntryRouter = require("./school/automation/routes/entry.router");
+const schoolClassesRouter = require("./school/hust/register-preview/routes/school-class.router");
+const automationEntryRouter = require("./school/hust/automation/routes/entry.router");
 const mongodbClient = require("./global/clients/mongodb.client");
 
-const EntryStatus = require("./school/automation/configs/entry-status");
+const EntryStatus = require("./school/hust/automation/configs/entry-status");
 const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
-const schoolAutomationRateLimit = require("./school/automation/middlewares/rate-limit");
+const schoolAutomationRateLimit = require("./school/hust/automation/middlewares/rate-limit");
 const rabbitmqClient = require("./global/clients/rabbitmq.client");
-const entryController = require("./school/automation/controllers/entry.controller");
+const entryController = require("./school/hust/automation/controllers/entry.controller");
 const loopAsync = require("./global/controllers/loop-async");
 
 async function main() {
@@ -115,14 +115,14 @@ async function main() {
     server.use(express.static(CONFIG.static, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
 
     // school/automation
-    server.get("/api/school/automation/entry", automationEntryRouter.find);
-    server.post("/api/school/automation/entry", schoolAutomationRateLimit.submitEntry, automationEntryRouter.insert);
-    server.put("/api/school/automation/entry/:entryId", automationEntryRouter.update);
+    server.get("/api/school/hust/automation/entry", automationEntryRouter.find);
+    server.post("/api/school/hust/automation/entry", schoolAutomationRateLimit.submitEntry, automationEntryRouter.insert);
+    server.put("/api/school/hust/automation/entry/:entryId", automationEntryRouter.update);
 
     // school/register-preview
-    server.get("/api/school/register-preview/classes", schoolClassesRouter.find);
-    server.post("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.insert);
-    server.delete("/api/school/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.drop);
+    server.get("/api/school/hust/register-preview/classes", schoolClassesRouter.find);
+    server.post("/api/school/hust/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.insert);
+    server.delete("/api/school/hust/register-preview/classes", requireCorrectSecretHeader, schoolClassesRouter.drop);
 
     // create server
     if (CONFIG.ssl.enabled) {

@@ -2,7 +2,7 @@
 const axios = require("axios").default.create();
 const dotenv = require("dotenv");
 
-const EntryStatus = require("../../../main/node/school/automation/configs/entry-status");
+const EntryStatus = require("../../../main/node/school/hust/automation/configs/entry-status");
 
 dotenv.config({ path: ".jest.local.env" });
 
@@ -20,7 +20,7 @@ test("test all submit entry", async () => {
         timeToStart: Date.now(),
     };
 
-    res = await axios.post(`${process.env.SERVER}/api/school/automation/entry`, body);
+    res = await axios.post(`${process.env.SERVER}/api/school/hust/automation/entry`, body);
     response = res.data;
 
     expect(response.code).toBe(1);
@@ -41,7 +41,7 @@ test("test all submit entry", async () => {
         timeToStart: Date.now(),
     };
 
-    res = await axios.put(`${process.env.SERVER}/api/school/automation/entry/${entryId}`, body);
+    res = await axios.put(`${process.env.SERVER}/api/school/hust/automation/entry/${entryId}`, body);
     response = res.data;
     expect(response.code).toBe(1);
     expect(response.message).toBe("success");
@@ -57,7 +57,7 @@ test("test all submit entry", async () => {
         status: EntryStatus.CANCELED,
     };
 
-    res = await axios.put(`${process.env.SERVER}/api/school/automation/entry/${entryId}`, body);
+    res = await axios.put(`${process.env.SERVER}/api/school/hust/automation/entry/${entryId}`, body);
     response = res.data;
     expect(response.code).toBe(1);
     expect(response.message).toBe("success");
@@ -73,7 +73,7 @@ test("test all submit entry", async () => {
             password: process.env.PASSWORD,
             status: EntryStatus.CANCELED,
         };
-        await axios.put(`${process.env.SERVER}/api/school/automation/entry/${entryId}`, body);
+        await axios.put(`${process.env.SERVER}/api/school/hust/automation/entry/${entryId}`, body);
     } catch (err) {
         expect(err.message).toMatch("400");
     }

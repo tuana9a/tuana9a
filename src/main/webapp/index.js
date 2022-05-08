@@ -1,9 +1,9 @@
 import doUpgrade from "./do-upgrade";
 import OS from "./kernel/components/os.component";
-import SchoolAdminComponent from "./apps/school/register-preview/components/admin.component";
+import SchoolAdminComponent from "./apps/school/hust/register-preview/components/admin.component";
 import TerminalComponent from "./apps/terminal/components/terminal.component";
-import SchoolRegisterPreviewComponent from "./apps/school/register-preview/components/register-preview.component";
-import AutomationManagerComponent from "./apps/school/automation/components/automation-manager.component";
+import SchoolRegisterPreviewComponent from "./apps/school/hust/register-preview/components/register-preview.component";
+import AutomationManagerComponent from "./apps/school/hust/automation/components/automation-manager.component";
 import EnvExec from "./kernel/executables/env.exec";
 // import runMemoryLeakTest from "./tests/memory-leak.test";
 

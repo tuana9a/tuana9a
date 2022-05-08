@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const SafeError = require("../../../main/node/global/exceptions/safe-error");
-const semesterValidation = require("../../../main/node/school/register-preview/validations/semester.validation");
+const semesterValidation = require("../../../main/node/school/hust/register-preview/validations/semester.validation");
 
 test("semester is null", () => {
     expect(() => {

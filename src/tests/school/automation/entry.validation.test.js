@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const SafeError = require("../../../main/node/global/exceptions/safe-error");
-const entryValidation = require("../../../main/node/school/automation/validations/entry.validation");
+const entryValidation = require("../../../main/node/school/hust/automation/validations/entry.validation");
 
 test("entry.username is null", () => {
     expect(() => {

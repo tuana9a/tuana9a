@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const DateTime = require("../../../main/node/global/data/datetime");
-const entryDTO = require("../../../main/node/school/automation/dto/entry.dto");
+const entryDTO = require("../../../main/node/school/hust/automation/dto/entry.dto");
 
 test("entry to insert", () => {
     const now = new Date();

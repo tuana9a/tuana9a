@@ -2,8 +2,8 @@
 @import url("./common/styles/index.css");
 @import url("./kernel/styles/index.css");
 @import url("./neon/styles/index.css");
-@import url("./apps/school/register-preview/styles/index.css");
-@import url("./apps/school/automation/styles/index.css");
+@import url("./apps/school/hust/register-preview/styles/index.css");
+@import url("./apps/school/hust/automation/styles/index.css");
 @import url("./apps/terminal/styles/index.css");
 
 * {
