@@ -4,8 +4,7 @@ const CONFIG = {};
 // start assign value
 CONFIG.bind = process.env.BIND || "127.0.0.1";
 CONFIG.port = parseInt(process.env.PORT) || 80;
-CONFIG.static = process.env.STATIC || "src/main/webapp";
-CONFIG.docsDir = process.env.DOCS_DIR;
+CONFIG.static = process.env.STATIC;
 
 // config logging
 CONFIG.log = {};

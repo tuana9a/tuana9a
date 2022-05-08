@@ -1,6 +1,5 @@
 /* eslint-disable max-len */
 const fs = require("fs");
-const path = require("path");
 const cors = require("cors");
 const http = require("http");
 const https = require("https");
@@ -18,7 +17,6 @@ const automationEntryRouter = require("./school/automation/routes/entry.router")
 const mongodbClient = require("./global/clients/mongodb.client");
 
 const EntryStatus = require("./school/automation/configs/entry-status");
-const faviconUtils = require("./global/utils/favicon.utils");
 const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
 const schoolAutomationRateLimit = require("./school/automation/middlewares/rate-limit");
 const rabbitmqClient = require("./global/clients/rabbitmq.client");
@@ -105,7 +103,6 @@ async function main() {
 
     // init server
     const server = express();
-    server.set("view engine", "ejs");
 
     // enable cors
     LOGGER.info(`allowCors: ${CONFIG.allowCors}`);
@@ -116,50 +113,6 @@ async function main() {
     // init handlers
     server.use(express.json());
     server.use(express.static(CONFIG.static, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
-    server.use("/libs", express.static("./libs", { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
-
-    // docs
-    server.use(
-        "/docs",
-        (req, res, next) => {
-            next();
-            const extesions = [".sh", ".cmd", ".ps1", ".md", ".ini", ".gitignore"];
-            const regex = new RegExp(`^.*(${extesions.join("|")})$`);
-            if (req.path.match(regex)) {
-                res.set("Content-Type", "text/plain");
-            }
-        },
-        express.static(CONFIG.docsDir, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */, dotfiles: "allow" }),
-    );
-    server.get("/docs/*", (req, res) => {
-        try {
-            // this block of code is hard to understand
-            // just run it for debug :)
-            const prefix = "/docs";
-            const pathRequest = req.path;
-            const realpath = pathRequest.substring(prefix.length);
-            const faviconUrl = faviconUtils.createFaviconUrl(realpath);
-            const filepaths = fs.readdirSync(path.join(CONFIG.docsDir, realpath));
-            const entries = [];
-            // eslint-disable-next-line no-restricted-syntax
-            for (const filepath of filepaths) {
-                const isDir = fs.statSync(path.join(CONFIG.docsDir, realpath, filepath)).isDirectory();
-                const entry = {};
-                entry.name = isDir ? `${filepath}/` : filepath;
-                entry.url = path.join(prefix, realpath, filepath);
-                entry.type = isDir ? "d" : "f";
-                entries.push(entry);
-            }
-            res.render("explorer", {
-                faviconUrl,
-                titleName: pathRequest,
-                entries,
-            });
-        } catch (err) {
-            LOGGER.error(err);
-            res.end();
-        }
-    });
 
     // school/automation
     server.get("/api/school/automation/entry", automationEntryRouter.find);

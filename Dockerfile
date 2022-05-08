@@ -13,8 +13,6 @@ COPY src/main/node/ src/
 
 COPY static.local/ static.local/
 
-COPY libs/ libs/
-
 COPY views/ views/
 
 CMD ["node", "src/index.js"]
