@@ -1,5 +1,5 @@
 import BaseComponent from "../../../global/components/base.component";
-import SpanInputComponent from "../../../global/components/span.input.component";
+import InputComponent from "../../../global/components/input.component";
 import { dce } from "../../../global/utils/dom.utils";
 import SuggestComponent from "./suggest.component";
 
@@ -18,18 +18,14 @@ export default class TypingComponent extends BaseComponent {
         this.prefixContainer = new BaseComponent(dce("div"));
         this.prefixContainer.getClassList().add("PrefixContainer");
 
-        this.input = new SpanInputComponent();
-        const thiss = this;
-        this.suggest = new SuggestComponent({
-            maxEntryCount: 20,
-            onchoose(value) {
-                thiss.setValue(value);
-            },
-        });
+        this.input = new InputComponent();
+        this.suggest = new SuggestComponent(dce("div"));
         this.inputContainer = new BaseComponent(dce("div"));
+
         this.inputContainer.getClassList().add("InputContainer");
         this.input.getClassList().add("InputCommand");
         this.input.getElement().autocomplete = "off";
+        this.input.setType("text");
 
         this.prefixContainer.appendChild(
             this.username,

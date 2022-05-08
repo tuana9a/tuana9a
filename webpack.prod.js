@@ -12,11 +12,11 @@ module.exports = {
     },
     mode: "production",
     output: {
-        filename: "index.[contenthash].js",
+        filename: "index.js",
         path: path.resolve(__dirname, process.env.STATIC),
     },
     plugins: [
-        new MiniCssExtractPlugin({ filename: "index.[contenthash].css" }),
+        new MiniCssExtractPlugin({ filename: "index.css" }),
         new HtmlWebpackPlugin({ template: "./src/main/webapp/index.html" }),
     ],
     module: {

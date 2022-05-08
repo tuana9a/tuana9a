@@ -21,9 +21,12 @@ export default class TerminalComponent extends App {
         this.screen = new ScreenComponent(document.createElement("div"));
         this.console = new OutputComponent(dce("div"));
         this.typing = new TypingComponent(document.createElement("div"));
+        this.history = [];
+        this.selectingHistoryIndex = 0;
 
         this.console.getClassList().add("Console");
         this.typing.input.addEventListener("keydown", (e) => thiss.onKeyDown(e));
+        this.typing.input.addEventListener("input", (e) => thiss.onInput(e));
         this.screen.addEventListener("click", () => thiss.typing.input.focus(), { capture: true });
 
         this.onkeydownHandlers = new Map();
@@ -50,17 +53,9 @@ export default class TerminalComponent extends App {
             });
             this.addEventListener("drop", (e) => {
                 e.preventDefault();
-                thiss.ondrop(e);
+                thiss.onDrop(e);
             });
         }
-    }
-
-    /**
-     * @param {String} command
-     */
-    // eslint-disable-next-line class-methods-use-this
-    getComandArgs(command) {
-        return command.trim().split(/\s+/);
     }
 
     /**
@@ -69,18 +64,17 @@ export default class TerminalComponent extends App {
     onKeyDown(e) {
         const { key } = e;
         const handler = this.onkeydownHandlers.get(key);
-        if (handler) {
-            handler(e);
+        if (!handler) {
             return;
         }
-        // if not, render other thing
-        const thiss = this;
-        setTimeout(() => {
-            const typingValue = thiss.typing.getValue();
-            const args = thiss.getComandArgs(typingValue);
-            thiss.typing.suggest.reset();
-            thiss.typing.suggest.render(args, typingValue);
-        }, 0);
+        handler(e);
+    }
+
+    onInput() {
+        const value = this.typing.getValue();
+        const args = value.trim().split(/\s+/);
+        this.typing.suggest.reset();
+        this.typing.suggest.render(args, value);
     }
 
     /**
@@ -113,7 +107,7 @@ export default class TerminalComponent extends App {
             LOGGER.error(err);
             this.console.appendOutput(err.message);
         }
-        this.typing.suggest.addHistory(command);
+        this.history.push(command);
         for (const word of command.split(/\s+/)) {
             this.typing.suggest.addWord(word);
         }
@@ -146,7 +140,7 @@ export default class TerminalComponent extends App {
     /**
      * @param {Event} e
      */
-    ondrop(e) {
+    onDrop(e) {
         e.preventDefault();
         const files = Array.from(e.dataTransfer.files);
         this.notifyParent("i:env:set", { key: "files", value: files });

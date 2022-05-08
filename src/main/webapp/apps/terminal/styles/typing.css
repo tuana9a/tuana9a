@@ -20,7 +20,7 @@
 
 .TypingSuggest {
     top: 100%;
-    left: 0px;
+    left: calc(20% - 3px);
     max-height: 300px;
     max-width: 100%;
     /* direction: rtl; */
@@ -58,9 +58,9 @@
     margin-right: 3px;
     background-color: black;
     color: white;
+    width: calc(20% - 3px); /* 20% - 3px of margin */
 }
 
 .InputContainer {
-    min-width: 70%;
-    max-width: 80%;
+    width: 80%;
 }

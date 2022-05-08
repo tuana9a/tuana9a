@@ -2,30 +2,23 @@ import BaseComponent from "../../../global/components/base.component";
 import SuggestEntryComponent from "./suggest-entry.component";
 
 export default class SuggestComponent extends BaseComponent {
-    constructor(opts = { maxEntryCount: 10, onchoose: null }) {
-        super(document.createElement("div"));
+    constructor(element) {
+        super(element);
         this.getClassList().add("TypingSuggest", "position-absolute");
         this.selectingIndex = 0;
-        this.maxEntryCount = opts.maxEntryCount;
+        this.maxEntryCount = 20;
         this.wordDict = new Map();
-        this.historyDict = new Map();
         this.entries = [];
         for (let i = 0; i < this.maxEntryCount; i += 1) {
             const entry = new SuggestEntryComponent();
             entry.disable();
-            if (opts.onchoose) {
-                entry.addEventListener("mousedown", (e) => {
-                    e.preventDefault();
-                    opts.onchoose(entry.choose());
-                });
-                entry.addEventListener("touchstart", (e) => {
-                    e.preventDefault();
-                    opts.onchoose(entry.choose());
-                });
-            }
             this.appendChild(entry);
             this.entries.push(entry);
         }
+    }
+
+    setMaxEntryCount(count) {
+        this.maxEntryCount = count;
     }
 
     addWord(word) {
@@ -63,35 +56,6 @@ export default class SuggestComponent extends BaseComponent {
         }
     }
 
-    addHistory(command) {
-        const originLength = command.length;
-        for (let i = 0; i < command.length; i += 1) {
-            const suffix = command.slice(0, i);
-            const postfix = command.slice(i, originLength);
-            const entry = this.historyDict.get(suffix);
-            const newLink = { missing: postfix };
-            if (!entry) {
-                this.historyDict.set(suffix, { links: [newLink] });
-                // eslint-disable-next-line no-continue
-                continue;
-            }
-            let exist = false;
-            const { links } = entry;
-            // eslint-disable-next-line no-restricted-syntax
-            for (const link of links) {
-                if (link.missing === postfix) {
-                    exist = true;
-                    break;
-                }
-            }
-            if (exist) {
-                // eslint-disable-next-line no-continue
-                continue;
-            }
-            links.push(newLink);
-        }
-    }
-
     build(tree) {
         const thiss = this;
         const ignoreWords = new Set(["execute"]);
@@ -121,10 +85,6 @@ export default class SuggestComponent extends BaseComponent {
         }
         // start generate entries
         const links = [];
-        const historyEntry = this.historyDict.get(typingValue);
-        if (historyEntry) {
-            links.push(...historyEntry.links);
-        }
         const wordEntry = this.wordDict.get(args[args.length - 1]);
         if (!typingValue.endsWith(" ") && wordEntry) {
             links.push(...wordEntry.links);
