@@ -5,25 +5,32 @@
 
 // eslint-disable-next-line no-unused-vars
 import BaseComponent from "../../global/components/base.component";
+import { document } from "../../global/utils/dom.utils";
 
 /**
  * @param {BaseComponent} component
- * @param {BaseComponent} dragChild
+ * @param {BaseComponent} dragComponent
  */
-export default function makeDragToMoveWithMouse(component, dragChild, opts) {
+export default function makeDragToMoveWithMouse(component, dragComponent, opts) {
     let oldX = 0;
     let oldY = 0;
     let deltaX = 0;
     let deltaY = 0;
-    function mousedown(e) {
+    let isDragging = false;
+
+    const mousedown = (e) => {
         e.preventDefault();
         // get the mouse cursor position at startup:
         oldX = e.clientX;
         oldY = e.clientY;
-        document.addEventListener("mousemove", mousemove);
-        document.addEventListener("mouseup", mouseup);
-    }
-    function mousemove(e) {
+        isDragging = true;
+    };
+
+    const mousemove = (e) => {
+        if (!isDragging) {
+            return;
+        }
+
         e.preventDefault();
         // caculate delta from previos
         const clientX = e.clientX;
@@ -67,17 +74,18 @@ export default function makeDragToMoveWithMouse(component, dragChild, opts) {
             }
         }
         component.style({ top: `${newY}px`, left: `${newX}px` });
-    }
-    function mouseup() {
+    };
+
+    const mouseup = () => {
         // stop moving when mouse button is released:
-        document.removeEventListener("mousemove", mousemove);
-        document.removeEventListener("mouseup", mouseup);
-    }
-    if (dragChild) {
-        // if present, the header is where you move the DIV from:
-        dragChild.addEventListener("mousedown", mousedown);
-    } else {
-        // otherwise, move the DIV from anywhere inside the DIV:
-        component.addEventListener("mousedown", mousedown);
-    }
+        isDragging = false;
+    };
+
+    dragComponent.addEventListener("mousedown", mousedown);
+
+    document().addEventListener("mousemove", mousemove);
+    component.addNotifyListener("remove", () => document().removeEventListener("mousemove", mousemove));
+
+    document().addEventListener("mouseup", mouseup);
+    component.addNotifyListener("remove", () => document().removeEventListener("mouseup", mouseup));
 }

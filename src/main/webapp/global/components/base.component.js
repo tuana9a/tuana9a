@@ -201,6 +201,7 @@ export default class BaseComponent {
     }
 
     remove() {
+        this.onNotify("remove");
         this.parentComponent = null;
         for (const eventName of this.notifyListeners.keys()) {
             this.removeNotifyListener(eventName);

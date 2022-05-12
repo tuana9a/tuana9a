@@ -1,6 +1,7 @@
 import BaseComponent from "../../../../../global/components/base.component";
 import LabeledInputComponent from "../../../../../global/components/labeled-input.component";
 import LabeledSelectComponent from "../../../../../global/components/labeled-select.component";
+import { dce } from "../../../../../global/utils/dom.utils";
 import CONFIG from "../configs/config";
 
 export default class EntryFormComponent extends BaseComponent {
@@ -11,13 +12,13 @@ export default class EntryFormComponent extends BaseComponent {
         super(element);
 
         this.getClassList().add("Form");
-        this.entryId = new LabeledInputComponent(document.createElement("div"));
-        this.historyId = new LabeledInputComponent(document.createElement("div"));
-        this.username = new LabeledInputComponent(document.createElement("div"));
-        this.password = new LabeledInputComponent(document.createElement("div"));
-        this.actionId = new LabeledSelectComponent(document.createElement("div"));
-        this.classIds = new LabeledInputComponent(document.createElement("div"));
-        this.timeToStart = new LabeledInputComponent(document.createElement("div"));
+        this.entryId = new LabeledInputComponent(dce("div"));
+        this.historyId = new LabeledInputComponent(dce("div"));
+        this.username = new LabeledInputComponent(dce("div"));
+        this.password = new LabeledInputComponent(dce("div"));
+        this.actionId = new LabeledSelectComponent(dce("div"));
+        this.classIds = new LabeledInputComponent(dce("div"));
+        this.timeToStart = new LabeledInputComponent(dce("div"));
 
         this.entryId.input.setType("text");
         this.historyId.input.setType("text");
@@ -38,7 +39,7 @@ export default class EntryFormComponent extends BaseComponent {
         this.actionId.select.addOption("getStudentTimetable", CONFIG.ACTION_IDS.GET_STUDENT_TIMETABLE);
         this.actionId.select.addOption("getStudentProgram", CONFIG.ACTION_IDS.GET_STUDENT_PROGRAM);
 
-        this.appendChild(new BaseComponent(document.createElement("div"))
+        this.appendChild(new BaseComponent(dce("div"))
             .style({ display: "flex", flexWrap: "wrap" })
             .appendChild(this.entryId)
             .appendChild(this.historyId)

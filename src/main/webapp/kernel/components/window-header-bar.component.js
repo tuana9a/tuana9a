@@ -1,4 +1,5 @@
 import BaseComponent from "../../global/components/base.component";
+import { dce } from "../../global/utils/dom.utils";
 import WindowResizerComponent from "./window-resizer.component";
 
 export default class WindowHeaderBar extends BaseComponent {
@@ -9,11 +10,11 @@ export default class WindowHeaderBar extends BaseComponent {
         super(element);
         this.getClassList().add("HeaderBar", "display-flex", "align-items-center");
         // init
-        this.icon = new BaseComponent(document.createElement("img"));
-        this.pid = new BaseComponent(document.createElement("span"));
-        this.name = new BaseComponent(document.createElement("span"));
-        this.resizer = new WindowResizerComponent(document.createElement("div"));
-        this.close = new BaseComponent(document.createElement("button"));
+        this.icon = new BaseComponent(dce("img"));
+        this.pid = new BaseComponent(dce("span"));
+        this.name = new BaseComponent(dce("span"));
+        this.resizer = new WindowResizerComponent(dce("div"));
+        this.close = new BaseComponent(dce("button"));
         // class
         this.pid.getClassList().add("PID");
         this.name.getClassList().add("Name");

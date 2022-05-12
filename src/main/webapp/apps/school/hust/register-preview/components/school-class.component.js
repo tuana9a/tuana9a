@@ -4,17 +4,18 @@ import BaseComponent from "../../../../../global/components/base.component";
 import timeUtils from "../utils/time.utils";
 // eslint-disable-next-line no-unused-vars
 import SchoolClass from "../data/school-class.data";
+import { dce } from "../../../../../global/utils/dom.utils";
 
 export default class SchoolClassComponent extends BaseComponent {
     /**
      * @param {SchoolClass} schoolClass
      */
     constructor(schoolClass) {
-        super(document.createElement("div"));
+        super(dce("div"));
         this.schoolClass = schoolClass;
         // create element bind to this class
         this.getClassList().add("SchoolClassElement", "position-absolute");
-        this.detail = new BaseComponent(document.createElement("div"));
+        this.detail = new BaseComponent(dce("div"));
         this.detail.getClassList().add("ThongTinLop");
         this.appendChild(this.detail);
         // other info

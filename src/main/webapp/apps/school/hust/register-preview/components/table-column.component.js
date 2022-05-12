@@ -6,6 +6,7 @@ import BaseComponent from "../../../../../global/components/base.component";
 import SchoolClassComponent from "./school-class.component";
 import SchoolClass from "../data/school-class.data";
 import LOGGER from "../../../../../global/loggers/logger";
+import { dce } from "../../../../../global/utils/dom.utils";
 
 const defaulColumnOpts = {
     dropHours: new Set(),
@@ -22,13 +23,13 @@ export default class TableColumnComponent extends BaseComponent {
      * @param {*} opts
      */
     constructor(dayOfWeek, opts = defaulColumnOpts) {
-        super(document.createElement("div"));
+        super(dce("div"));
         this.dayOfWeek = dayOfWeek;
         this.getClassList().add("TableColumn", "position-relative", "DayOfWeek");
         if (opts.isIndexHourColumn) this.getClassList().add("IndexHour");
         else this.getClassList().add(CONSTANTS.dayOfWeekSwitch.get(dayOfWeek).className);
 
-        this.tableColumnName = new BaseComponent(document.createElement("div"));
+        this.tableColumnName = new BaseComponent(dce("div"));
         this.tableColumnName
             .getClassList()
             .add("TableColumnName", "display-flex", "justify-content-center", "align-items-center");
@@ -42,7 +43,7 @@ export default class TableColumnComponent extends BaseComponent {
             if (opts.dropHours.has(i)) {
                 continue;
             }
-            const hourComponent = new BaseComponent(document.createElement("div"));
+            const hourComponent = new BaseComponent(dce("div"));
             hourComponent
                 .getClassList()
                 .add("Hour", `_${i}h`, "display-flex", "justify-content-center", "align-items-center");

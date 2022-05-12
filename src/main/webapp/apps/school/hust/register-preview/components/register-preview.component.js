@@ -1,6 +1,7 @@
 import BaseComponent from "../../../../../global/components/base.component";
 import LabeledInputComponent from "../../../../../global/components/labeled-input.component";
 import LOGGER from "../../../../../global/loggers/logger";
+import { dce } from "../../../../../global/utils/dom.utils";
 import App from "../../../../../kernel/components/app.component";
 import classesApis from "../apis/classes.apis";
 import CONSTANTS from "../configs/constants";
@@ -23,10 +24,10 @@ export default class RegisterPreviewComponent extends App {
     constructor(element) {
         super(element);
         const thiss = this;
-        this.semester = new LabeledInputComponent(document.createElement("div"));
-        this.currentWeek = new LabeledInputComponent(document.createElement("div"));
-        this.selectedClassIds = new LabeledInputComponent(document.createElement("div"));
-        this.timetable = new TimeTableComponent(document.createElement("div"));
+        this.semester = new LabeledInputComponent(dce("div"));
+        this.currentWeek = new LabeledInputComponent(dce("div"));
+        this.selectedClassIds = new LabeledInputComponent(dce("div"));
+        this.timetable = new TimeTableComponent(dce("div"));
         // set input type
         this.semester.input.setType("text");
         this.currentWeek.input.setType("text");
@@ -47,7 +48,7 @@ export default class RegisterPreviewComponent extends App {
             thiss.onselected();
         });
         // append to parent
-        this.appendChild(new BaseComponent(document.createElement("div"))
+        this.appendChild(new BaseComponent(dce("div"))
             .style({ display: "flex" })
             .appendChild(this.semester)
             .appendChild(this.currentWeek)

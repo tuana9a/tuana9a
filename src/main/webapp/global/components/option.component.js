@@ -1,8 +1,9 @@
+import { dce } from "../utils/dom.utils";
 import BaseComponent from "./base.component";
 
 export default class OptionComponent extends BaseComponent {
     constructor(element) {
-        super(element || document.createElement("option"));
+        super(element || dce("option"));
     }
 
     update(name, value) {

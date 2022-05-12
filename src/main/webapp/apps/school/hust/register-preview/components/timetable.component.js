@@ -5,6 +5,7 @@ import CONSTANTS from "../configs/constants";
 import SchoolClass from "../data/school-class.data";
 import BaseComponent from "../../../../../global/components/base.component";
 import TableColumnComponent from "./table-column.component";
+import { dce } from "../../../../../global/utils/dom.utils";
 
 export default class TimeTableComponent extends BaseComponent {
     /**
@@ -15,7 +16,7 @@ export default class TimeTableComponent extends BaseComponent {
         // TODO: make timetable reactive with opts by adding setter getter
         this.opts = opts;
         this.getClassList().add("RenderContainer");
-        this.table = new BaseComponent(document.createElement("div"));
+        this.table = new BaseComponent(dce("div"));
         this.table.getClassList().add("RenderTable", "position-relative", "display-flex", "text-align-center");
         this.appendChild(this.table);
         this.tableColumnMapper = new Map();

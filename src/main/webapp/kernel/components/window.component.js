@@ -1,4 +1,5 @@
 import BaseComponent from "../../global/components/base.component";
+import { dce } from "../../global/utils/dom.utils";
 // eslint-disable-next-line no-unused-vars
 import LaunchOption from "../data/launch.option";
 import WindowBody from "./window-body.component";
@@ -12,8 +13,8 @@ export default class WindowComponent extends BaseComponent {
         super(element);
         this.getClassList().add("Window");
         this.isFocusing = false;
-        this.headerBar = new WindowHeaderBar(document.createElement("div"));
-        this.body = new WindowBody(document.createElement("div"));
+        this.headerBar = new WindowHeaderBar(dce("div"));
+        this.body = new WindowBody(dce("div"));
         // event
         const thiss = this;
         this.addNotifyListener("i:bash:execute", (data) => thiss.notifyParent("i:bash:execute", data));

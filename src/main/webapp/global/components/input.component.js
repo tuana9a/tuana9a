@@ -1,8 +1,9 @@
 import LOGGER from "../loggers/logger";
+import { dce } from "../utils/dom.utils";
 import BaseComponent from "./base.component";
 
 export default class InputComponent extends BaseComponent {
-    constructor(element = document.createElement("input")) {
+    constructor(element = dce("input")) {
         super(element);
         this.binds = [];
     }

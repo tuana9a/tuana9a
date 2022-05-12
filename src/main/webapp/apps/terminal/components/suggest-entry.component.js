@@ -1,17 +1,18 @@
 import BaseComponent from "../../../global/components/base.component";
+import { dce } from "../../../global/utils/dom.utils";
 
 export default class SuggestEntryComponent extends BaseComponent {
     /**
      * @param {String} value
      */
     constructor(value) {
-        super(document.createElement("div"));
+        super(dce("div"));
         this.value = value || "";
         this.isEnable = false;
         // element
         this.getClassList().add("SuggestEntry", "display-flex", "align-items-center");
         // text element
-        this.text = new BaseComponent(document.createElement("span"));
+        this.text = new BaseComponent(dce("span"));
         this.text.getClassList().add("SuggestEntryValue");
         this.text.setInnerText(value);
         this.appendChild(this.text);

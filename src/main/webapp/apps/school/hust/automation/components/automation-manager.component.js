@@ -1,5 +1,6 @@
 import BaseComponent from "../../../../../global/components/base.component";
 import LOGGER from "../../../../../global/loggers/logger";
+import { dce } from "../../../../../global/utils/dom.utils";
 import App from "../../../../../kernel/components/app.component";
 import entryApis from "../apis/entry.apis";
 import EntryFormComponent from "./entry-form.component";
@@ -11,10 +12,10 @@ export default class AutomationManagerComponent extends App {
     constructor(element) {
         super(element);
         this.getClassList().add("Form");
-        this.entryForm = new EntryFormComponent(document.createElement("div"));
-        this.submitEntryButton = new BaseComponent(document.createElement("button"));
-        this.submitCancelButton = new BaseComponent(document.createElement("button"));
-        this.output = new BaseComponent(document.createElement("div"));
+        this.entryForm = new EntryFormComponent(dce("div"));
+        this.submitEntryButton = new BaseComponent(dce("button"));
+        this.submitCancelButton = new BaseComponent(dce("button"));
+        this.output = new BaseComponent(dce("div"));
 
         this.submitEntryButton.setInnerText("Submit Entry");
         this.submitCancelButton.setInnerText("Submit Cancel");
@@ -81,7 +82,7 @@ export default class AutomationManagerComponent extends App {
 
     appendResponse(response) {
         const content = JSON.stringify(response, null, 2);
-        const entry = new BaseComponent(document.createElement("pre"));
+        const entry = new BaseComponent(dce("pre"));
         entry.setInnerText(content);
         this.output.appendChild(entry);
     }

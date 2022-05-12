@@ -1,9 +1,10 @@
+import { dce } from "../utils/dom.utils";
 import BaseComponent from "./base.component";
 import OptionComponent from "./option.component";
 
 export default class SelectComponent extends BaseComponent {
     constructor(element) {
-        super(element || document.createElement("select"));
+        super(element || dce("select"));
     }
 
     getValue() {

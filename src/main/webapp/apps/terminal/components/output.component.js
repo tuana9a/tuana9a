@@ -3,12 +3,12 @@ import { dce } from "../../../global/utils/dom.utils";
 
 export default class OutputComponent extends BaseComponent {
     appendCommand(prefixValue, commandValue) {
-        const command = new BaseComponent(document.createElement("div"));
+        const command = new BaseComponent(dce("div"));
         command.getClassList().add("Command");
-        const prefix = new BaseComponent(document.createElement("span"));
+        const prefix = new BaseComponent(dce("span"));
         prefix.getClassList().add("Prefix");
         prefix.setInnerText(prefixValue);
-        const content = new BaseComponent(document.createElement("span"));
+        const content = new BaseComponent(dce("span"));
         content.setInnerText(commandValue);
         content.getClassList().add("Content");
         command.appendChild(prefix, content);

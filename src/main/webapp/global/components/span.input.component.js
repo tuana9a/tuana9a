@@ -1,7 +1,8 @@
+import { dce } from "../utils/dom.utils";
 import BaseComponent from "./base.component";
 
 export default class SpanInputComponent extends BaseComponent {
-    constructor(element = document.createElement("span")) {
+    constructor(element = dce("span")) {
         super(element);
         this.element.setAttribute("contenteditable", "true");
         this.binds = [];

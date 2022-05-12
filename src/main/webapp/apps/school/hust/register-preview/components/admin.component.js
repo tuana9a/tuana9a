@@ -3,6 +3,7 @@ import InputComponent from "../../../../../global/components/input.component";
 import BaseComponent from "../../../../../global/components/base.component";
 import classesApis from "../apis/classes.apis";
 import LOGGER from "../../../../../global/loggers/logger";
+import { dce } from "../../../../../global/utils/dom.utils";
 
 export default class AdminComponent extends App {
     /**
@@ -14,8 +15,8 @@ export default class AdminComponent extends App {
         this.inputSemester = new InputComponent();
         this.inputFile = new InputComponent();
         this.inputSecret = new InputComponent();
-        this.insertClassesButton = new BaseComponent(document.createElement("button"));
-        this.deleteClassesButton = new BaseComponent(document.createElement("button"));
+        this.insertClassesButton = new BaseComponent(dce("button"));
+        this.deleteClassesButton = new BaseComponent(dce("button"));
         // input type
         this.inputSemester.setType("text");
         this.inputFile.setType("file");

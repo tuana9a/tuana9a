@@ -18,9 +18,9 @@ export default class TerminalComponent extends App {
         const thiss = this;
         this.getClassList().add("Terminal");
 
-        this.screen = new ScreenComponent(document.createElement("div"));
+        this.screen = new ScreenComponent(dce("div"));
         this.console = new OutputComponent(dce("div"));
-        this.typing = new TypingComponent(document.createElement("div"));
+        this.typing = new TypingComponent(dce("div"));
         this.history = [];
         this.selectingHistoryIndex = 0;
 

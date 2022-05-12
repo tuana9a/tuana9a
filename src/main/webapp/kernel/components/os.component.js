@@ -10,6 +10,7 @@ import WindowComponent from "./window.component";
 import BaseComponent from "../../global/components/base.component";
 import EnvComponent from "./env.component";
 import CONFIG from "../configs/config";
+import { dce } from "../../global/utils/dom.utils";
 
 export default class OS extends BaseComponent {
     /**
@@ -18,7 +19,7 @@ export default class OS extends BaseComponent {
     constructor(element) {
         super(element);
         this.getClassList().add("OS");
-        this.windowManager = new WindowManagerComponent(document.createElement("div"));
+        this.windowManager = new WindowManagerComponent(dce("div"));
         this.appendChild(this.windowManager);
         this.env = new EnvComponent();
         this.env.set("PATH", new Map());
@@ -40,12 +41,12 @@ export default class OS extends BaseComponent {
      */
     install(name, AppClass, launchOption = {}) {
         this.apps.set(name, AppClass);
-        const launcher = new BaseComponent(document.createElement("button"));
+        const launcher = new BaseComponent(dce("button"));
         launcher.getClassList().add("display-flex", "align-items-center");
-        const launcherIcon = new BaseComponent(document.createElement("img"));
+        const launcherIcon = new BaseComponent(dce("img"));
         launcherIcon.style({ width: "20px", height: "20px", padding: "3px" });
         launcherIcon.getElement().src = `https://avatars.dicebear.com/api/identicon/${name}.svg`;
-        const launcherName = new BaseComponent(document.createElement("span"));
+        const launcherName = new BaseComponent(dce("span"));
         launcherName.setInnerText(name);
         launcherName.style({ padding: "3px" });
         launcher.appendChild(launcherIcon, launcherName);
@@ -73,11 +74,11 @@ export default class OS extends BaseComponent {
         if (!AppClass) {
             throw new Error(`app not found: "${name}"`);
         }
-        const app = new AppClass(document.createElement("div"));
+        const app = new AppClass(dce("div"));
         if (!(app instanceof App)) {
             throw new Error(`app "${AppClass}" is not a App`);
         }
-        const window = new WindowComponent(document.createElement("div"));
+        const window = new WindowComponent(dce("div"));
         app.launch(launchOption);
         window.launch(launchOption);
         window.moveTo(launchOption.x, launchOption.y);
