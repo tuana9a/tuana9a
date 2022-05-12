@@ -53,6 +53,7 @@ async function main() {
         await channel0.consume(AUTOMATION_RESULTS_QUEUE_NAME, async (msg) => {
             try {
                 const result = JSON.parse(msg.content.toString());
+                LOGGER.info(`received automation result: ${JSON.stringify(result.data, null, 2)}`);
                 entryController.processResult(result.data, result);
             } catch (err) {
                 LOGGER.error(err);
