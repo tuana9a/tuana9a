@@ -110,6 +110,13 @@ module.exports = {
         );
         return "success";
     },
+    async find({ username, password }) {
+        const entriesCollection = mongodbClient.getEntriesCollection();
+
+        const result = await entriesCollection.find({ username, password }).toArray();
+
+        return result;
+    },
     async processResult(entry, result) {
         const entriesCollection = mongodbClient.getEntriesCollection();
         const historyCollection = mongodbClient.getHistoryCollection();

@@ -15,6 +15,7 @@ module.exports = {
             .pipe(transforms.normalize.username)
             .pipe(transforms.normalize.password)
             .pipe(transforms.normalize.actionId)
+            .pipe(transforms.normalize.classIds)
             .pipe(transforms.normalize.timeToStart)
             .pipe(transforms.replace.timeToStart)
             .collect();
@@ -31,6 +32,7 @@ module.exports = {
             .pipe(transforms.normalize.newUsername)
             .pipe(transforms.normalize.password)
             .pipe(transforms.normalize.newPassword)
+            .pipe(transforms.normalize.classIds)
             .pipe(transforms.normalize.actionId)
             .pipe(transforms.normalize.timeToStart)
             .pipe(transforms.normalize.status)

@@ -118,6 +118,7 @@ async function main() {
     // school/automation
     server.get("/api/school/hust/automation/entry", automationEntryRouter.find);
     server.post("/api/school/hust/automation/entry", schoolAutomationRateLimit.submitEntry, automationEntryRouter.insert);
+    server.post("/api/school/hust/automation/getEntries", automationEntryRouter.find);
     server.put("/api/school/hust/automation/entry/:entryId", automationEntryRouter.update);
 
     // school/register-preview

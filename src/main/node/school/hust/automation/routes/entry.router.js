@@ -25,9 +25,18 @@ async function update(req) {
 
 // eslint-disable-next-line no-unused-vars
 async function find(req, resp) {
-    // TODO: hiện tại chưa sử dụng
-    // nếu dùng nhớ xóa password trước khi trả vè frontend
-    throw new SafeError("not implemented");
+    const { username, password } = req.body;
+
+    entryValidation.checkUsername(username);
+    entryValidation.checkPassword(password);
+
+    const result = await entryController.find({ username, password });
+
+    if (result.length === 0) {
+        throw new SafeError("Entry not found");
+    }
+
+    return result;
 }
 
 module.exports = {

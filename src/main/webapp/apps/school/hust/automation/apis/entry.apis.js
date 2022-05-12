@@ -1,6 +1,8 @@
 import CONFIG from "../configs/config";
 
-const baseUrl = "/api/school/hust/automation/entry";
+const automationBaseUrl = "/api/school/hust/automation";
+
+const baseUrl = `${automationBaseUrl}/entry`;
 
 export default {
     async insert(params = { entry: {} }) {
@@ -39,5 +41,16 @@ export default {
         // eslint-disable-next-line no-param-reassign
         params.entry.status = "CANCELED";
         return this.update(params);
+    },
+    async find(params = { username: "", password: "" }) {
+        const url = `${automationBaseUrl}/getEntries`;
+        const requestInfo = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify({ username: params.username, password: params.password }),
+        };
+        return fetch(url, requestInfo).then((resp) => resp.json());
     },
 };

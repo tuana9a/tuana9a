@@ -1,6 +1,7 @@
 const DateTime = require("../../../../global/data/datetime");
 const numberDTO = require("../../../../global/dto/number.dto");
 const BaseTransform = require("../../../../global/transforms/base.transform");
+const NormalizeArrayProp = require("../../../../global/transforms/normalize-array-prop");
 const NormalizeIntProp = require("../../../../global/transforms/normalize-int-prop");
 const NormalizeStringProp = require("../../../../global/transforms/normalize-string-prop");
 const PickProp = require("../../../../global/transforms/pick-prop");
@@ -11,6 +12,7 @@ module.exports = {
         password: NormalizeStringProp("password"),
         newUsername: NormalizeStringProp("newUsername"),
         newPassword: NormalizeStringProp("newPassword"),
+        classIds: NormalizeArrayProp("classIds", { type: "string" }),
         actionId: NormalizeStringProp("actionId"),
         timeToStart: NormalizeIntProp("timeToStart"),
         status: NormalizeStringProp("status"),

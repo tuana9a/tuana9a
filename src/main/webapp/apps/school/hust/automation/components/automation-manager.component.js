@@ -15,10 +15,12 @@ export default class AutomationManagerComponent extends App {
         this.entryForm = new EntryFormComponent(dce("div"));
         this.submitEntryButton = new BaseComponent(dce("button"));
         this.submitCancelButton = new BaseComponent(dce("button"));
+        this.queryEntriesButton = new BaseComponent(dce("button"));
         this.output = new BaseComponent(dce("div"));
 
         this.submitEntryButton.setInnerText("Submit Entry");
         this.submitCancelButton.setInnerText("Submit Cancel");
+        this.queryEntriesButton.setInnerText("Query Entries");
 
         const thiss = this;
         this.submitEntryButton.addEventListener("click", () => {
@@ -27,10 +29,14 @@ export default class AutomationManagerComponent extends App {
         this.submitCancelButton.addEventListener("click", () => {
             thiss.onCancel();
         });
+        this.queryEntriesButton.addEventListener("click", () => {
+            thiss.onQuery();
+        });
 
         this.appendChild(this.entryForm);
         this.appendChild(this.submitEntryButton);
         this.appendChild(this.submitCancelButton);
+        this.appendChild(this.queryEntriesButton);
         this.appendChild(this.output);
     }
 
@@ -77,6 +83,15 @@ export default class AutomationManagerComponent extends App {
         };
         const response = await entryApis.cancel({ entryId, entry });
         LOGGER.info(response);
+        this.appendResponse(response);
+    }
+
+    async onQuery() {
+        const form = this.entryForm;
+        const username = form.username.input.getValue();
+        const password = form.password.input.getValue();
+
+        const response = await entryApis.find({ username, password });
         this.appendResponse(response);
     }
 
