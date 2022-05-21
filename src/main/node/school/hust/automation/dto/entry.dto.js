@@ -15,7 +15,7 @@ module.exports = {
             .pipe(transforms.normalize.username)
             .pipe(transforms.normalize.password)
             .pipe(transforms.normalize.actionId)
-            .pipe(transforms.normalize.classIds)
+            .pipe(transforms.normalize.classIdsWithDefault)
             .pipe(transforms.normalize.timeToStart)
             .pipe(transforms.replace.timeToStart)
             .collect();

@@ -1,12 +1,14 @@
 const ResponseEntity = require("../data/response-entity");
 const SafeError = require("../exceptions/safe-error");
-const LOGGER = require("../loggers/logger");
 
-module.exports = {
-    makeSafeHandler(handler) {
+class ServerUtils {
+    logger;
+
+    makeSafeHandler(handler, bind = null) {
+        const LOGGER = this.logger;
         const safeHandler = async (req, resp, next) => {
             try {
-                const data = await handler(req, resp, next);
+                const data = await handler.call(bind, req, resp, next);
                 resp.setHeader("Content-Type", "application/json; charset=utf-8");
                 resp.send(new ResponseEntity(1, "success", data));
             } catch (err) {
@@ -28,5 +30,7 @@ module.exports = {
             }
         };
         return safeHandler;
-    },
-};
+    }
+}
+
+module.exports = ServerUtils;

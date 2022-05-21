@@ -13,6 +13,7 @@ module.exports = {
         newUsername: NormalizeStringProp("newUsername"),
         newPassword: NormalizeStringProp("newPassword"),
         classIds: NormalizeArrayProp("classIds", { type: "string" }),
+        classIdsWithDefault: NormalizeArrayProp("classIds", { type: "string", default: true }),
         actionId: NormalizeStringProp("actionId"),
         timeToStart: NormalizeIntProp("timeToStart"),
         status: NormalizeStringProp("status"),

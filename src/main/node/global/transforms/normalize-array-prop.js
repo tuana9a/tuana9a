@@ -4,12 +4,14 @@ const stringDTO = require("../dto/string.dto");
 const numberDTO = require("../dto/number.dto");
 const BaseTransform = require("./base.transform");
 
-function NormalizeArrayProp(propName, options = { type: "object" }) {
+function NormalizeArrayProp(propName, options = { type: "object", default: false }) {
     return new BaseTransform((object) => {
         const check = object[propName];
 
         if (check === null || check === undefined || !Array.isArray(check)) {
-            object[propName] = []; // default for an array;
+            if (options.default) {
+                object[propName] = []; // default for an array;
+            }
             return object;
         }
 

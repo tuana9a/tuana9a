@@ -1,9 +1,11 @@
 /* eslint-disable class-methods-use-this */
-const AUTOMATION_CONFIG = require("../configs/config");
 const SafeError = require("../../../../global/exceptions/safe-error");
-const arrayValidation = require("../../../../global/validations/array.validation");
 
 class EntryValidation {
+    arrayValidation;
+
+    AUTOMATION_CONFIG;
+
     checkUsername(username) {
         if (!username || username.match(/^\s+$/) || username.length < 8) {
             throw new SafeError("username is missing or wrong format");
@@ -17,7 +19,7 @@ class EntryValidation {
     }
 
     checkActionId(actionId) {
-        if (!AUTOMATION_CONFIG.allowedActions.has(actionId)) {
+        if (!this.AUTOMATION_CONFIG.allowedActions.has(actionId)) {
             throw new SafeError("actionId not allowed");
         }
     }
@@ -34,13 +36,13 @@ class EntryValidation {
     }
 
     checkActionIdTimeTable(actionId) {
-        if (actionId !== AUTOMATION_CONFIG.actionIds.getStudentTimetable) {
+        if (actionId !== this.AUTOMATION_CONFIG.actionIds.getStudentTimetable) {
             throw new SafeError("actionId not match");
         }
     }
 
     checkActionIdAutoRegister(actionId) {
-        if (actionId !== AUTOMATION_CONFIG.actionIds.autoRegisterClasses) {
+        if (actionId !== this.AUTOMATION_CONFIG.actionIds.autoRegisterClasses) {
             throw new SafeError("actionId not match");
         }
     }
@@ -52,7 +54,7 @@ class EntryValidation {
         if (!classIds) {
             throw new SafeError("classIds is missing");
         }
-        arrayValidation.isArray(classIds, { name: "classIds" });
+        this.arrayValidation.isArray(classIds, { name: "classIds" });
         if (classIds.length === 0) {
             throw new SafeError("classIds is empty");
         }
@@ -65,6 +67,4 @@ class EntryValidation {
     }
 }
 
-const entryValidation = new EntryValidation();
-
-module.exports = entryValidation;
+module.exports = EntryValidation;

@@ -4,7 +4,7 @@ class DateTime {
      */
     constructor(date = new Date()) {
         this.n = date.getTime();
-        this.s = date.toLocaleString();
+        this.s = date.toString();
     }
 }
 

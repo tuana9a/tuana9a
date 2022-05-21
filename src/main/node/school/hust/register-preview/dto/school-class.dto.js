@@ -30,13 +30,10 @@ module.exports = {
         return output;
     },
     extractClassIds(input) {
-        const output = [];
-        stringDTO
+        const output = stringDTO
             .format(input)
             .split(",")
-            .forEach((x) => {
-                output.push(numberDTO.toInt(stringDTO.format(x)));
-            });
+            .map((x) => numberDTO.toInt(stringDTO.format(x)));
         return output;
     },
     /**

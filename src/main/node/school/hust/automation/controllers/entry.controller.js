@@ -2,48 +2,56 @@ const mongodb = require("mongodb");
 
 const HistoryRecord = require("../data/history-record");
 const automationUtils = require("../utils/automation.utils");
-const mongodbClient = require("../../../../global/clients/mongodb.client");
 const EntryStatus = require("../configs/entry-status");
 // eslint-disable-next-line no-unused-vars
 const Entry = require("../data/entry");
 const SafeError = require("../../../../global/exceptions/safe-error");
 const HttpStatusCode = require("../../../../global/configs/http-status-code");
 
-module.exports = {
+class EntryController {
+    mongodbClient;
+
+    getEntriesCollection() {
+        return this.mongodbClient.getEntriesCollection();
+    }
+
+    getHistoryCollection() {
+        return this.mongodbClient.getHistoryCollection();
+    }
+
     /**
      * thêm mới entry
      * @param {Entry} entry
      */
     async insert(entry) {
-        const entriesCollection = mongodbClient.getEntriesCollection();
-        const historyCollection = mongodbClient.getHistoryCollection();
         // create new entry has history record
-        const insertEntryResult = await entriesCollection.insertOne(entry);
-        const insertHistoryResult = await historyCollection.insertOne(new HistoryRecord());
+        const insertEntryResult = await this.getEntriesCollection().insertOne(entry);
+        const insertHistoryResult = await this.getHistoryCollection()
+            .insertOne(new HistoryRecord());
         // create relation between entry and history
         const entryId = insertEntryResult.insertedId;
         const historyId = insertHistoryResult.insertedId;
-        entriesCollection.updateOne(
+        this.getEntriesCollection().updateOne(
             { _id: new mongodb.ObjectId(entryId) },
             { $set: { historyId } },
         );
-        historyCollection.updateOne(
+        this.getEntriesCollection().updateOne(
             { _id: new mongodb.ObjectId(historyId) },
             { $set: { entryId } },
         );
         return { entryId, historyId };
-    },
+    }
+
     /**
      * NOTE: sử  dụng chung cho cả update entry và cancel entry
      * @param {String} entryId
      * @param {*} updateEntry
      */
     async update(entryId, updateEntry) {
-        // prepare collection
-        const entriesCollection = mongodbClient.getEntriesCollection();
-        const historyCollection = mongodbClient.getHistoryCollection();
         // check exist first
-        const existEntry = await entriesCollection.findOne({ _id: new mongodb.ObjectId(entryId) });
+        const existEntry = await this.getEntriesCollection().findOne({
+            _id: new mongodb.ObjectId(entryId),
+        });
         if (!existEntry) {
             throw new SafeError("entry not found", HttpStatusCode.NOT_FOUND);
         }
@@ -77,11 +85,11 @@ module.exports = {
         if (updateEntry.timeToStart) {
             updateDTO.timeToStart = updateEntry.timeToStart;
         }
-        if (updateEntry.status) {
-            // TODO: nếu cho người dùng có thể cập nhật có thể  cho phép họ spam retry
+        if ([EntryStatus.CANCELED].includes(updateEntry.status)) {
+            // hiện tại chỉ cho phép cancel thôi
             updateDTO.status = updateEntry.status;
         }
-        await entriesCollection.updateOne(
+        await this.getEntriesCollection().updateOne(
             { _id: new mongodb.ObjectId(entryId) },
             {
                 $set: updateDTO,
@@ -100,7 +108,7 @@ module.exports = {
             }),
             message: "update",
         });
-        await historyCollection.updateOne(
+        await this.getHistoryCollection().updateOne(
             { _id: new mongodb.ObjectId(existEntry.historyId) },
             {
                 $push: {
@@ -108,21 +116,18 @@ module.exports = {
                 },
             },
         );
-        return "success";
-    },
-    async find({ username, password }) {
-        const entriesCollection = mongodbClient.getEntriesCollection();
+    }
 
-        const result = await entriesCollection.find({ username, password }).toArray();
+    async find({ username, password }) {
+        const result = await this.getEntriesCollection().find({ username, password }).toArray();
 
         return result;
-    },
+    }
+
     async processResult(entry, result) {
-        const entriesCollection = mongodbClient.getEntriesCollection();
-        const historyCollection = mongodbClient.getHistoryCollection();
         const { historyId } = entry;
         const historyRecord = automationUtils.injectTimestampAt(result);
-        await historyCollection.updateOne(
+        await this.getHistoryCollection().updateOne(
             { _id: new mongodb.ObjectId(historyId) },
             {
                 $push: {
@@ -130,10 +135,12 @@ module.exports = {
                 },
             },
         );
-        await entriesCollection.updateOne(
+        await this.getEntriesCollection().updateOne(
             // eslint-disable-next-line no-underscore-dangle
             { _id: new mongodb.ObjectId(entry._id) },
             { $set: { status: result.isBreak ? EntryStatus.FAILED : EntryStatus.DONE } },
         );
-    },
-};
+    }
+}
+
+module.exports = EntryController;

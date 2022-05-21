@@ -1,22 +1,49 @@
-const cs = require("./cs");
-const fs = require("./fs");
+const fs = require("fs");
 // eslint-disable-next-line no-unused-vars
 const LogObject = require("../data/log-object");
 
-const handlers = new Map();
-handlers.set("cs", cs);
-handlers.set("fs", fs);
-
 class Logger {
+    CONFIG;
+
+    datetimeUtils;
+
     constructor() {
-        this.handler = cs;
+        this.handler = this.csLog;
+        this.handlers = new Map();
+        this.handlers.set("cs", this.csLog.bind(this));
+        this.handlers.set("fs", this.fsLog.bind(this));
+    }
+
+    /**
+     * @param {LogObject} object
+     */
+    // eslint-disable-next-line class-methods-use-this
+    csLog(object) {
+        const now = new Date();
+        let { data } = object;
+        if (typeof data === "object") {
+            data = JSON.stringify(data, null, "  ");
+        }
+        const record = `${this.datetimeUtils.getFull(now)} [${object.type}] ${data}\n`;
+        // eslint-disable-next-line no-console
+        console.log(record);
+    }
+
+    /**
+     * @param {LogObject} object
+     */
+    fsLog(object) {
+        const now = new Date();
+        const record = `${this.datetimeUtils.getFull(now)} [${object.type}] ${object.data}\n`;
+        const filepath = `${this.CONFIG.log.dir + this.datetimeUtils.getDate(now)}.log`;
+        fs.appendFileSync(filepath, record);
     }
 
     /**
      * @param {String} handlerName
      */
     use(handlerName) {
-        this.handler = handlers.get(handlerName);
+        this.handler = this.handlers.get(handlerName);
     }
 
     info(data) {
@@ -39,11 +66,9 @@ class Logger {
      */
     log(object) {
         if (this.handler) {
-            this.handler.log(object);
+            this.handler(object);
         }
     }
 }
 
-const LOGGER = new Logger();
-
-module.exports = LOGGER;
+module.exports = Logger;
