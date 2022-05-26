@@ -1,4 +1,54 @@
-@import url("./classes.css");
-@import url("./column.css");
-@import url("./render-container.css");
-@import url("./render-table.css");
+.RenderContainer {
+    /* max-width: 100%; */
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.RenderTable {
+    /* CAUTION: không đc để overflow ở đây 
+    vì nó làm mất cái sticky của hourIndex */
+    /* width: max-content; */
+    /* min-width: 100%; */
+    border: 1px solid black;
+    margin: 3px 0;
+}
+
+.SchoolClassElement {
+    left: 0px;
+    width: 100%;
+    padding: 2px;
+    overflow: auto;
+    /* border-radius: 3px; */
+    text-align: left;
+    /* border: 1px inset var(--black-neon); */
+    box-sizing: border-box;
+    transition: 0.1s;
+}
+
+.SchoolClassElement .ThongTinLop {
+    cursor: default;
+    font-size: 13px;
+}
+
+.TableColumn {
+    min-width: 100px;
+    width: 14%;
+}
+
+.TableColumn.IndexHour {
+    min-width: 30px;
+    width: 2%;
+    /* position: sticky; */
+    /* left: 0; */
+    /* z-index: 2; */
+}
+
+.TableColumn .Hour, .TableColumnName {
+    border: 1px solid black;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.TableColumn .ComeHomeHour {
+    background-color: whitesmoke;
+}

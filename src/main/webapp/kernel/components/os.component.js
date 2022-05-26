@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign */
 import BashComponent from "./bash.component";
 import App from "./app.component";
-import makeClickThenBringToFront from "../../common/styles/bring-to-front";
-import makeDragToMove from "../../common/styles/make-drag-to-move";
 // eslint-disable-next-line no-unused-vars
 import LaunchOption from "../data/launch.option";
 import WindowManagerComponent from "./window-manager.component";
@@ -11,6 +9,7 @@ import BaseComponent from "../../global/components/base.component";
 import EnvComponent from "./env.component";
 import CONFIG from "../configs/config";
 import { dce } from "../../global/utils/dom.utils";
+import styleUtils from "../../common/utils/style.utils";
 
 export default class OS extends BaseComponent {
     /**
@@ -84,8 +83,15 @@ export default class OS extends BaseComponent {
         window.moveTo(launchOption.x, launchOption.y);
         window.addApp(app);
         // eslint-disable-next-line max-len
-        makeDragToMove(window, window.headerBar, { boundComponent: this.windowManager, boundLeft: true, boundTop: true });
-        makeClickThenBringToFront(window);
+        styleUtils.makeDragToMove(window, window.headerBar, {
+            boundComponent: this.windowManager,
+            boundLeft: true,
+            boundTop: true,
+        });
+        this.windowManager.currentMaxZIndex = styleUtils.makeClickThenBringToFront(
+            window,
+            this.windowManager.currentMaxZIndex,
+        );
         this.windowManager.appendChild(window);
         return window.id;
     }

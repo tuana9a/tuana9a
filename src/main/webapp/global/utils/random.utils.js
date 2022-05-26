@@ -1,5 +1,3 @@
-"user strict";
-
 export default {
     color_hex(r = { s: 0, e: 255 }, g = { s: 0, e: 255 }, b = { s: 0, e: 255 }) {
         let red = Math.floor(r.s + Math.random() * (r.e - r.s));

@@ -1,1 +1,3 @@
-@import url("./color.css");
+:root {
+    --web-background: #797979;
+}

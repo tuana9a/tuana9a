@@ -1,7 +1,73 @@
-@import url("./os.css");
-@import url("./window.css");
-@import url("./window-manager.css");
-@import url("./window-header-bar.css");
-@import url("./window-body.css");
-@import url("./window-resizer.css");
-@import url("./app.css");
+.OS {
+    width: 100%;
+    height: 100%;
+}
+
+.Window {
+    overflow: auto;
+    padding: 3px;
+    max-width: calc(100% - 12px); /* include border and padding */
+    border: 1px solid black;
+    background-color: whitesmoke;
+    box-shadow: -1px 1px 0px 0px black, -1px 2px 0px 0px black, -2px 3px 0px 0px black;
+}
+
+.WindowManager {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.HeaderBar {
+    /* background-color: white; */
+    /* border: 1px solid black; */
+    background-color: black;
+    color: white;
+    padding: 5px;
+}
+
+.HeaderBar .PID {
+    display: inline-block;
+    padding: 2px 5px;
+    margin: 0 5px;
+}
+
+.HeaderBar .Name {
+    display: inline-block;
+    padding: 2px 5px;
+    margin: 0 5px;
+}
+
+.HeaderBar .CloseButton {
+    margin-left: auto;
+    background-color: black;
+    color: white;
+    padding: 4px;
+    border: 1px solid white;
+    transition: 0.05s;
+}
+
+.HeaderBar .CloseButton:hover {
+    background-color: white;
+    color: black;
+}
+
+.Window .Body {
+    overflow: auto;
+}
+
+.PixcelResizer{
+    display: inline-block;
+    padding: 2px 5px;
+    margin: 0 5px;
+}
+
+.PixcelResizer input {
+    border: none;
+    outline: none;
+}
+
+.App {
+    width: 100%;
+    overflow: auto;
+}

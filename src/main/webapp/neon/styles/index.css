@@ -1,25 +1,23 @@
-@import url("./color.css");
-@import url("./background-color.css");
-@import url("./button.css");
-
-.CustomTitle {
-    padding: 3px;
-    color: #0dff00;
-    letter-spacing: 1px;
+:root {
+    --green-neon: #73ff00;
+    --black-neon: #000800;
+    --black-neon-faded: #000a00f3;
+    --green-neon-faded: #081000;
 }
-.CustomNeonText {
+
+.color-green-neon {
     color: var(--green-neon);
-    background-color: var(--black-neon);
-
-    padding: 4px 5px;
-    border-radius: 3px;
-    margin: 10px 0px;
-    display: inline-block;
-    font-size: 12px;
 }
-.CustomNeonText:hover {
-    box-shadow: 0 0 5px 1px var(--green-neon);
+.color-black-neon {
     color: var(--black-neon);
+}
+
+.background-color-green-neon {
     background-color: var(--green-neon);
 }
-
+.background-color-black-neon {
+    background-color: var(--black-neon);
+}
+.background-color-gray-faded {
+    background-color: var(--gray-faded);
+}
