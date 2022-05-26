@@ -6,6 +6,7 @@ import SchoolRegisterPreviewComponent from "./apps/school/hust/register-preview/
 import AutomationManagerComponent from "./apps/school/hust/automation/components/automation-manager.component";
 import EnvExec from "./kernel/executables/env.exec";
 import { body, dce } from "./global/utils/dom.utils";
+import PasswordGeneratorComponent from "./apps/password-generator/components/password-generator.component";
 // import memoryLeakTest from "./tests/memory-leak.test";
 
 doUpgrade();
@@ -40,6 +41,11 @@ os.install("school-admin", SchoolAdminComponent, {
 
 os.install("automation-manager", AutomationManagerComponent, {
     width: 700,
+});
+
+os.install("password-generator", PasswordGeneratorComponent, {
+    width: 500,
+    height: 400,
 });
 
 body().appendChild(os);
