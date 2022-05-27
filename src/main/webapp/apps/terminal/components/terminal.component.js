@@ -4,18 +4,17 @@ import ScreenComponent from "./screen.component";
 import TypingComponent from "./typing.component";
 // eslint-disable-next-line no-unused-vars
 import LaunchOption from "../../../kernel/data/launch.option";
-import App from "../../../kernel/components/app.component";
+import WindowComponent from "../../../kernel/components/window.component";
 import OutputComponent from "./output.component";
 import { dce } from "../../../global/utils/dom.utils";
 import LOGGER from "../../../global/loggers/logger";
 
-export default class TerminalComponent extends App {
+export default class TerminalComponent extends WindowComponent {
     /**
      * @param {Element} element
      */
     constructor(element) {
         super(element);
-        const thiss = this;
         this.getClassList().add("Terminal");
 
         this.screen = new ScreenComponent(dce("div"));
@@ -25,19 +24,19 @@ export default class TerminalComponent extends App {
         this.selectingHistoryIndex = 0;
 
         this.console.getClassList().add("Console");
-        this.typing.input.addEventListener("keydown", (e) => thiss.onKeyDown(e));
-        this.typing.input.addEventListener("input", (e) => thiss.onInput(e));
-        this.screen.addEventListener("click", () => thiss.typing.input.focus(), { capture: true });
+        this.typing.input.addEventListener("keydown", this.onKeyDown.bind(this));
+        this.typing.input.addEventListener("input", this.onInput.bind(this));
+        this.screen.addEventListener("click", this.typing.input.focus.bind(this.typing.input), { capture: true });
 
         this.onkeydownHandlers = new Map();
-        this.onkeydownHandlers.set("Enter", (e) => thiss.onPressEnter(e));
-        this.onkeydownHandlers.set("Tab", (e) => thiss.onPressTab(e));
-        this.onkeydownHandlers.set("ArrowUp", (e) => thiss.onPressArrowUp(e));
-        this.onkeydownHandlers.set("ArrowDown", (e) => thiss.onPressArrowDown(e));
+        this.onkeydownHandlers.set("Enter", this.onPressEnter.bind(this));
+        this.onkeydownHandlers.set("Tab", this.onPressTab.bind(this));
+        this.onkeydownHandlers.set("ArrowUp", this.onPressArrowUp.bind(this));
+        this.onkeydownHandlers.set("ArrowDown", this.onPressArrowDown.bind(this));
 
         this.screen.appendChild(this.console);
         this.screen.appendChild(this.typing);
-        this.appendChild(this.screen);
+        this.body.appendChild(this.screen);
     }
 
     /**
@@ -46,15 +45,9 @@ export default class TerminalComponent extends App {
     launch(launchOption) {
         super.launch(launchOption);
         if (launchOption.dropFile) {
-            const thiss = this;
             // prevent default drop effect
-            this.addEventListener("dragover", (e) => {
-                e.preventDefault();
-            });
-            this.addEventListener("drop", (e) => {
-                e.preventDefault();
-                thiss.onDrop(e);
-            });
+            this.addEventListener("dragover", (e) => e.preventDefault());
+            this.addEventListener("drop", this.onDrop.bind(this));
         }
     }
 

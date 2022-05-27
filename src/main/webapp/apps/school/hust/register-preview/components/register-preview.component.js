@@ -2,7 +2,7 @@ import BaseComponent from "../../../../../global/components/base.component";
 import LabeledInputComponent from "../../../../../global/components/labeled-input.component";
 import LOGGER from "../../../../../global/loggers/logger";
 import { dce } from "../../../../../global/utils/dom.utils";
-import App from "../../../../../kernel/components/app.component";
+import WindowComponent from "../../../../../kernel/components/window.component";
 import classesApis from "../apis/classes.apis";
 import CONSTANTS from "../configs/constants";
 import TimeTableComponent from "./timetable.component";
@@ -17,13 +17,12 @@ function prepareRenderOpts(opts = { rowHeight: 0, currentWeekPreview: 0, offsetH
     return opts;
 }
 
-export default class RegisterPreviewComponent extends App {
+export default class RegisterPreviewComponent extends WindowComponent {
     /**
      * @param {Element} element
      */
     constructor(element) {
         super(element);
-        const thiss = this;
         this.semester = new LabeledInputComponent(dce("div"));
         this.currentWeek = new LabeledInputComponent(dce("div"));
         this.selectedClassIds = new LabeledInputComponent(dce("div"));
@@ -38,22 +37,16 @@ export default class RegisterPreviewComponent extends App {
         this.selectedClassIds.setName("selected");
         this.selectedClassIds.input.setPlaceHolder("Eg: 123456 123457");
         // init event listener
-        this.semester.input.addEventListener("input", () => {
-            // TODO: handle semester change
-        });
-        this.currentWeek.input.addEventListener("input", () => {
-            thiss.onweekchange();
-        });
-        this.selectedClassIds.addEventListener("input", () => {
-            thiss.onselected();
-        });
+        this.semester.input.addEventListener("input", null); // TODO: handle semester change
+        this.currentWeek.input.addEventListener("input", this.onweekchange.bind(this));
+        this.selectedClassIds.addEventListener("input", this.onselected.bind(this));
         // append to parent
-        this.appendChild(new BaseComponent(dce("div"))
+        this.body.appendChild(new BaseComponent(dce("div"))
             .style({ display: "flex" })
             .appendChild(this.semester)
             .appendChild(this.currentWeek)
             .appendChild(this.selectedClassIds));
-        this.appendChild(this.timetable);
+        this.body.appendChild(this.timetable);
     }
 
     async onselected() {

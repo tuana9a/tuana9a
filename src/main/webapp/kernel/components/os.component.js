@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import BashComponent from "./bash.component";
-import App from "./app.component";
 // eslint-disable-next-line no-unused-vars
 import LaunchOption from "../data/launch.option";
 import WindowManagerComponent from "./window-manager.component";
@@ -24,13 +23,12 @@ export default class OS extends BaseComponent {
         this.env.set("PATH", new Map());
         this.bash = new BashComponent(this.env);
         this.apps = new Map();
-        const thiss = this;
-        this.addNotifyListener("close", ({ id }) => thiss.kill(id));
-        this.addNotifyListener("i:env:get", ({ key }) => thiss.env.get(key));
-        this.addNotifyListener("i:env:set", ({ key, value }) => thiss.env.set(key, value));
+        this.addNotifyListener("close", ({ id }) => this.kill(id));
+        this.addNotifyListener("i:env:get", ({ key }) => this.env.get(key));
+        this.addNotifyListener("i:env:set", ({ key, value }) => this.env.set(key, value));
         this.addNotifyListener("i:bash:execute", ({ command }) => {
-            const bin = thiss.getBin(command.trim().split(/\s+/)[0]);
-            return thiss.bash.execute({ os: thiss, command, bin });
+            const bin = this.getBin(command.trim().split(/\s+/)[0]);
+            return this.bash.execute({ os: this, command, bin });
         });
     }
 
@@ -53,10 +51,8 @@ export default class OS extends BaseComponent {
         launchOption.name = launchOption.name || name;
         launchOption.width = launchOption.width || CONFIG.DEFAULT.WINDOW.MIN_WIDTH;
         launchOption.height = launchOption.height || CONFIG.DEFAULT.WINDOW.MIN_HEIGHT;
-        const thiss = this;
-        launcher.addEventListener("click", () => {
-            thiss.launch(name, launchOption);
-        });
+        const launch = this.launch.bind(this);
+        launcher.addEventListener("click", () => launch(name, launchOption));
         this.windowManager.appendChild(launcher);
     }
 
@@ -74,26 +70,22 @@ export default class OS extends BaseComponent {
             throw new Error(`app not found: "${name}"`);
         }
         const app = new AppClass(dce("div"));
-        if (!(app instanceof App)) {
-            throw new Error(`app "${AppClass}" is not a App`);
+        if (!(app instanceof WindowComponent)) {
+            throw new Error(`app "${AppClass}" is not a WindowComponent`);
         }
-        const window = new WindowComponent(dce("div"));
         app.launch(launchOption);
-        window.launch(launchOption);
-        window.moveTo(launchOption.x, launchOption.y);
-        window.addApp(app);
+        app.moveTo(launchOption.x, launchOption.y);
         // eslint-disable-next-line max-len
-        styleUtils.makeDragToMove(window, window.headerBar, {
+        styleUtils.makeDragToMove(app, app.head, {
             boundComponent: this.windowManager,
             boundLeft: true,
             boundTop: true,
+            // boundRight: true,
+            // boundBottom: true,
         });
-        this.windowManager.currentMaxZIndex = styleUtils.makeClickThenBringToFront(
-            window,
-            this.windowManager.currentMaxZIndex,
-        );
-        this.windowManager.appendChild(window);
-        return window.id;
+        styleUtils.makeClickThenBringToFront(app, this.windowManager);
+        this.windowManager.appendChild(app);
+        return app.id;
     }
 
     getBin(bin) {

@@ -31,7 +31,6 @@ export default {
     },
     daysBetween(date1 = new Date(), date2 = new Date()) {
         const delta = date1.getTime() - date2.getTime();
-        // console.log(delta);
         return Math.abs(delta) / 86_400_000;
     },
     timeBetween(date1 = new Date(), date2 = new Date()) {
@@ -48,11 +47,9 @@ export default {
     },
     // CAUTION: nếu lệch mất một tuần thì vào đây mà sửa
     weeksFromStartDay(dash = "", firstWeekDay = "") {
-        // console.log(dash, firstWeekDay);
         const date1 = this.stringToDateVn(dash);
         const date2 = this.stringToDateVn(firstWeekDay);
         const weeks = this.daysBetween(date1, date2) / 7;
-        // console.log(weeks);
         return Math.floor(weeks) + 1;
         // EXPLAIN: đéo biết giải thích thế nào cái cộng 1, thời gian mệt vlòn
     },

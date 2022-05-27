@@ -4,6 +4,7 @@
 
 import LOGGER from "../loggers/logger";
 
+// TODO: don't use global variable like this
 let epoch = 0;
 
 export default class BaseComponent {
@@ -159,8 +160,6 @@ export default class BaseComponent {
     onNotify(eventName, data) {
         const handlers = this.notifyListeners.get(eventName);
         if (!handlers) {
-            // eslint-disable-next-line no-console
-            console.warn(`${this}: No handler for event: ${eventName}`);
             return [];
         }
         const outputs = [];

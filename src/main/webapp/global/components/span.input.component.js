@@ -6,6 +6,9 @@ export default class SpanInputComponent extends BaseComponent {
         super(element);
         this.element.setAttribute("contenteditable", "true");
         this.binds = [];
+        const getValue = this.getValue.bind(this);
+        const onChange = this.onChange.bind(this);
+        this.addEventListener("input", () => onChange(getValue()));
     }
 
     getValue() {
@@ -29,12 +32,7 @@ export default class SpanInputComponent extends BaseComponent {
     }
 
     bind(handler) {
-        const thiss = this;
         this.binds.push(handler);
-        this.addEventListener("input", () => {
-            const value = thiss.getValue();
-            thiss.setValue(value);
-        });
         return this;
     }
 

@@ -1,3 +1,5 @@
 :root {
-    --web-background: #797979;
+    --gray: #797979;
+    --grey: var(--gray);
+    --web-background: var(--gray);
 }

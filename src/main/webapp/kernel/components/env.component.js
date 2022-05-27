@@ -11,11 +11,9 @@ export default class EnvComponent {
 
     tree() {
         const result = {};
-        // eslint-disable-next-line prefer-destructuring
-        const values = this.values;
-        for (const key in values) {
-            result[key] = values[key];
-        }
+        this.values.forEach((v, k) => {
+            result[k] = v;
+        });
         return result;
     }
 

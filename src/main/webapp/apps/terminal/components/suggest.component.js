@@ -57,7 +57,7 @@ export default class SuggestComponent extends BaseComponent {
     }
 
     build(tree) {
-        const thiss = this;
+        const addWord = this.addWord.bind(this);
         const ignoreWords = new Set(["execute"]);
         function dfs(pointer) {
             // eslint-disable-next-line no-restricted-syntax
@@ -66,7 +66,7 @@ export default class SuggestComponent extends BaseComponent {
                     // eslint-disable-next-line no-continue
                     continue;
                 }
-                thiss.addWord(key);
+                addWord(key);
                 dfs(pointer[key]);
             }
         }

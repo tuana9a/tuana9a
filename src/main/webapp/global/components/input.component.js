@@ -6,6 +6,9 @@ export default class InputComponent extends BaseComponent {
     constructor(element = dce("input")) {
         super(element);
         this.binds = [];
+        const getValue = this.getValue.bind(this);
+        const onChange = this.onChange.bind(this);
+        this.addEventListener("input", () => onChange(getValue()));
     }
 
     setType(type) {
@@ -68,13 +71,8 @@ export default class InputComponent extends BaseComponent {
         this.binds.forEach((handler) => handler(normalizedValue));
     }
 
-    bind(handler) {
-        const thiss = this;
+    watch(handler) {
         this.binds.push(handler);
-        this.addEventListener("input", () => {
-            const value = thiss.getValue();
-            thiss.setValue(value);
-        });
         return this;
     }
 

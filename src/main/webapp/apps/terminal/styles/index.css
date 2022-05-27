@@ -1,14 +1,12 @@
 .Terminal {
     /* box-shadow: 0 0 10px 1px black; */
-    height: 100%;
-    width: 100%;
     max-width: 1280px;
 }
 
 .TerminalScreen {
     min-height: 100%;
     padding-bottom: 400px;
-    /* background-color: #000000; */
+    background-color: black;
 }
 
 .TerminalScreen span {
@@ -23,12 +21,21 @@
 
 .TerminalScreen .Command .Prefix {
     background-color: black;
-    color: white;
+    color: var(--green-neon);
     margin-right: 3px;
+}
+
+.TerminalScreen .Command .Content {
+    background-color: black;
+    color: white;
 }
 
 .TerminalScreen .Output {
     margin-bottom: 10px;
+}
+
+.Terminal .Output .Content {
+    color: white;
 }
 
 .Typing {
@@ -44,6 +51,7 @@
     width: 100%;
     background-color: transparent;
     z-index: 2;
+    color: white;
 }
 
 .CommandPreview {
@@ -53,7 +61,7 @@
 
 .TypingSuggest {
     top: 100%;
-    left: calc(20% - 3px);
+    left: 0;
     max-height: 300px;
     max-width: 100%;
     /* direction: rtl; */
@@ -79,21 +87,23 @@
     opacity: 0.5;
     max-width: 100%;
     word-wrap: break-word;
+    color: white;
 }
 
 .SuggestEntry.isSelecting .SuggestEntryValue {
     opacity: 1;
     background-color: black;
-    color: white;
 }
 
 .PrefixContainer {
     margin-right: 3px;
     background-color: black;
-    color: white;
-    width: calc(20% - 3px); /* 20% - 3px of margin */
+    color: var(--green-neon);
+    max-width: calc(20% - 3px); /* 20% - 3px of margin */
+    font-family: monospace;
 }
 
 .InputContainer {
     width: 80%;
+    position: relative;
 }

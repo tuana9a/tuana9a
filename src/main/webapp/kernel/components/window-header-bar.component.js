@@ -24,7 +24,6 @@ export default class WindowHeaderBar extends BaseComponent {
         // other
         this.icon.style({ width: "20px", height: "20px", padding: "3px" });
         // event
-        const thiss = this;
         this.close.addEventListener("mousedown", (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -33,12 +32,9 @@ export default class WindowHeaderBar extends BaseComponent {
         // mouse down also trigger bringToFrom of makeDragToMove
         // so when close the is a blink of bring to top then close
         // so we just simple prevent mousedown but catch click event
-        this.close.addEventListener("click", () => {
-            thiss.notifyParent("close");
-        });
-        this.resizer.addEventListener("mousedown", (e) => {
-            e.stopPropagation();
-        });
+        const notifyParent = this.notifyParent.bind(this);
+        this.close.addEventListener("click", () => notifyParent("close"));
+        this.resizer.addEventListener("mousedown", (e) => e.stopPropagation());
         // append
         this.appendChild(this.icon);
         this.appendChild(this.pid);

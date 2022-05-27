@@ -35,10 +35,10 @@ export default class TypingComponent extends BaseComponent {
             this.cwd,
             this.commandSign,
         );
-        this.inputContainer.appendChild(this.input);
+        this.inputContainer.appendChild(this.input)
+            .appendChild(this.suggest);
         this.appendChild(this.prefixContainer);
         this.appendChild(this.inputContainer);
-        this.appendChild(this.suggest);
     }
 
     setValue(value = "") {

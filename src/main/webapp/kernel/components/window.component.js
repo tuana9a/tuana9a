@@ -13,22 +13,17 @@ export default class WindowComponent extends BaseComponent {
         super(element);
         this.getClassList().add("Window");
         this.isFocusing = false;
-        this.headerBar = new WindowHeaderBar(dce("div"));
+        this.head = new WindowHeaderBar(dce("div"));
         this.body = new WindowBody(dce("div"));
         // event
-        const thiss = this;
-        this.addNotifyListener("i:bash:execute", (data) => thiss.notifyParent("i:bash:execute", data));
-        this.addNotifyListener("close", () => {
-            thiss.close();
-        });
-        this.headerBar.resizer.width.input.bind((value) => {
-            thiss.resizeBodyWidth(value);
-        });
-        this.headerBar.resizer.height.input.bind((value) => {
-            thiss.resizeBodyHeight(value);
-        });
-        this.addEventListener("click", () => thiss.onFocus());
-        this.appendChild(this.headerBar);
+        this.addNotifyListener("i:bash:execute", (data) => this.notifyParent("i:bash:execute", data));
+        this.addNotifyListener("close", () => this.close());
+        const resizeBodyWidth = this.resizeBodyWidth.bind(this);
+        this.head.resizer.width.input.watch((value) => resizeBodyWidth(value));
+        const resizeBodyHeight = this.resizeBodyHeight.bind(this);
+        this.head.resizer.height.input.watch((value) => resizeBodyHeight(value));
+        this.addEventListener("click", this.onFocus.bind(this));
+        this.appendChild(this.head);
         this.appendChild(this.body);
     }
 
@@ -36,16 +31,12 @@ export default class WindowComponent extends BaseComponent {
      * @param {LaunchOption} launchOption
      */
     launch(launchOption) {
-        this.headerBar.setPID(this.id);
-        this.headerBar.setName(launchOption.name);
-        this.headerBar.setIconSrcByName(launchOption.name);
+        this.head.setPID(this.id);
+        this.head.setName(launchOption.name);
+        this.head.setIconSrcByName(launchOption.name);
         // this.resizeBody(launchOption.width, launchOption.height);
-        this.headerBar.resizer.width.input.setValue(launchOption.width);
-        this.headerBar.resizer.height.input.setValue(launchOption.height);
-    }
-
-    addApp(app) {
-        this.body.appendChild(app);
+        this.head.resizer.width.input.setValue(launchOption.width);
+        this.head.resizer.height.input.setValue(launchOption.height);
     }
 
     onFocus() {

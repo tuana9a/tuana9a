@@ -1,11 +1,11 @@
 import BaseComponent from "../../../../../global/components/base.component";
 import LOGGER from "../../../../../global/loggers/logger";
 import { dce } from "../../../../../global/utils/dom.utils";
-import App from "../../../../../kernel/components/app.component";
+import WindowComponent from "../../../../../kernel/components/window.component";
 import entryApis from "../apis/entry.apis";
 import EntryFormComponent from "./entry-form.component";
 
-export default class AutomationManagerComponent extends App {
+export default class AutomationManagerComponent extends WindowComponent {
     /**
      * @param {Element} element
      */
@@ -22,22 +22,15 @@ export default class AutomationManagerComponent extends App {
         this.submitCancelButton.setInnerText("Submit Cancel");
         this.queryEntriesButton.setInnerText("Query Entries");
 
-        const thiss = this;
-        this.submitEntryButton.addEventListener("click", () => {
-            thiss.onSubmitEntry();
-        });
-        this.submitCancelButton.addEventListener("click", () => {
-            thiss.onCancel();
-        });
-        this.queryEntriesButton.addEventListener("click", () => {
-            thiss.onQuery();
-        });
+        this.submitEntryButton.addEventListener("click", this.onSubmitEntry.bind(this));
+        this.submitCancelButton.addEventListener("click", this.onCancel.bind(this));
+        this.queryEntriesButton.addEventListener("click", this.onQuery.bind(this));
 
-        this.appendChild(this.entryForm);
-        this.appendChild(this.submitEntryButton);
-        this.appendChild(this.submitCancelButton);
-        this.appendChild(this.queryEntriesButton);
-        this.appendChild(this.output);
+        this.body.appendChild(this.entryForm);
+        this.body.appendChild(this.submitEntryButton);
+        this.body.appendChild(this.submitCancelButton);
+        this.body.appendChild(this.queryEntriesButton);
+        this.body.appendChild(this.output);
     }
 
     async onSubmitEntry() {

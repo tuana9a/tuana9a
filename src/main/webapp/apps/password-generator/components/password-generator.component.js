@@ -1,7 +1,7 @@
 import BaseComponent from "../../../global/components/base.component";
 import SpanInputComponent from "../../../global/components/span.input.component";
 import { dce } from "../../../global/utils/dom.utils";
-import App from "../../../kernel/components/app.component";
+import WindowComponent from "../../../kernel/components/window.component";
 
 /**
  * Thanks to https://stackoverflow.com/a/16548229/10459230
@@ -33,7 +33,7 @@ function generate(len, opts = {
     return password.substring(0, len);
 }
 
-export default class PasswordGenerator extends App {
+export default class PasswordGenerator extends WindowComponent {
     /**
      * @param {Element} element
      */
@@ -51,10 +51,10 @@ export default class PasswordGenerator extends App {
         this.button.addEventListener("click", this.onClick.bind(this));
         this.inputLength.addEventListener("input", this.onClick.bind(this));
         this.button.setInnerText("Generate");
-        this.appendChild(this.lengthLabel);
-        this.appendChild(this.inputLength);
-        this.appendChild(this.button);
-        this.appendChild(this.value);
+        this.body.appendChild(this.lengthLabel);
+        this.body.appendChild(this.inputLength);
+        this.body.appendChild(this.button);
+        this.body.appendChild(this.value);
     }
 
     onClick() {

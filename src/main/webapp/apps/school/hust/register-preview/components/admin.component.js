@@ -1,17 +1,16 @@
-import App from "../../../../../kernel/components/app.component";
 import InputComponent from "../../../../../global/components/input.component";
 import BaseComponent from "../../../../../global/components/base.component";
 import classesApis from "../apis/classes.apis";
 import LOGGER from "../../../../../global/loggers/logger";
 import { dce } from "../../../../../global/utils/dom.utils";
+import WindowComponent from "../../../../../kernel/components/window.component";
 
-export default class AdminComponent extends App {
+export default class AdminComponent extends WindowComponent {
     /**
      * @param {Element} element
      */
     constructor(element) {
         super(element);
-        const thiss = this;
         this.inputSemester = new InputComponent();
         this.inputFile = new InputComponent();
         this.inputSecret = new InputComponent();
@@ -28,14 +27,14 @@ export default class AdminComponent extends App {
         this.insertClassesButton.setInnerText("Insert Classes");
         this.deleteClassesButton.setInnerText("Delete Classes");
         // event listener
-        this.insertClassesButton.addEventListener("click", () => thiss.insertClasses());
-        this.deleteClassesButton.addEventListener("click", () => thiss.deleteClasses());
+        this.insertClassesButton.addEventListener("click", this.insertClasses.bind(this));
+        this.deleteClassesButton.addEventListener("click", this.deleteClasses.bind(this));
         // append to parent
-        this.appendChild(this.inputSemester);
-        this.appendChild(this.inputFile);
-        this.appendChild(this.inputSecret);
-        this.appendChild(this.insertClassesButton);
-        this.appendChild(this.deleteClassesButton);
+        this.body.appendChild(this.inputSemester);
+        this.body.appendChild(this.inputFile);
+        this.body.appendChild(this.inputSecret);
+        this.body.appendChild(this.insertClassesButton);
+        this.body.appendChild(this.deleteClassesButton);
     }
 
     async insertClasses() {

@@ -7,12 +7,13 @@ export default {
      * @param {BaseComponent} component
      * @param {Number} currentMaxZIndex
      */
-    makeClickThenBringToFront(component, currentMaxZIndex) {
+    makeClickThenBringToFront(component, bind = { currentMaxZIndex: 0 }) {
         component.addEventListener("mousedown", () => {
-            const zIndex = currentMaxZIndex;
+            const zIndex = bind.currentMaxZIndex;
+            // eslint-disable-next-line no-param-reassign
+            bind.currentMaxZIndex = zIndex + 1;
             component.style({ zIndex });
         });
-        return currentMaxZIndex + 1;
     },
     /**
      * @param {BaseComponent} component
@@ -81,6 +82,8 @@ export default {
                         newY = minY;
                     }
                 }
+                newX = Math.max(newX, minX);
+                newY = Math.max(newY, minY);
             }
             component.style({ top: `${newY}px`, left: `${newX}px` });
         };
@@ -159,6 +162,8 @@ export default {
                         newY = minY;
                     }
                 }
+                newX = Math.max(newX, minX);
+                newY = Math.max(newY, minY);
             }
             component.style({ top: `${newY}px`, left: `${newX}px` });
         };

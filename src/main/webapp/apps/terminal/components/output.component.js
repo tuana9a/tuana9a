@@ -20,7 +20,7 @@ export default class OutputComponent extends BaseComponent {
         output.getClassList().add("Output");
         const content = new BaseComponent(dce("pre"));
         content.getClassList().add("Content");
-        content.setInnerText(outputValue);
+        content.setInnerHTML(outputValue);
         output.appendChild(content);
         this.appendChild(output);
     }

@@ -7,7 +7,6 @@ export default class WindowBody extends BaseComponent {
     constructor(element) {
         super(element);
         this.getClassList().add("Body");
-        const thiss = this;
-        this.addNotifyListener("i:bash:execute", (data) => thiss.notifyParent("i:bash:execute", data));
+        this.addNotifyListener("i:bash:execute", (data) => this.notifyParent("i:bash:execute", data));
     }
 }
