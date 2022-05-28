@@ -18,7 +18,6 @@ const MongoDBClient = require("./global/clients/mongodb.client");
 const EntryStatus = require("./school/hust/automation/configs/entry-status");
 const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
 const schoolAutomationRateLimit = require("./school/hust/automation/middlewares/rate-limit");
-const RabbitMQClient = require("./global/clients/rabbitmq.client");
 const EntryController = require("./school/hust/automation/controllers/entry.controller");
 const loopAsync = require("./global/controllers/loop-async");
 const IOCContainer = require("./global/libs/ioc-container");
@@ -32,12 +31,11 @@ const semesterValidation = require("./school/hust/register-preview/validations/s
 const schoolClassDTO = require("./school/hust/register-preview/dto/school-class.dto");
 const EntryValidation = require("./school/hust/automation/validations/entry.validation");
 const entryDTO = require("./school/hust/automation/dto/entry.dto");
+const PuppeteerManager = require("./school/hust/automation/controllers/puppeteer.manager");
+const JobRunner = require("./school/hust/automation/controllers/job.runner");
+const JobValidation = require("./school/hust/automation/validations/job.validatation");
 
 async function main() {
-    const BOT_EXCHANGE_NAME = "bot";
-    const ENTRY_CREATED_TOPIC = "entry.created";
-    const AUTOMATION_RESULTS_QUEUE_NAME = "tuana9a:school:automation-results";
-
     const ioc = new IOCContainer();
     ioc.addZeroDependencyBean({ name: "CONFIG", instance: CONFIG });
     ioc.addZeroDependencyBean({ name: "AUTOMATION_CONFIG", instance: AUTOMATION_CONFIG });
@@ -51,21 +49,38 @@ async function main() {
     // eslint-disable-next-line object-curly-newline
     ioc.addClassInfo({ name: "logger", Classs: Logger, ignoreDep: ["handler", "handlers"], autowired: true });
     ioc.addClassInfo({ name: "mongodbClient", Classs: MongoDBClient, autowired: true });
-    ioc.addClassInfo({ name: "rabbitmqClient", Classs: RabbitMQClient });
     ioc.addClassInfo({ name: "serverUtils", Classs: ServerUtils, autowired: true });
     ioc.addClassInfo({ name: "entryController", Classs: EntryController, autowired: true });
     ioc.addClassInfo({ name: "entryRouter", Classs: EntryRouter, autowired: true });
     ioc.addClassInfo({ name: "schoolClassRouter", Classs: SchoolClassRouter, autowired: true });
     ioc.addClassInfo({ name: "schoolClassController", Classs: SchoolClassController, autowired: true });
     ioc.addClassInfo({ name: "entryValidation", Classs: EntryValidation, autowired: true });
+    ioc.addClassInfo({ name: "puppeteerManager", Classs: PuppeteerManager, autowired: true });
+    ioc.addClassInfo({ name: "jobRunner", Classs: JobRunner, autowired: true });
+    ioc.addClassInfo({ name: "jobValidation", Classs: JobValidation, autowired: true });
 
     await ioc.startup();
 
     const logger = ioc.beanPool.get("logger").instance;
     const mongodbClient = ioc.beanPool.get("mongodbClient").instance;
-    const rabbitmqClient = ioc.beanPool.get("rabbitmqClient").instance;
     const entryRouter = ioc.beanPool.get("entryRouter").instance;
     const classRouter = ioc.beanPool.get("schoolClassRouter").instance;
+    const puppeteerManager = ioc.beanPool.get("puppeteerManager").instance;
+    const jobRunner = ioc.beanPool.get("jobRunner").instance;
+    const entryController = ioc.beanPool.get("entryController").instance;
+
+    // make sure tmp dir exists
+    if (!fs.existsSync(CONFIG.tmpDir)) {
+        fs.mkdirSync(CONFIG.tmpDir);
+    }
+
+    // init puppeteer
+    logger.info(`launchOption: ${JSON.stringify(CONFIG.puppeteer.launchOption, null, 2)}`);
+    await puppeteerManager.launch(CONFIG.puppeteer.launchOption);
+    await puppeteerManager
+        .getBrowser()
+        .pages() // lúc thực thi có thể có một số trang web sử dụng alert, dialog thì chỉ cần accept
+        .then((pages) => pages.forEach((page) => page.on("dialog", (dialog) => dialog.accept())));
 
     // init logger
     logger.use(CONFIG.log.dest);
@@ -75,25 +90,6 @@ async function main() {
     logger.info(`mongodb.connectionString: ${CONFIG.mongodb.connectionString}`);
     await mongodbClient.prepare(CONFIG.mongodb.connectionString);
     mongodbClient.getClassesCollection().createIndex({ MaLop: 1 }); // init collection index for search faster
-
-    // init rabbitmq
-    logger.info(`rabbitmq.connectionString: ${CONFIG.rabbitmq.connectionString}`);
-    await rabbitmqClient.prepare(CONFIG.rabbitmq.connectionString);
-    const channel0 = rabbitmqClient.getChannel();
-    // prepare response queue for bot to reply to
-    await channel0.assertQueue(AUTOMATION_RESULTS_QUEUE_NAME);
-    await channel0.prefetch(1);
-    await channel0.consume(AUTOMATION_RESULTS_QUEUE_NAME, async (msg) => {
-        try {
-            const result = JSON.parse(msg.content.toString());
-            logger.info(`received automation result: ${JSON.stringify(result.data, null, 2)}`);
-            EntryController.processResult(result.data, result);
-        } catch (err) {
-            logger.error(err);
-        } finally {
-            channel0.ack(msg);
-        }
-    }, { noAck: false });
 
     // can start process entry
     logger.info(`automation.repeatProcessAfter: ${AUTOMATION_CONFIG.repeatProcessAfter}`);
@@ -113,18 +109,10 @@ async function main() {
             while (await cursor.hasNext()) {
                 // eslint-disable-next-line no-await-in-loop
                 const entry = await cursor.next();
-                const body = {
-                    jobId: AUTOMATION_CONFIG.jobIdMappers.get(entry.actionId),
-                    data: entry,
-                };
-                rabbitmqClient.getChannel().publish(
-                    BOT_EXCHANGE_NAME,
-                    ENTRY_CREATED_TOPIC,
-                    Buffer.from(JSON.stringify(body)),
-                    {
-                        replyTo: AUTOMATION_RESULTS_QUEUE_NAME,
-                    },
-                );
+                const job = AUTOMATION_CONFIG.jobMappers.get(entry.actionId);
+                // eslint-disable-next-line no-await-in-loop
+                const result = await jobRunner.run(job, entry);
+                entryController.processResult(result);
             }
         } catch (err) {
             // có thể lỗi mất mạng

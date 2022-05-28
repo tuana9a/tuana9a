@@ -1,12 +1,16 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable max-len */
 const mongodb = require("mongodb");
 
-const HistoryRecord = require("../data/history-record");
 const automationUtils = require("../utils/automation.utils");
 const EntryStatus = require("../configs/entry-status");
 // eslint-disable-next-line no-unused-vars
 const Entry = require("../data/entry");
 const SafeError = require("../../../../global/exceptions/safe-error");
 const HttpStatusCode = require("../../../../global/configs/http-status-code");
+const EntryHasHistory = require("../data/entry-has-history");
+const HistoryRecord = require("../data/history-record");
+const DateTime = require("../../../../global/data/datetime");
 
 class EntryController {
     mongodbClient;
@@ -19,6 +23,10 @@ class EntryController {
         return this.mongodbClient.getHistoryCollection();
     }
 
+    getEntryHasHistoryCollection() {
+        return this.mongodbClient.getEntryHasHistoryCollection();
+    }
+
     /**
      * thêm mới entry
      * @param {Entry} entry
@@ -26,20 +34,9 @@ class EntryController {
     async insert(entry) {
         // create new entry has history record
         const insertEntryResult = await this.getEntriesCollection().insertOne(entry);
-        const insertHistoryResult = await this.getHistoryCollection()
-            .insertOne(new HistoryRecord());
         // create relation between entry and history
         const entryId = insertEntryResult.insertedId;
-        const historyId = insertHistoryResult.insertedId;
-        this.getEntriesCollection().updateOne(
-            { _id: new mongodb.ObjectId(entryId) },
-            { $set: { historyId } },
-        );
-        this.getEntriesCollection().updateOne(
-            { _id: new mongodb.ObjectId(historyId) },
-            { $set: { entryId } },
-        );
-        return { entryId, historyId };
+        return { entryId };
     }
 
     /**
@@ -100,22 +97,18 @@ class EntryController {
             // ignore property for create difference between two entry
             "_id",
             "created",
-            "historyId",
         ]);
-        const historyRecord = automationUtils.injectTimestampAt({
-            diff: automationUtils.createEntryDiff(existEntry, updateEntry, {
+        const historyRecord = new HistoryRecord("update", existEntry);
+        historyRecord.logs.push({
+            diff: automationUtils.createEntryDiff(existEntry, updateDTO, {
                 ignoreKey,
             }),
-            message: "update",
+            at: new DateTime(),
         });
-        await this.getHistoryCollection().updateOne(
-            { _id: new mongodb.ObjectId(existEntry.historyId) },
-            {
-                $push: {
-                    details: historyRecord,
-                },
-            },
-        );
+        const insertHistoryResult = await this.getHistoryCollection().insertOne(historyRecord);
+        const entryHasHistory = new EntryHasHistory(new mongodb.ObjectId(entryId), insertHistoryResult.insertedId);
+        await this.getEntryHasHistoryCollection().insertOne(entryHasHistory);
+        return historyRecord;
     }
 
     async find({ username, password }) {
@@ -124,21 +117,14 @@ class EntryController {
         return result;
     }
 
-    async processResult(entry, result) {
-        const { historyId } = entry;
-        const historyRecord = automationUtils.injectTimestampAt(result);
-        await this.getHistoryCollection().updateOne(
-            { _id: new mongodb.ObjectId(historyId) },
-            {
-                $push: {
-                    details: historyRecord,
-                },
-            },
-        );
+    async processResult(historyRecord) {
+        const { data: entry } = historyRecord;
+        const insertHistoryResult = await this.getHistoryCollection().insertOne(historyRecord);
+        const entryHasHistory = new EntryHasHistory(entry._id, insertHistoryResult.insertedId);
+        await this.getEntryHasHistoryCollection().insertOne(entryHasHistory);
         await this.getEntriesCollection().updateOne(
-            // eslint-disable-next-line no-underscore-dangle
             { _id: new mongodb.ObjectId(entry._id) },
-            { $set: { status: result.isBreak ? EntryStatus.FAILED : EntryStatus.DONE } },
+            { $set: { status: historyRecord.isCompleted ? EntryStatus.DONE : EntryStatus.FAILED } },
         );
     }
 }

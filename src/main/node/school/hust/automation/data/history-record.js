@@ -1,12 +1,17 @@
+const DateTime = require("../../../../global/data/datetime");
+
 class HistoryRecord {
     /**
-     * @param {Object[]} details
+     * @param {Object[]} logs
      */
-    constructor(details) {
+    constructor(name = "", data = null, logs = []) {
         // eslint-disable-next-line no-underscore-dangle
         this._id = null;
-        this.entryId = null;
-        this.details = details || [];
+        this.name = name || "";
+        this.data = data;
+        this.logs = logs || [];
+        this.isCompleted = false;
+        this.created = new DateTime();
     }
 }
 

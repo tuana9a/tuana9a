@@ -1,6 +1,9 @@
 /* eslint-disable radix */
 /* eslint-disable max-len */
 
+const cttSisHustEduVn = require("../jobs/ctt-sis.hust.edu.vn");
+const dkSisHustEduVn = require("../jobs/dk-sis.hust.edu.vn");
+
 const GET_STUDENT_PROGRAM_ID = "getStudentProgram";
 const GET_STUDENT_TIMETABLE_ID = "getStudentTimetable";
 const AUTO_REGISTER_CLASSES_ID = "autoRegisterClasses";
@@ -11,10 +14,10 @@ const allowedActions = new Set([
     AUTO_REGISTER_CLASSES_ID,
 ]);
 
-const botJobIdMapper = new Map();
-botJobIdMapper.set(GET_STUDENT_TIMETABLE_ID, "ctt-sis.hust.edu.vn/getStudentTimetable");
-botJobIdMapper.set(GET_STUDENT_PROGRAM_ID, "ctt-sis.hust.edu.vn/getStudentProgram");
-botJobIdMapper.set(AUTO_REGISTER_CLASSES_ID, "dk-sis.hust.edu.vn/autoRegisterClasses");
+const jobMapper = new Map();
+jobMapper.set(GET_STUDENT_TIMETABLE_ID, cttSisHustEduVn.getStudentTimetable);
+jobMapper.set(GET_STUDENT_PROGRAM_ID, cttSisHustEduVn.getStudentProgram);
+jobMapper.set(AUTO_REGISTER_CLASSES_ID, dkSisHustEduVn.autoRegisterClasses);
 
 const AUTOMATION_CONFIG = {};
 
@@ -27,6 +30,6 @@ AUTOMATION_CONFIG.allowedActions = allowedActions;
 AUTOMATION_CONFIG.repeatProcessAfter = parseInt(process.env.REPEAT_PROCESS_ENTRY_AFFER) || 15000; // default 15s repeat process
 AUTOMATION_CONFIG.maxTryCount = parseInt(process.env.MAX_TRY_COUNT) || 10;
 AUTOMATION_CONFIG.maxTryCaptchaCount = parseInt(process.env.MAX_TRY_CAPTCHA_COUNT) || 10;
-AUTOMATION_CONFIG.jobIdMappers = botJobIdMapper;
+AUTOMATION_CONFIG.jobMappers = jobMapper;
 
 module.exports = AUTOMATION_CONFIG;

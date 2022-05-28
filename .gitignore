@@ -107,3 +107,4 @@ dist
 *.local*
 .venv/
 __pycache__/
+tmp/

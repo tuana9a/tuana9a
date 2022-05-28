@@ -1,11 +1,9 @@
+const DateTime = require("../../../../global/data/datetime");
+
 module.exports = {
     injectTimestampAt(object) {
-        const now = new Date();
         // eslint-disable-next-line no-param-reassign
-        object.at = {
-            n: now.getTime(),
-            s: now.toLocaleString(),
-        };
+        object.at = new DateTime();
         return object;
     },
     createEntryDiff(oldEntry, newEntry, opts = { ignoreKey: new Set() }) {
@@ -21,8 +19,7 @@ module.exports = {
             if (oldEntry[key] !== newEntry[key]) {
                 diff[key] = {
                     old: oldEntry[key],
-                    new: newEntry[key],
-                    str: `${oldEntry[key]} -> ${newEntry[key]}`,
+                    replace: newEntry[key],
                 };
             }
         }
