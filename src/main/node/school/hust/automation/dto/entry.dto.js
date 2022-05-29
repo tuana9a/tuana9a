@@ -1,53 +1,78 @@
 const TransformObject = require("../../../../global/data/transform-object");
-const DropProp = require("../../../../global/transforms/drop-prop");
 // eslint-disable-next-line no-unused-vars
 const Entry = require("../data/entry");
-const transforms = require("../transforms/entry.transforms");
 
-module.exports = {
+class EntryDTO {
+    numberDTO;
+
+    stringDTO;
+
     /**
      * @param {*} object
      * @returns {Entry}
      */
     toEntryToInsert(object) {
-        const entry = new TransformObject(object)
-            .pipe(transforms.pickProp.entryToInsert)
-            .pipe(transforms.normalize.username)
-            .pipe(transforms.normalize.password)
-            .pipe(transforms.normalize.actionId)
-            .pipe(transforms.normalize.classIdsWithDefault)
-            .pipe(transforms.normalize.timeToStart)
-            .pipe(transforms.replace.timeToStart)
+        const { numberDTO, stringDTO } = this;
+        const entry = new TransformObject(object, { numberDTO, stringDTO })
+            .pickProps([
+                "username",
+                "password",
+                "actionId",
+                "classIds",
+                "timeToStart",
+                // insert entry not take status value
+            ])
+            .normalizeStringProp("username")
+            .normalizeStringProp("password")
+            .normalizeStringProp("actionId")
+            .normalizeArrayProp("classIds", { type: "string", default: true })
+            .normalizeIntProp("timeToStart")
+            .replaceIntWithDateTime("timeToStart")
             .collect();
         return entry;
-    },
+    }
+
     /**
      * @param {*} object
      * @returns {Entry}
      */
     toEntryToUpdate(object) {
-        const entry = new TransformObject(object)
-            .pipe(transforms.pickProp.entryToUpdate)
-            .pipe(transforms.normalize.username)
-            .pipe(transforms.normalize.newUsername)
-            .pipe(transforms.normalize.password)
-            .pipe(transforms.normalize.newPassword)
-            .pipe(transforms.normalize.classIds)
-            .pipe(transforms.normalize.actionId)
-            .pipe(transforms.normalize.timeToStart)
-            .pipe(transforms.normalize.status)
-            .pipe(transforms.replace.timeToStart)
+        const { numberDTO, stringDTO } = this;
+        const entry = new TransformObject(object, { numberDTO, stringDTO })
+            .pickProps([
+                "username",
+                "password",
+                "newUsername",
+                "newPassword",
+                "actionId",
+                "classIds",
+                "timeToStart",
+                "status",
+            ])
+            .normalizeStringProp("username")
+            .normalizeStringProp("newUsername")
+            .normalizeStringProp("password")
+            .normalizeStringProp("newPassword")
+            .normalizeArrayProp("classIds", { type: "string" })
+            .normalizeStringProp("actionId")
+            .normalizeIntProp("timeToStart")
+            .normalizeStringProp("status")
+            .replaceIntWithDateTime("timeToStart")
             .collect();
         return entry;
-    },
+    }
+
     /**
      * mapper cho chuẩn với frontend
      * @param {Entry} entry
      */
     toClient(entry) {
-        const output = new TransformObject(entry)
-            .pipe(DropProp(new Set(["password"])))
+        const { numberDTO, stringDTO } = this;
+        const output = new TransformObject(entry, { numberDTO, stringDTO })
+            .dropProps(["password"])
             .collect();
         return output;
-    },
-};
+    }
+}
+
+module.exports = EntryDTO;

@@ -1,9 +1,11 @@
 const SafeError = require("../exceptions/safe-error");
 
-module.exports = {
+class Validation {
     checkNulOrUndefined(input, name) {
         if (!input) {
             throw new SafeError(`${name} is null or undefined`);
         }
-    },
-};
+    }
+}
+
+module.exports = Validation;

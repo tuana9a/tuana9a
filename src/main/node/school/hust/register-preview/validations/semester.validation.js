@@ -1,9 +1,11 @@
 const SafeError = require("../../../../global/exceptions/safe-error");
 
-module.exports = {
+class SemesterValidation {
     check(semester) {
         if (!String(semester).match(/^\d+\w*$/)) {
             throw new SafeError("wrong semester");
         }
-    },
-};
+    }
+}
+
+module.exports = SemesterValidation;

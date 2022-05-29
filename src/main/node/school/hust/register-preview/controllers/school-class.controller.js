@@ -44,13 +44,17 @@ class SchoolClassController {
     async findMany(semester, method, query) {
         const classIds = this.schoolClassDTO.extractClassIds(query.classIds);
         const filter = createSearchFilter(method, { classIds });
+        const { schoolClassDTO } = this;
+
         if (!filter) throw new SafeError("wrong method");
+
         filter.semester = semester;
         const classes = await this.mongodbClient.getClassesCollection()
             .find(filter)
             .limit(this.CONFIG.mongodb.readLimit)
             .toArray();
-        const result = classes.map(this.schoolClassDTO.toClient);
+        const toClient = schoolClassDTO.toClient.bind(schoolClassDTO);
+        const result = classes.map(toClient);
         return result;
     }
 

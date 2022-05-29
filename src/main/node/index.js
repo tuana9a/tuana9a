@@ -1,4 +1,7 @@
 /* eslint-disable max-len */
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
+
 const fs = require("fs");
 const cors = require("cors");
 const http = require("http");
@@ -7,9 +10,9 @@ const express = require("express");
 
 require("dotenv").config();
 
-const CONFIG = require("./global/configs/config");
+const Config = require("./global/configs/config");
 const Logger = require("./global/loggers/logger");
-const AUTOMATION_CONFIG = require("./school/hust/automation/configs/config");
+const AutomationConfig = require("./school/hust/automation/configs/config");
 
 const SchoolClassRouter = require("./school/hust/register-preview/routes/school-class.router");
 const EntryRouter = require("./school/hust/automation/routes/entry.router");
@@ -23,44 +26,52 @@ const loopAsync = require("./global/controllers/loop-async");
 const IOCContainer = require("./global/libs/ioc-container");
 const ServerUtils = require("./global/utils/server.utils");
 const SchoolClassController = require("./school/hust/register-preview/controllers/school-class.controller");
-const validation = require("./global/validations/validation");
-const arrayValidation = require("./global/validations/array.validation");
-const datetimeUtils = require("./global/utils/datetime.utils");
-const stringDTO = require("./global/dto/string.dto");
-const semesterValidation = require("./school/hust/register-preview/validations/semester.validation");
-const schoolClassDTO = require("./school/hust/register-preview/dto/school-class.dto");
+const Validation = require("./global/validations/validation");
+const ArrayValidation = require("./global/validations/array.validation");
+const DateTimeUtils = require("./global/utils/datetime.utils");
+const StringDTO = require("./global/dto/string.dto");
+const SemesterValidation = require("./school/hust/register-preview/validations/semester.validation");
+const SchoolClassDTO = require("./school/hust/register-preview/dto/school-class.dto");
 const EntryValidation = require("./school/hust/automation/validations/entry.validation");
-const entryDTO = require("./school/hust/automation/dto/entry.dto");
+const EntryDTO = require("./school/hust/automation/dto/entry.dto");
 const PuppeteerManager = require("./school/hust/automation/controllers/puppeteer.manager");
 const JobRunner = require("./school/hust/automation/controllers/job.runner");
 const JobValidation = require("./school/hust/automation/validations/job.validatation");
+const NumberDTO = require("./global/dto/number.dto");
 
 async function main() {
     const ioc = new IOCContainer();
-    ioc.addZeroDependencyBean({ name: "CONFIG", instance: CONFIG });
-    ioc.addZeroDependencyBean({ name: "AUTOMATION_CONFIG", instance: AUTOMATION_CONFIG });
-    ioc.addZeroDependencyBean({ name: "validation", instance: validation });
-    ioc.addZeroDependencyBean({ name: "arrayValidation", instance: arrayValidation });
-    ioc.addZeroDependencyBean({ name: "datetimeUtils", instance: datetimeUtils });
-    ioc.addZeroDependencyBean({ name: "stringDTO", instance: stringDTO });
-    ioc.addZeroDependencyBean({ name: "semesterValidation", instance: semesterValidation });
-    ioc.addZeroDependencyBean({ name: "schoolClassDTO", instance: schoolClassDTO });
-    ioc.addZeroDependencyBean({ name: "entryDTO", instance: entryDTO });
-    // eslint-disable-next-line object-curly-newline
-    ioc.addClassInfo({ name: "logger", Classs: Logger, ignoreDep: ["handler", "handlers"], autowired: true });
-    ioc.addClassInfo({ name: "mongodbClient", Classs: MongoDBClient, autowired: true });
-    ioc.addClassInfo({ name: "serverUtils", Classs: ServerUtils, autowired: true });
-    ioc.addClassInfo({ name: "entryController", Classs: EntryController, autowired: true });
-    ioc.addClassInfo({ name: "entryRouter", Classs: EntryRouter, autowired: true });
-    ioc.addClassInfo({ name: "schoolClassRouter", Classs: SchoolClassRouter, autowired: true });
-    ioc.addClassInfo({ name: "schoolClassController", Classs: SchoolClassController, autowired: true });
-    ioc.addClassInfo({ name: "entryValidation", Classs: EntryValidation, autowired: true });
-    ioc.addClassInfo({ name: "puppeteerManager", Classs: PuppeteerManager, autowired: true });
-    ioc.addClassInfo({ name: "jobRunner", Classs: JobRunner, autowired: true });
-    ioc.addClassInfo({ name: "jobValidation", Classs: JobValidation, autowired: true });
 
-    await ioc.startup();
+    ioc.addZeroDependencyBean("iocContainer", ioc);
+    ioc.addZeroDependencyBean("ioc", ioc);
+    ioc.addClassInfo("CONFIG", Config);
+    ioc.addClassInfo("AUTOMATION_CONFIG", AutomationConfig);
+    ioc.addClassInfo("validation", Validation);
+    ioc.addClassInfo("arrayValidation", ArrayValidation);
+    ioc.addClassInfo("datetimeUtils", DateTimeUtils);
+    ioc.addClassInfo("stringDTO", StringDTO);
+    ioc.addClassInfo("numberDTO", NumberDTO);
+    ioc.addClassInfo("semesterValidation", SemesterValidation);
+    ioc.addClassInfo("schoolClassDTO", SchoolClassDTO);
+    ioc.addClassInfo("entryDTO", EntryDTO);
+    ioc.addClassInfo("logger", Logger, [], ["handler", "handlers"]);
+    ioc.addClassInfo("mongodbClient", MongoDBClient);
+    ioc.addClassInfo("serverUtils", ServerUtils);
+    ioc.addClassInfo("entryController", EntryController);
+    ioc.addClassInfo("entryRouter", EntryRouter);
+    ioc.addClassInfo("schoolClassRouter", SchoolClassRouter);
+    ioc.addClassInfo("schoolClassController", SchoolClassController);
+    ioc.addClassInfo("entryValidation", EntryValidation);
+    ioc.addClassInfo("puppeteerManager", PuppeteerManager);
+    ioc.addClassInfo("jobRunner", JobRunner);
+    ioc.addClassInfo("jobValidation", JobValidation);
 
+    ioc.startup();
+
+    const CONFIG = ioc.beanPool.get("CONFIG").instance;
+    CONFIG.loadFromEnv(process.env);
+    const AUTOMATION_CONFIG = ioc.beanPool.get("AUTOMATION_CONFIG").instance;
+    AUTOMATION_CONFIG.loadFromEnv(process.env);
     const logger = ioc.beanPool.get("logger").instance;
     const mongodbClient = ioc.beanPool.get("mongodbClient").instance;
     const entryRouter = ioc.beanPool.get("entryRouter").instance;
@@ -109,7 +120,7 @@ async function main() {
             while (await cursor.hasNext()) {
                 // eslint-disable-next-line no-await-in-loop
                 const entry = await cursor.next();
-                const job = AUTOMATION_CONFIG.jobMappers.get(entry.actionId);
+                const job = require(AUTOMATION_CONFIG.jobMappers.get(entry.actionId));
                 // eslint-disable-next-line no-await-in-loop
                 const result = await jobRunner.run(job, entry);
                 entryController.processResult(result);

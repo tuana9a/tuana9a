@@ -13,11 +13,11 @@ class IOCContainer {
         this.propagateQueue = [];
     }
 
-    addClassInfo({ name, Classs, dependOns, ignoreDep, autowired }) {
-        this.classInfoPool.set(name, { name, Classs, dependOns, ignoreDep, autowired });
+    addClassInfo(name, Classs, dependOns = [], ignoreDeps = [], autowired = true) {
+        this.classInfoPool.set(name, { name, Classs, dependOns, ignoreDeps, autowired });
     }
 
-    addZeroDependencyBean({ name, instance }) {
+    addZeroDependencyBean(name, instance) {
         if (this.beanPool.has(name)) {
             const existBean = this.beanPool.get(name);
             existBean.instance = instance;
@@ -42,7 +42,7 @@ class IOCContainer {
             const classInfo = this.classInfoPool.get(name);
             const instance = new classInfo.Classs();
             let instanceDepNames = classInfo.autowired ? Object.keys(instance) : classInfo.dependOns;
-            instanceDepNames = (instanceDepNames || []).filter((depName) => !classInfo.ignoreDep?.includes(depName));
+            instanceDepNames = (instanceDepNames || []).filter((depName) => !classInfo.ignoreDeps?.includes(depName));
 
             if (this.beanPool.has(name)) {
                 const existBean = this.beanPool.get(name);
@@ -81,7 +81,7 @@ class IOCContainer {
         }
     }
 
-    async ignite() {
+    ignite() {
         for (let bean = this.propagateQueue.shift(); bean; bean = this.propagateQueue.shift()) {
             const beans = bean.doPropagate(this.beanPool);
             for (const { instance } of beans) {
@@ -92,7 +92,7 @@ class IOCContainer {
         }
     }
 
-    async startup() {
+    startup() {
         this.prepare();
         this.ignite();
     }

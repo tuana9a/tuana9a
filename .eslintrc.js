@@ -13,5 +13,8 @@ module.exports = {
     rules: {
         indent: ["error", 4],
         quotes: [2, "double", "avoid-escape"],
+        "class-methods-use-this": "off",
+        radix: "off",
+        "max-len": "off",
     },
 };
