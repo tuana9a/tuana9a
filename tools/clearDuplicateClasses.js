@@ -1,22 +1,45 @@
+/* eslint-disable no-console */
+/* eslint-disable object-curly-newline */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 const mongodb = require("mongodb");
-const dotenv = require("dotenv");
-
-dotenv.config();
+const config = require("./config.local");
 
 async function main() {
-    const client = await new mongodb.MongoClient(process.env.MONGODB_CONNECTION_STRING).connect();
-    const collection = client.db(process.env.MONGODB_DATABASE_NAME).collection("school.classes");
+    const client = await new mongodb.MongoClient(config.connectionString).connect();
+    const db = client.db(config.databaseName);
+    const collection = db.collection(config.schoolClassCollectionName);
     const cursor = collection.find();
-    // eslint-disable-next-line no-await-in-loop
+    const ids = new Set();
+
     while (await cursor.hasNext()) {
-        // eslint-disable-next-line no-await-in-loop
         const schoolClass = await cursor.next();
-        const MaLop = schoolClass.MaLop;
-        const BuoiHocSo = schoolClass.BuoiHocSo;
-        const classes = await collection.find({ MaLop, BuoiHocSo }).sort({ created: -1 }).limit(1).toArray();
-        const newestClassCreated = classes[0].created;
-        await collection.deleteMany({ MaLop, BuoiHocSo, created: { $ne: newestClassCreated } });
+        const { MaLop, BuoiHocSo, semester } = schoolClass;
+        ids.add(`${semester}-${MaLop}-${BuoiHocSo}`);
     }
+
+    for (const id of ids) {
+        const [p1, p2, p3] = id.split("-");
+        const semester = p1;
+        const MaLop = parseInt(p2);
+        const BuoiHocSo = parseInt(p3);
+        const newestClass = (await collection.find({
+            MaLop,
+            BuoiHocSo,
+            semester,
+        }).sort({ created: -1 }).limit(1).toArray())[0];
+        const newestClassCreated = newestClass.created;
+        const deleteResult = await collection.deleteMany({
+            MaLop,
+            BuoiHocSo,
+            semester,
+            created: { $ne: newestClassCreated },
+        });
+        const deleteCount = deleteResult.deletedCount;
+        if (deleteCount > 0) console.log(`${id}: ${deleteCount}`);
+    }
+
+    console.log("done");
 }
 
 main();
