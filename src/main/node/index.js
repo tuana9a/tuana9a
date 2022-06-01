@@ -19,7 +19,7 @@ const EntryRouter = require("./school/hust/automation/routes/entry.router");
 const MongoDBClient = require("./global/clients/mongodb.client");
 
 const EntryStatus = require("./school/hust/automation/configs/entry-status");
-const requireCorrectSecretHeader = require("./global/middlewares/require-secret-correct-header");
+const requireCorrectSecretHeader = require("./global/middlewares/require-correct-secret-header");
 const schoolAutomationRateLimit = require("./school/hust/automation/middlewares/rate-limit");
 const EntryController = require("./school/hust/automation/controllers/entry.controller");
 const loopAsync = require("./global/controllers/loop-async");
@@ -152,8 +152,8 @@ async function main() {
 
     // school/register-preview
     server.get("/api/school/hust/register-preview/classes", classRouter.find);
-    server.post("/api/school/hust/register-preview/classes", requireCorrectSecretHeader, classRouter.insert);
-    server.delete("/api/school/hust/register-preview/classes", requireCorrectSecretHeader, classRouter.drop);
+    server.post("/api/school/hust/register-preview/classes", requireCorrectSecretHeader(CONFIG.security.secret), classRouter.insert);
+    server.delete("/api/school/hust/register-preview/classes", requireCorrectSecretHeader((CONFIG.security.secret)), classRouter.drop);
 
     // create server
     if (CONFIG.ssl.enabled) {
