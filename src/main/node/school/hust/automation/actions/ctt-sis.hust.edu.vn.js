@@ -22,14 +22,27 @@ async function captcha2text(filepath, ctx) {
         fs,
         axios,
         FormData,
-        hustCaptchaToTextEndpoint,
+        getCaptchaToTextEndpointsUrl,
     } = ctx;
-    // send request
-    const url = hustCaptchaToTextEndpoint;
-    const data = new FormData();
-    data.append("file", fs.createReadStream(filepath));
-    const headers = data.getHeaders();
-    return axios.post(url, data, { headers }).then((res) => String(res.data).trim());
+    // get list of availables captcha2text endpoints
+    const endpoints = await axios.get(getCaptchaToTextEndpointsUrl).then((res) => res.data);
+    if (!Array.isArray(endpoints)) {
+        throw new Error("endpoint list is not an array");
+    }
+    // eslint-disable-next-line no-restricted-syntax
+    for (const endpoint of endpoints) {
+        try {
+            const data = new FormData();
+            data.append("file", fs.createReadStream(filepath));
+            const headers = data.getHeaders();
+            // eslint-disable-next-line no-await-in-loop
+            const result = await axios.post(endpoint, data, { headers }).then((res) => String(res.data).trim());
+            return result;
+        } catch (err) {
+            // ignore
+        }
+    }
+    throw new Error("No endpoints available");
 }
 
 async function gotoLoginPage(ctx) {

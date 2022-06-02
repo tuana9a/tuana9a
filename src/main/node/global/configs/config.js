@@ -53,6 +53,7 @@ class Config {
 
         // automation
         this.hustCaptchaToTextEndpoint = env.HUST_CAPTCHA_TO_TEXT_ENDPOINT || env.HUST_CAPTCHA2TEXT_ENDPOINT;
+        this.getCaptchaToTextEndpointsUrl = env.GET_CAPTCHA_TO_TEXT_ENDPOINTS_URL || env.GET_CAPTCHA2TEXT_ENDPOINTS_URL;
 
         // puppeteer
         this.puppeteer = {};

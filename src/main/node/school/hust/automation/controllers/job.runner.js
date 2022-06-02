@@ -29,7 +29,7 @@ class JobRunner {
             fs: require("fs"),
             axios: require("axios"),
             FormData: require("form-data"),
-            hustCaptchaToTextEndpoint: this.CONFIG.hustCaptchaToTextEndpoint,
+            getCaptchaToTextEndpointsUrl: this.CONFIG.getCaptchaToTextEndpointsUrl,
         };
         const result = new HistoryRecord("result", data);
         result.isCompleted = true;
