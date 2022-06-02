@@ -19,7 +19,7 @@ const EntryRouter = require("./school/hust/automation/routes/entry.router");
 const MongoDBClient = require("./global/clients/mongodb.client");
 
 const EntryStatus = require("./school/hust/automation/configs/entry-status");
-const requireCorrectSecretHeader = require("./global/middlewares/require-correct-secret-header");
+const auth = require("./global/middlewares/auth");
 const schoolAutomationRateLimit = require("./school/hust/automation/middlewares/rate-limit");
 const EntryController = require("./school/hust/automation/controllers/entry.controller");
 const loopAsync = require("./global/controllers/loop-async");
@@ -145,15 +145,15 @@ async function main() {
     server.use(express.static(CONFIG.static, { maxAge: String(7 * 24 * 60 * 60 * 1000) /* 7 day */ }));
 
     // school/automation
-    server.get("/api/school/hust/automation/entry", entryRouter.find);
-    server.post("/api/school/hust/automation/entry", schoolAutomationRateLimit.submitEntry, entryRouter.insert);
-    server.post("/api/school/hust/automation/getEntries", entryRouter.find);
-    server.put("/api/school/hust/automation/entry/:entryId", entryRouter.update);
+    server.get("/api/school/hust/automation/entries", entryRouter.find);
+    server.post("/api/school/hust/automation/entries", schoolAutomationRateLimit.submitEntry, entryRouter.insert);
+    server.post("/api/school/hust/automation/entries", entryRouter.find);
+    server.put("/api/school/hust/automation/entries/:entryId", entryRouter.update);
 
     // school/register-preview
     server.get("/api/school/hust/register-preview/classes", classRouter.find);
-    server.post("/api/school/hust/register-preview/classes", requireCorrectSecretHeader(CONFIG.security.secret), classRouter.insert);
-    server.delete("/api/school/hust/register-preview/classes", requireCorrectSecretHeader((CONFIG.security.secret)), classRouter.drop);
+    server.post("/api/school/hust/register-preview/classes", auth.isCorrectSecret(CONFIG.security.secret), classRouter.insert);
+    server.delete("/api/school/hust/register-preview/classes", auth.isCorrectSecret(CONFIG.security.secret), classRouter.drop);
 
     // create server
     if (CONFIG.ssl.enabled) {

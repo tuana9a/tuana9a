@@ -1,8 +1,6 @@
 import CONFIG from "../configs/config";
 
-const automationBaseUrl = "/api/school/hust/automation";
-
-const baseUrl = `${automationBaseUrl}/entry`;
+const baseUrl = "/api/school/hust/automation/entries";
 
 export default {
     async insert(params = { entry: {} }) {
@@ -43,13 +41,13 @@ export default {
         return this.update(params);
     },
     async find(params = { username: "", password: "" }) {
-        const url = `${automationBaseUrl}/getEntries`;
+        const url = `${baseUrl}`;
         const requestInfo = {
-            method: "POST",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
+                Authorization: `Basic ${btoa(`${params.username}:${params.password}`)}`,
             },
-            body: JSON.stringify({ username: params.username, password: params.password }),
         };
         return fetch(url, requestInfo).then((resp) => resp.json());
     },

@@ -2,7 +2,37 @@ import json
 import yaml
 import requests
 import openpyxl
-from data import SchoolClass
+import base64
+import time
+
+
+class SchoolClass:
+    def __init__(self, row, prop_table, semester):
+        self.prop_table = prop_table
+        self.semester = semester
+        for key in prop_table:
+            self.__setattr__(key, row[prop_table[key]])
+        self.created = int(time.time() * 1000)
+        self.semester = semester
+        pass
+
+    def __str__(self) -> str:
+        result = ""
+        for key in self.prop_table:
+            result = result + key + ": " + \
+                str(self.__getattribute__(key)) + "|"
+        result += "semester: " + str(self.semester) + "|"
+        result += "created: " + str(self.created)
+        return result
+
+    def to_dict(self):
+        result = {}
+        for key in self.prop_table:
+            result[key] = self.__getattribute__(key)
+        result["created"] = self.created
+        result["semester"] = self.semester
+        return result
+
 
 CONFIG = yaml.load(open('tools.config.local.yaml'), Loader=yaml.FullLoader)
 
@@ -87,7 +117,7 @@ def run(semester, xlsx_file_path):
             handler_name = "found"
 
     if len(classes_to_insert) > 0:
-        headers = {'secret': SECRET}
+        headers = {'Authorization': f'Basic {base64.b64encode(SECRET.encode("utf-8")).decode("utf-8")}'}
         batch = []
         max_batch_size = 100
         for classs in classes_to_insert:
