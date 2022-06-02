@@ -10,7 +10,7 @@ class MongoDBClient {
 
     async prepare(connectionString) {
         this.client = await new mongodb.MongoClient(connectionString).connect();
-        this.db = this.client.db(this.CONFIG.mongodb.name);
+        this.db = this.client.db(this.CONFIG.mongodb.databaseName);
         return this.client;
     }
 

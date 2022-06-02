@@ -81,8 +81,8 @@ async function main() {
     const entryController = ioc.beanPool.get("entryController").instance;
 
     // make sure tmp dir exists
-    if (!fs.existsSync(CONFIG.tmpDir)) {
-        fs.mkdirSync(CONFIG.tmpDir);
+    if (!fs.existsSync(CONFIG.tmp.dir)) {
+        fs.mkdirSync(CONFIG.tmp.dir);
     }
 
     // init puppeteer
@@ -135,8 +135,8 @@ async function main() {
     const server = express();
 
     // enable cors
-    logger.info(`allowCors: ${CONFIG.allowCors}`);
-    if (CONFIG.allowCors) {
+    logger.info(`security.cors: ${CONFIG.security.cors}`);
+    if (CONFIG.security.cors) {
         server.use(cors());
     }
 
