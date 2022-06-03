@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 const NumberDTO = require("../../../../main/node/global/dto/number.dto");
 const StringDTO = require("../../../../main/node/global/dto/string.dto");
 const IOCContainer = require("../../../../main/node/global/libs/ioc-container");

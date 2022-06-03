@@ -1,6 +1,5 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 
 class Bean {
     constructor({ name, instance, propagates, dependOns, missingDepsCount }) {

@@ -1,7 +1,5 @@
 /* eslint-disable no-console */
 /* eslint-disable object-curly-newline */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
 const mongodb = require("mongodb");
 const config = require("./config.local");
 

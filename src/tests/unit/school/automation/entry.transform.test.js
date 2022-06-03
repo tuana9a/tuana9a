@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 const DateTime = require("../../../../main/node/global/data/datetime");
 const NumberDTO = require("../../../../main/node/global/dto/number.dto");
 const StringDTO = require("../../../../main/node/global/dto/string.dto");

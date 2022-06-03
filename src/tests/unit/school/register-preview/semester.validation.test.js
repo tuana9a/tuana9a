@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 const SafeError = require("../../../../main/node/global/exceptions/safe-error");
 const IOCContainer = require("../../../../main/node/global/libs/ioc-container");
 const SemesterValidation = require("../../../../main/node/school/hust/register-preview/validations/semester.validation");

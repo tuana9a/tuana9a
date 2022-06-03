@@ -58,7 +58,6 @@ export default class RegisterPreviewComponent extends WindowComponent {
         });
         const classes = response.data;
         const classesMap = new Map();
-        // eslint-disable-next-line no-restricted-syntax
         for (const schoolClass of classes) {
             const key = `${schoolClass.MaLop}.${schoolClass.BuoiHocSo}`;
             const exist = classesMap.get(key);
@@ -71,7 +70,6 @@ export default class RegisterPreviewComponent extends WindowComponent {
             }
         }
         this.timetable.clearSchoolClasses();
-        // eslint-disable-next-line no-restricted-syntax
         for (const schoolClass of classesMap.values()) {
             try {
                 this.timetable.addSchoolClass(schoolClass);

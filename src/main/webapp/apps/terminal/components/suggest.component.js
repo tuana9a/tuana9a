@@ -37,7 +37,6 @@ export default class SuggestComponent extends BaseComponent {
             if (entry) {
                 let exist = false;
                 const { links } = entry;
-                // eslint-disable-next-line no-restricted-syntax
                 for (const link of links) {
                     if (link.missing === postfix) {
                         exist = true;
@@ -60,7 +59,6 @@ export default class SuggestComponent extends BaseComponent {
         const addWord = this.addWord.bind(this);
         const ignoreWords = new Set(["execute"]);
         function dfs(pointer) {
-            // eslint-disable-next-line no-restricted-syntax
             for (const key in pointer) {
                 if (ignoreWords.has(key)) {
                     // eslint-disable-next-line no-continue
@@ -112,7 +110,6 @@ export default class SuggestComponent extends BaseComponent {
     }
 
     reset() {
-        // eslint-disable-next-line no-restricted-syntax
         for (const entry of this.entries) {
             entry.getClassList().remove("isSelecting");
             entry.disable();

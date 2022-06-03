@@ -22,7 +22,6 @@ class TransformObject {
         const { object } = this;
         const output = {};
 
-        // eslint-disable-next-line no-restricted-syntax
         for (const propName in object) {
             if (!propNames.includes(propName)) {
                 // keep props not in propNames
@@ -38,7 +37,6 @@ class TransformObject {
         const { object } = this;
         const output = {};
 
-        // eslint-disable-next-line no-restricted-syntax
         for (const propName of propNames) {
             if (options.dropFalsy) {
                 if (object[propName]) { // check not falsy value

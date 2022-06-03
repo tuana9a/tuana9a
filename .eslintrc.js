@@ -3,6 +3,7 @@ module.exports = {
         browser: true,
         es2021: true,
         node: true,
+        jest: true,
     },
     extends: [
         "airbnb-base",
@@ -16,5 +17,7 @@ module.exports = {
         "class-methods-use-this": "off",
         radix: "off",
         "max-len": "off",
+        "no-restricted-syntax": "off",
+        "no-await-in-loop": "off",
     },
 };

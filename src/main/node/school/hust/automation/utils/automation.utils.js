@@ -10,7 +10,6 @@ module.exports = {
         const diff = {};
         const { ignoreKey } = opts;
         const keys = new Set(Object.keys(oldEntry).concat(Object.keys(newEntry)));
-        // eslint-disable-next-line no-restricted-syntax
         for (const key of keys) {
             if (ignoreKey.has(key) || !newEntry[key]) {
                 // eslint-disable-next-line no-continue

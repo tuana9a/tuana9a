@@ -33,12 +33,10 @@ class JobRunner {
         };
         const result = new HistoryRecord("result", data);
         result.isCompleted = true;
-        // eslint-disable-next-line no-restricted-syntax
         for (const task of job.tasks) {
             let output = { messages: [] };
             let logRecord = {};
             try {
-                // eslint-disable-next-line no-await-in-loop
                 output = await task.run(ctx);
             } catch (err) {
                 this.logger.error(err);

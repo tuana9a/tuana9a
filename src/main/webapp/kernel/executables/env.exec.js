@@ -1,5 +1,4 @@
 /* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 import BaseExec from "./base.exec";
 
 export default class EnvExec extends BaseExec {

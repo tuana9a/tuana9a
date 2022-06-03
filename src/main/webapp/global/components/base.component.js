@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 
 import LOGGER from "../loggers/logger";

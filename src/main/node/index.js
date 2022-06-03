@@ -112,12 +112,9 @@ async function main() {
                 },
                 status: EntryStatus.READY,
             });
-            // eslint-disable-next-line no-await-in-loop
             while (await cursor.hasNext()) {
-                // eslint-disable-next-line no-await-in-loop
                 const entry = await cursor.next();
                 const job = require(CONFIG.automation.jobMappers.get(entry.actionId));
-                // eslint-disable-next-line no-await-in-loop
                 const result = await jobRunner.run(job, entry);
                 entryController.processResult(result);
             }

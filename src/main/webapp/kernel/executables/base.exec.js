@@ -14,7 +14,6 @@ export default class BaseExec {
     }
 
     exit() {
-        // eslint-disable-next-line no-restricted-syntax
         for (const key of this.handlers.keys()) {
             this.handlers.delete(key);
         }

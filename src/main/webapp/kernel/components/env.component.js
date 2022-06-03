@@ -1,6 +1,5 @@
 /* eslint-disable radix */
 /* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 
 // env chứa các biến ngầm môi trường, có thể chứa file
 export default class EnvComponent {

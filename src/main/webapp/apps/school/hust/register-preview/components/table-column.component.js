@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-continue */
 /* eslint-disable max-len */
 import CONSTANTS from "../configs/constants";

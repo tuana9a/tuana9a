@@ -2,7 +2,6 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable guard-for-in */
-/* eslint-disable no-restricted-syntax */
 
 const Bean = require("./bean");
 

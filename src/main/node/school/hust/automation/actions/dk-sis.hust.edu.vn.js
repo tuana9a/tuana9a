@@ -26,13 +26,11 @@ async function captcha2text(filepath, ctx) {
     if (!Array.isArray(endpoints)) {
         throw new Error("endpoint list is not an array");
     }
-    // eslint-disable-next-line no-restricted-syntax
     for (const endpoint of endpoints) {
         try {
             const data = new FormData();
             data.append("file", fs.createReadStream(filepath));
             const headers = data.getHeaders();
-            // eslint-disable-next-line no-await-in-loop
             const result = await axios.post(endpoint, data, { headers }).then((res) => String(res.data).trim());
             return result;
         } catch (err) {
@@ -100,7 +98,6 @@ async function loginUntilSuccess(ctx) {
     let output = new HustActionOutput();
     while (tryCaptchaCount < MAX_TRY_CAPTCHA_COUNT) {
         tryCaptchaCount += 1;
-        // eslint-disable-next-line no-await-in-loop
         output = await loginOnce(ctx);
         if (output.isAccountError) {
             // nếu user sai thì k quan tâm captcha phải break luôn và không làm gì cả
@@ -126,7 +123,6 @@ async function autoRegisterClasses(ctx) {
     const $inputClassId = "#ctl00_ctl00_ASPxSplitter1_Content_ContentSplitter_MainContent_ASPxCallbackPanel1_tbDirectClassRegister_I";
     const $sendClassIdButton = "#ctl00_ctl00_ASPxSplitter1_Content_ContentSplitter_MainContent_ASPxCallbackPanel1_btDirectClassRegister_CD";
     const $responseClassIdMessage = "#ctl00_ctl00_ASPxSplitter1_Content_ContentSplitter_MainContent_ASPxCallbackPanel1_lbKQ";
-    // eslint-disable-next-line no-restricted-syntax
     for await (const classId of classIds) {
     // click vào ô nhập mã lớp 3 lần
         await page.click($inputClassId, { clickCount: 3 });

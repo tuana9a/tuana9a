@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 import ScreenComponent from "./screen.component";
 import TypingComponent from "./typing.component";

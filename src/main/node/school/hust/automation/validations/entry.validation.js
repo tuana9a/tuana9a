@@ -58,7 +58,6 @@ class EntryValidation {
         if (classIds.length === 0) {
             throw new SafeError("classIds is empty");
         }
-        // eslint-disable-next-line no-restricted-syntax
         for (const classId of classIds) {
             if (typeof classId !== "string") {
                 throw new SafeError("classIds must be string");

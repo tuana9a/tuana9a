@@ -11,7 +11,6 @@ export default {
             return false;
         }
         const weeksByComma = weeksInString.split(",");
-        // eslint-disable-next-line no-restricted-syntax
         for (const weekByComma of weeksByComma) {
             const weeksByDash = weekByComma.split("-");
             if (weeksByDash.length == 1) {

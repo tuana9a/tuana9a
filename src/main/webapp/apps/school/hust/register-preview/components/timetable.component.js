@@ -1,5 +1,4 @@
 /* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
 import CONSTANTS from "../configs/constants";
 // eslint-disable-next-line no-unused-vars
 import SchoolClass from "../data/school-class.data";
