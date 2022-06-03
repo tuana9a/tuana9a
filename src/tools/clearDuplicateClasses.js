@@ -11,6 +11,7 @@ async function main() {
     const collection = db.collection(config.schoolClassCollectionName);
     const cursor = collection.find();
     const ids = new Set();
+    let deletedCount = 0;
 
     while (await cursor.hasNext()) {
         const schoolClass = await cursor.next();
@@ -36,10 +37,11 @@ async function main() {
             created: { $ne: newestClassCreated },
         });
         const deleteCount = deleteResult.deletedCount;
-        if (deleteCount > 0) console.log(`${id}: ${deleteCount}`);
+        if (deleteCount > 0) deletedCount += 1;
     }
 
-    console.log("done");
+    console.log("Done, deleted count:", deletedCount);
+    process.exit(0);
 }
 
 main();
