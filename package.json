@@ -6,8 +6,9 @@
   "scripts": {
     "start": "node src/main/node/index.js",
     "test:unit": "jest",
-    "test:unit:watch": "jest --watch",
-    "test:local:ci": "jest --config jest.config.local.js",
+    "test:unit-watch": "jest --watch",
+    "test:local": "jest --config jest.config.local.js",
+    "test:local-watch": "jest --watch --config jest.config.local.js",
     "dev:server": "nodemon src/main/node/index.js",
     "dev:webpack": "webpack --config webpack.dev.js",
     "prod:webpack": "webpack --config webpack.prod.js"

@@ -3,18 +3,18 @@
 const SafeError = require("../../../../main/node/global/exceptions/safe-error");
 const IOCContainer = require("../../../../main/node/global/libs/ioc-container");
 const ArrayValidation = require("../../../../main/node/global/validations/array.validation");
-const AutomationConfig = require("../../../../main/node/school/hust/automation/configs/config");
+const Config = require("../../../../main/node/global/configs/config");
 const EntryValidation = require("../../../../main/node/school/hust/automation/validations/entry.validation");
 
 describe("EntryValidation", () => {
     const ioc = new IOCContainer();
     ioc.addClassInfo("arrayValidation", ArrayValidation);
-    ioc.addClassInfo("AUTOMATION_CONFIG", AutomationConfig);
+    ioc.addClassInfo("CONFIG", Config);
     ioc.addClassInfo("entryValidation", EntryValidation);
     ioc.startup();
 
-    const AUTOMATION_CONFIG = ioc.beanPool.get("AUTOMATION_CONFIG").instance;
-    AUTOMATION_CONFIG.loadFromEnv(process.env);
+    const CONFIG = ioc.beanPool.get("CONFIG").instance;
+    CONFIG.loadFromEnv(process.env);
     const entryValidation = ioc.beanPool.get("entryValidation").instance;
 
     test("should throw error if entry.username is null", () => {

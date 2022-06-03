@@ -1,4 +1,4 @@
-const HttpStatusCode = require("../configs/http-status-code");
+const HttpStatusCode = require("../data/http-status-code");
 
 class SafeError extends Error {
     constructor(message, code = HttpStatusCode.BAD_REQUEST) {

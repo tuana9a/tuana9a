@@ -1,7 +1,7 @@
-const EntryStatus = require("../configs/entry-status");
+const EntryStatus = require("../data/entry-status");
 const SafeError = require("../../../../global/exceptions/safe-error");
 const DateTime = require("../../../../global/data/datetime");
-const HttpStatusCode = require("../../../../global/configs/http-status-code");
+const HttpStatusCode = require("../../../../global/data/http-status-code");
 
 class EntryRouter {
     entryDTO;

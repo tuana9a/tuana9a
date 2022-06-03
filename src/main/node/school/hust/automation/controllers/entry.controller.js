@@ -3,11 +3,11 @@
 const mongodb = require("mongodb");
 
 const automationUtils = require("../utils/automation.utils");
-const EntryStatus = require("../configs/entry-status");
+const EntryStatus = require("../data/entry-status");
 // eslint-disable-next-line no-unused-vars
 const Entry = require("../data/entry");
 const SafeError = require("../../../../global/exceptions/safe-error");
-const HttpStatusCode = require("../../../../global/configs/http-status-code");
+const HttpStatusCode = require("../../../../global/data/http-status-code");
 const EntryHasHistory = require("../data/entry-has-history");
 const HistoryRecord = require("../data/history-record");
 const DateTime = require("../../../../global/data/datetime");

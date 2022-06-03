@@ -4,7 +4,7 @@ const SafeError = require("../../../../global/exceptions/safe-error");
 class EntryValidation {
     arrayValidation;
 
-    AUTOMATION_CONFIG;
+    CONFIG;
 
     checkUsername(username) {
         if (!username || username.match(/^\s+$/) || username.length < 8) {
@@ -19,7 +19,7 @@ class EntryValidation {
     }
 
     checkActionId(actionId) {
-        if (!this.AUTOMATION_CONFIG.allowedActions.has(actionId)) {
+        if (!this.CONFIG.automation.allowedActions.has(actionId)) {
             throw new SafeError("actionId not allowed");
         }
     }
@@ -36,13 +36,13 @@ class EntryValidation {
     }
 
     checkActionIdTimeTable(actionId) {
-        if (actionId !== this.AUTOMATION_CONFIG.actionIds.getStudentTimetable) {
+        if (actionId !== this.CONFIG.automation.getStudentTimetableId) {
             throw new SafeError("actionId not match");
         }
     }
 
     checkActionIdAutoRegister(actionId) {
-        if (actionId !== this.AUTOMATION_CONFIG.actionIds.autoRegisterClasses) {
+        if (actionId !== this.CONFIG.automation.autoRegisterClassesId) {
             throw new SafeError("actionId not match");
         }
     }

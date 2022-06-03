@@ -12,13 +12,12 @@ require("dotenv").config();
 
 const Config = require("./global/configs/config");
 const Logger = require("./global/loggers/logger");
-const AutomationConfig = require("./school/hust/automation/configs/config");
 
 const SchoolClassRouter = require("./school/hust/register-preview/routes/school-class.router");
 const EntryRouter = require("./school/hust/automation/routes/entry.router");
 const MongoDBClient = require("./global/clients/mongodb.client");
 
-const EntryStatus = require("./school/hust/automation/configs/entry-status");
+const EntryStatus = require("./school/hust/automation/data/entry-status");
 const auth = require("./global/middlewares/auth");
 const schoolAutomationRateLimit = require("./school/hust/automation/middlewares/rate-limit");
 const EntryController = require("./school/hust/automation/controllers/entry.controller");
@@ -45,7 +44,6 @@ async function main() {
     ioc.addZeroDependencyBean("iocContainer", ioc);
     ioc.addZeroDependencyBean("ioc", ioc);
     ioc.addClassInfo("CONFIG", Config);
-    ioc.addClassInfo("AUTOMATION_CONFIG", AutomationConfig);
     ioc.addClassInfo("validation", Validation);
     ioc.addClassInfo("arrayValidation", ArrayValidation);
     ioc.addClassInfo("datetimeUtils", DateTimeUtils);
@@ -70,8 +68,6 @@ async function main() {
 
     const CONFIG = ioc.beanPool.get("CONFIG").instance;
     CONFIG.loadFromEnv(process.env);
-    const AUTOMATION_CONFIG = ioc.beanPool.get("AUTOMATION_CONFIG").instance;
-    AUTOMATION_CONFIG.loadFromEnv(process.env);
     const logger = ioc.beanPool.get("logger").instance;
     const mongodbClient = ioc.beanPool.get("mongodbClient").instance;
     const entryRouter = ioc.beanPool.get("entryRouter").instance;
@@ -103,7 +99,7 @@ async function main() {
     mongodbClient.getClassesCollection().createIndex({ MaLop: 1 }); // init collection index for search faster
 
     // can start process entry
-    logger.info(`automation.repeatProcessAfter: ${AUTOMATION_CONFIG.repeatProcessAfter}`);
+    logger.info(`automation.repeatProcessAfter: ${CONFIG.automation.repeatProcessAfter}`);
     loopAsync.loopInfinity(async () => {
         // phải sử dụng chung tab vì nếu 2 tab cùng mở ctt-sis sẽ đánh nhau
         // phải cùng loop với execute vì nếu không cũng sẽ đánh nhau
@@ -120,7 +116,7 @@ async function main() {
             while (await cursor.hasNext()) {
                 // eslint-disable-next-line no-await-in-loop
                 const entry = await cursor.next();
-                const job = require(AUTOMATION_CONFIG.jobMappers.get(entry.actionId));
+                const job = require(CONFIG.automation.jobMappers.get(entry.actionId));
                 // eslint-disable-next-line no-await-in-loop
                 const result = await jobRunner.run(job, entry);
                 entryController.processResult(result);
@@ -129,7 +125,7 @@ async function main() {
             // có thể lỗi mất mạng
             logger.error(err);
         }
-    }, AUTOMATION_CONFIG.repeatProcessAfter);
+    }, CONFIG.automation.repeatProcessAfter);
 
     // init server
     const server = express();
