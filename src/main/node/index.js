@@ -12,16 +12,13 @@ require("dotenv").config();
 
 const Config = require("./global/configs/config");
 const Logger = require("./global/loggers/logger");
-
 const SchoolClassRouter = require("./school/hust/register-preview/routes/school-class.router");
 const EntryRouter = require("./school/hust/automation/routes/entry.router");
 const MongoDBClient = require("./global/clients/mongodb.client");
-
 const EntryStatus = require("./school/hust/automation/data/entry-status");
-const auth = require("./global/middlewares/auth");
-const schoolAutomationRateLimit = require("./school/hust/automation/middlewares/rate-limit");
+const Auth = require("./global/middlewares/auth");
+const RateLimit = require("./global/middlewares/rate-limit");
 const EntryController = require("./school/hust/automation/controllers/entry.controller");
-const loopAsync = require("./global/controllers/loop-async");
 const IOCContainer = require("./global/libs/ioc-container");
 const ServerUtils = require("./global/utils/server.utils");
 const SchoolClassController = require("./school/hust/register-preview/controllers/school-class.controller");
@@ -40,7 +37,6 @@ const NumberDTO = require("./global/dto/number.dto");
 
 async function main() {
     const ioc = new IOCContainer();
-
     ioc.addZeroDependencyBean("iocContainer", ioc);
     ioc.addZeroDependencyBean("ioc", ioc);
     ioc.addClassInfo("CONFIG", Config);
@@ -63,7 +59,8 @@ async function main() {
     ioc.addClassInfo("puppeteerManager", PuppeteerManager);
     ioc.addClassInfo("jobRunner", JobRunner);
     ioc.addClassInfo("jobValidation", JobValidation);
-
+    ioc.addClassInfo("auth", Auth);
+    ioc.addClassInfo("rateLimit", RateLimit);
     ioc.startup();
 
     const CONFIG = ioc.beanPool.get("CONFIG").instance;
@@ -75,6 +72,9 @@ async function main() {
     const puppeteerManager = ioc.beanPool.get("puppeteerManager").instance;
     const jobRunner = ioc.beanPool.get("jobRunner").instance;
     const entryController = ioc.beanPool.get("entryController").instance;
+    const serverUtils = ioc.beanPool.get("serverUtils").instance;
+    const auth = ioc.beanPool.get("auth").instance;
+    const rateLimit = ioc.beanPool.get("rateLimit").instance;
 
     // make sure tmp dir exists
     if (!fs.existsSync(CONFIG.tmp.dir)) {
@@ -100,7 +100,7 @@ async function main() {
 
     // can start process entry
     logger.info(`automation.repeatProcessAfter: ${CONFIG.automation.repeatProcessAfter}`);
-    loopAsync.loopInfinity(async () => {
+    serverUtils.loopInfinity(async () => {
         // phải sử dụng chung tab vì nếu 2 tab cùng mở ctt-sis sẽ đánh nhau
         // phải cùng loop với execute vì nếu không cũng sẽ đánh nhau
         const entriesCollection = mongodbClient.getEntriesCollection();
@@ -139,7 +139,7 @@ async function main() {
 
     // school/automation
     server.get("/api/school/hust/automation/entries", entryRouter.find);
-    server.post("/api/school/hust/automation/entries", schoolAutomationRateLimit.submitEntry, entryRouter.insert);
+    server.post("/api/school/hust/automation/entries", rateLimit.create({ windowMs: 5 * 60 * 1000, max: 5 }) /* 5 reqs per 5 minute */, entryRouter.insert);
     server.post("/api/school/hust/automation/entries", entryRouter.find);
     server.put("/api/school/hust/automation/entries/:entryId", entryRouter.update);
 

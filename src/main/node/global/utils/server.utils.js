@@ -31,6 +31,14 @@ class ServerUtils {
         };
         return safeHandler;
     }
+
+    loopInfinity(fn, delay) {
+        const callIt = async () => {
+            await fn();
+            setTimeout(callIt, delay);
+        };
+        callIt();
+    }
 }
 
 module.exports = ServerUtils;

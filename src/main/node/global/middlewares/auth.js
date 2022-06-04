@@ -1,21 +1,21 @@
-/**
- * check secret header for important request
- * @param {String} yourSecret
- */
-function isCorrectSecret(yourSecret) {
-    const correctToken = Buffer.from(yourSecret).toString("base64");
-    return (req, resp, next) => {
-        const { authorization } = req.headers;
+class Auth {
+    /**
+     * check secret header for important request
+     * @param {String} yourSecret
+     */
+    isCorrectSecret(yourSecret) {
+        const correctToken = Buffer.from(yourSecret).toString("base64");
+        return (req, resp, next) => {
+            const { authorization } = req.headers;
 
-        if (authorization !== `Basic ${correctToken}`) {
-            resp.status(401).send("Unauthorized");
-            return;
-        }
+            if (authorization !== `Basic ${correctToken}`) {
+                resp.status(401).send("Unauthorized");
+                return;
+            }
 
-        next();
-    };
+            next();
+        };
+    }
 }
 
-module.exports = {
-    isCorrectSecret,
-};
+module.exports = Auth;

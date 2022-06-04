@@ -10,7 +10,9 @@ export default {
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(params.entry),
+            body: JSON.stringify({
+                data: params.entry,
+            }),
         };
         return fetch(url, requestInfo).then((resp) => resp.json());
     },
@@ -31,7 +33,9 @@ export default {
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(params.entry),
+            body: JSON.stringify({
+                data: params.entry,
+            }),
         };
         return fetch(url, requestInfo).then((resp) => resp.json());
     },
@@ -46,7 +50,7 @@ export default {
             method: "GET",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
-                Authorization: `Basic ${btoa(`${params.username}:${params.password}`)}`,
+                Authorization: `Basic ${window.btoa(`${params.username}:${params.password}`)}`,
             },
         };
         return fetch(url, requestInfo).then((resp) => resp.json());

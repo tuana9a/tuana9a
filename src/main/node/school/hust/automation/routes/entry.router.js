@@ -19,19 +19,57 @@ class EntryRouter {
     }
 
     async insert(req) {
-        const entry = this.entryDTO.toEntryToInsert(req.body);
-        entry.created = new DateTime(new Date());
-        entry.status = EntryStatus.READY;
-        this.entryValidation.checkUsernamePasswordActionId(entry);
-        const result = await this.entryController.insert(entry);
+        let result;
+        const data = req.body?.data;
+        if (!data) {
+            throw new SafeError("data not found", HttpStatusCode.BAD_REQUEST);
+        }
+        if (Array.isArray(data)) {
+            result = [];
+            for (let entry of data) {
+                try {
+                    entry = this.entryDTO.toEntryToInsert(entry);
+                    entry.created = new DateTime(new Date());
+                    entry.status = EntryStatus.READY;
+                    this.entryValidation.checkUsernamePasswordActionId(entry);
+                    const insertResult = await this.entryController.insert(entry);
+                    result.push(insertResult);
+                } catch (err) {
+                    result.push({ entryId: "Error" });
+                }
+            }
+        } else {
+            const entry = this.entryDTO.toEntryToInsert(data);
+            entry.created = new DateTime(new Date());
+            entry.status = EntryStatus.READY;
+            this.entryValidation.checkUsernamePasswordActionId(entry);
+            result = await this.entryController.insert(entry);
+        }
+
         return result;
     }
 
     async update(req) {
-        const entry = this.entryDTO.toEntryToUpdate(req.body);
-        const { entryId } = req.params;
-        this.entryValidation.checkUsernamePasswordActionId(entry);
-        const result = await this.entryController.update(entryId, entry);
+        let result;
+        const data = req.body?.data;
+        if (!data) {
+            throw new SafeError("data not found", HttpStatusCode.BAD_REQUEST);
+        }
+        if (Array.isArray(data)) {
+            result = [];
+            for (let entry of data) {
+                entry = this.entryDTO.toEntryToUpdate(entry);
+                const { entryId } = req.params;
+                this.entryValidation.checkUsernamePasswordActionId(entry);
+                const updateResult = await this.entryController.update(entryId, entry);
+                result.push(updateResult);
+            }
+        } else {
+            const entry = this.entryDTO.toEntryToUpdate(data);
+            const { entryId } = req.params;
+            this.entryValidation.checkUsernamePasswordActionId(entry);
+            result = await this.entryController.update(entryId, entry);
+        }
         return result;
     }
 

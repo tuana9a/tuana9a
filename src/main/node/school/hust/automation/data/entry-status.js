@@ -1,8 +1,11 @@
-const EntryStatus = {
-    READY: "READY",
-    DONE: "DONE",
-    CANCELED: "CANCELED",
-    FAILED: "FAILED",
-};
+class EntryStatus {
+    static READY = "READY";
+
+    static DONE = "DONE";
+
+    static CANCELED = "CANCELED";
+
+    static FAILED = "FAILED";
+}
 
 module.exports = EntryStatus;

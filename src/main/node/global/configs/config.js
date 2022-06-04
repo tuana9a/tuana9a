@@ -31,6 +31,14 @@ launchOptionTemplate.set("docker", {
 });
 
 class Config {
+    constructor(data) {
+        if (data) {
+            for (const [key, value] of Object.entries(data)) {
+                this[key] = value;
+            }
+        }
+    }
+
     loadFromEnv(env) {
         // start assign value
         this.bind = env.BIND || "0.0.0.0";
@@ -99,6 +107,9 @@ class Config {
         // puppeteer
         this.puppeteer = {};
         this.puppeteer.launchOption = launchOptionTemplate.get(env.PUPPETEER_MODE) || launchOptionTemplate.get("default");
+
+        // rate limit
+        this.ignoreRateLimit = parseInt(env.IGNORE_RATE_LIMIT) || 0;
     }
 }
 

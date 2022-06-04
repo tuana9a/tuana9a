@@ -1,4 +1,5 @@
 const DateTime = require("../../../../global/data/datetime");
+const EntryStatus = require("./entry-status");
 
 /**
  * có những thuộc tính có thể nghiệp vụ khác không dùng
@@ -13,7 +14,7 @@ class Entry {
      * @param {DateTime} timeToStart
      * @param {DateTime} created
      */
-    constructor(username, password, actionId, classIds, timeToStart, created = new DateTime()) {
+    constructor(username, password, actionId, classIds, timeToStart, created = new DateTime(), status = EntryStatus.READY) {
         // USER MANAGE PROPERTY
         // eslint-disable-next-line no-underscore-dangle
         this._id = null; // ObjectId from MongoDB;
@@ -25,7 +26,7 @@ class Entry {
         // SERVER MANAGE PROPERTY
         this.historyId = null;
         this.created = created; // thời gian khởi tạo
-        this.status = null; // trạng thái của entry
+        this.status = status; // trạng thái của entry
     }
 }
 
