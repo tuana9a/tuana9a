@@ -8,7 +8,6 @@ class IOCContainer {
     constructor() {
         this.beanPool = new Map();
         this.classInfoPool = new Map();
-        this.propagateQueue = [];
     }
 
     addClassInfo(name, Classs, dependOns = [], ignoreDeps = [], autowired = true) {
@@ -19,17 +18,16 @@ class IOCContainer {
         if (this.beanPool.has(name)) {
             const existBean = this.beanPool.get(name);
             existBean.instance = instance;
-        } else {
-            const newBean = new Bean({
-                name,
-                instance,
-                propagates: [],
-                dependOns: [],
-                missingDepsCount: 0,
-            });
-            this.beanPool.set(name, newBean);
-            this.propagateQueue.push(newBean);
+            return;
         }
+        const newBean = new Bean({
+            name,
+            instance,
+            injectTos: [],
+            dependOns: [],
+            missingDepsCount: 0,
+        });
+        this.beanPool.set(name, newBean);
     }
 
     prepare() {
@@ -51,7 +49,7 @@ class IOCContainer {
                 const newBean = new Bean({
                     name,
                     instance,
-                    propagates: [],
+                    injectTos: [],
                     dependOns: instanceDepNames,
                     missingDepsCount: instanceDepNames.length,
                 });
@@ -61,38 +59,47 @@ class IOCContainer {
             for (const depName of instanceDepNames) {
                 if (this.beanPool.has(depName)) {
                     const existDepBean = this.beanPool.get(depName);
-                    existDepBean.propagates.push(name);
+                    existDepBean.injectTos.push(name);
                 } else {
                     this.beanPool.set(depName, new Bean({
                         name: depName,
                         instance: null,
-                        propagates: [name],
+                        injectTos: [name],
                         dependOns: [],
                         missingDepsCount: 0,
                     }));
                 }
             }
+        }
+    }
 
-            if (instanceDepNames.length === 0) {
-                this.propagateQueue.push(this.beanPool.get(name));
+    inject() {
+        for (const bean of this.beanPool.values()) {
+            const { name, injectTos } = bean;
+            for (const targetBeanName of injectTos) {
+                this.injectFromTo(name, targetBeanName);
             }
         }
     }
 
-    ignite() {
-        for (let bean = this.propagateQueue.shift(); bean; bean = this.propagateQueue.shift()) {
-            const beans = bean.doPropagate(this.beanPool);
-            for (const { instance } of beans) {
-                if (instance.postInjection) {
-                    instance.postInjection();
-                }
+    injectFromTo(from, target, name) {
+        const propName = name || from;
+        const fromBean = this.beanPool.get(from);
+        const targetBean = this.beanPool.get(target);
+        const { instance: targetInstance } = targetBean;
+        const { instance } = fromBean;
+        targetBean.missingDepsCount -= 1;
+        targetInstance[propName] = instance;
+        if (targetBean.missingDepsCount === 0) {
+            if (targetInstance.postInjection) {
+                targetInstance.postInjection();
             }
         }
     }
 
     startup() {
         this.prepare();
-        this.ignite();
+        this.inject();
     }
 }
 
