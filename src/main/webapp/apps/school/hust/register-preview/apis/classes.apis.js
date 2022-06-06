@@ -17,29 +17,4 @@ export default {
         params.method = "range";
         return this.find(params);
     },
-    async insert(params = { semester: "", secret: "", file: false }) {
-        const query = `semester=${params.semester}`;
-        const url = `${baseUrl}?${query}`;
-        const formData = new FormData();
-        formData.append("file", params.file);
-        const requestInfo = {
-            method: "POST",
-            headers: {
-                secret: params.secret,
-            },
-            body: formData,
-        };
-        return fetch(url, requestInfo).then((resp) => resp.json());
-    },
-    async delete(params = { semester: "", secret: "" }) {
-        const query = `semester=${params.semester}`;
-        const url = `${baseUrl}?${query}`;
-        const requestInfo = {
-            method: "DELETE",
-            headers: {
-                secret: params.secret,
-            },
-        };
-        return fetch(url, requestInfo).then((resp) => resp.json());
-    },
 };

@@ -1,6 +1,5 @@
 import doUpgrade from "./do-upgrade";
 import OS from "./kernel/components/os.component";
-import SchoolAdminComponent from "./apps/school/hust/register-preview/components/admin.component";
 import TerminalComponent from "./apps/terminal/components/terminal.component";
 import SchoolRegisterPreviewComponent from "./apps/school/hust/register-preview/components/register-preview.component";
 import AutomationManagerComponent from "./apps/school/hust/automation/components/automation-manager.component";
@@ -33,10 +32,6 @@ os.install("register-preview", SchoolRegisterPreviewComponent, {
     height: 500,
     x: 0,
     y: 0,
-});
-
-os.install("school-admin", SchoolAdminComponent, {
-    width: 600,
 });
 
 os.install("automation-manager", AutomationManagerComponent, {
