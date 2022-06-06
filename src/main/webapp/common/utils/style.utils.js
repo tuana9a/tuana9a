@@ -132,7 +132,6 @@ export default {
             oldY = clientY;
             // set the element's new position
             const element = component.getElement();
-            // eslint-disable-next-line max-len
             let newX = element.offsetLeft + deltaX;
             let newY = element.offsetTop + deltaY;
             if (opts?.boundComponent) {

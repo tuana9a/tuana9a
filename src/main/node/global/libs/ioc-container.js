@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable object-curly-newline */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable guard-for-in */

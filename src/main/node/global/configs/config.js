@@ -65,7 +65,7 @@ class Config {
 
         // database
         this.mongodb = {};
-        this.mongodb.connectionString = env.MONGODB_CONNECTION_STRING || "mongodb://localhost:27017/";
+        this.mongodb.connectionString = env.MONGODB_CONNECTION_STRING;
         this.mongodb.databaseName = env.MONGODB_DATABASE_NAME || "tuana9a";
         this.mongodb.readLimit = parseInt(env.MONGODB_READ_LIMIT) || 20;
 

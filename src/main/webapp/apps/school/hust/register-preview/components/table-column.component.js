@@ -1,5 +1,4 @@
 /* eslint-disable no-continue */
-/* eslint-disable max-len */
 import CONSTANTS from "../configs/constants";
 import BaseComponent from "../../../../../global/components/base.component";
 import SchoolClassComponent from "./school-class.component";

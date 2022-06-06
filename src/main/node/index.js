@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
 
@@ -34,6 +33,7 @@ const PuppeteerManager = require("./school/hust/automation/controllers/puppeteer
 const JobRunner = require("./school/hust/automation/controllers/job.runner");
 const JobValidation = require("./school/hust/automation/validations/job.validatation");
 const NumberDTO = require("./global/dto/number.dto");
+const AutomationUtils = require("./school/hust/automation/utils/automation.utils");
 
 async function main() {
     const ioc = new IOCContainer();
@@ -61,6 +61,7 @@ async function main() {
     ioc.addClassInfo("jobValidation", JobValidation);
     ioc.addClassInfo("auth", Auth);
     ioc.addClassInfo("rateLimit", RateLimit);
+    ioc.addClassInfo("automationUtils", AutomationUtils);
     ioc.startup();
 
     const CONFIG = ioc.beanPool.get("CONFIG").instance;

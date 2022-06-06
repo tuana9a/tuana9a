@@ -75,7 +75,6 @@ export default class OS extends BaseComponent {
         }
         app.launch(launchOption);
         app.moveTo(launchOption.x, launchOption.y);
-        // eslint-disable-next-line max-len
         styleUtils.makeDragToMove(app, app.head, {
             boundComponent: this.windowManager,
             boundLeft: true,

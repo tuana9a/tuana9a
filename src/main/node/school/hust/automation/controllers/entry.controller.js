@@ -1,8 +1,6 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable max-len */
 const mongodb = require("mongodb");
 
-const automationUtils = require("../utils/automation.utils");
 const EntryStatus = require("../data/entry-status");
 // eslint-disable-next-line no-unused-vars
 const Entry = require("../data/entry");
@@ -14,6 +12,8 @@ const DateTime = require("../../../../global/data/datetime");
 
 class EntryController {
     mongodbClient;
+
+    automationUtils;
 
     getEntriesCollection() {
         return this.mongodbClient.getEntriesCollection();
@@ -100,7 +100,7 @@ class EntryController {
         ]);
         const historyRecord = new HistoryRecord("update", existEntry);
         historyRecord.logs.push({
-            diff: automationUtils.createEntryDiff(existEntry, updateDTO, {
+            diff: this.automationUtils.createEntryDiff(existEntry, updateDTO, {
                 ignoreKey,
             }),
             at: new DateTime(),

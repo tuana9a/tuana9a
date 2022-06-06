@@ -1,11 +1,12 @@
 const DateTime = require("../../../../global/data/datetime");
 
-module.exports = {
+class AutomationUtils {
     injectTimestampAt(object) {
         // eslint-disable-next-line no-param-reassign
         object.at = new DateTime();
         return object;
-    },
+    }
+
     createEntryDiff(oldEntry, newEntry, opts = { ignoreKey: new Set() }) {
         const diff = {};
         const { ignoreKey } = opts;
@@ -23,5 +24,7 @@ module.exports = {
             }
         }
         return diff;
-    },
-};
+    }
+}
+
+module.exports = AutomationUtils;

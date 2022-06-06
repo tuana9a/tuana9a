@@ -136,7 +136,6 @@ export default class SuggestComponent extends BaseComponent {
         oldSelectingEntry?.getClassList().remove("isSelecting");
         // scroll selection to selecting entry
         const childStart = newSelectingEntry.offsetTop;
-        // eslint-disable-next-line max-len
         const childEnd = childStart + parseFloat(getComputedStyle(newSelectingEntry.getElement()).height);
         const dadStart = this.element.scrollTop;
         const dadEnd = dadStart + parseFloat(getComputedStyle(this.element).height);

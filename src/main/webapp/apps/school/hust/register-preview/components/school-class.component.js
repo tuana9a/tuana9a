@@ -25,7 +25,6 @@ export default class SchoolClassComponent extends BaseComponent {
 
     render(opts = { rowHeight: 0, currentWeekPreview: 0, offsetHour: 0 }) {
         if (!this.isEnabled) return;
-        // eslint-disable-next-line max-len
         const thoiGianHoc = this.schoolClass.ThoiGianHoc; // EXPLAIN: VD: 1234-5678 -> 12h34p - 56h78p
         const { rowHeight } = opts;
 
@@ -36,10 +35,8 @@ export default class SchoolClassComponent extends BaseComponent {
         time.stopMinute = parseInt(thoiGianHoc.substring(7, 9));
         this.schoolClass.time = time;
 
-        // eslint-disable-next-line max-len
         const top = (time.startHour + opts.offsetHour + 1 + time.startMinute / 60) * rowHeight; // +1 for column name
         this.getElement().style.top = `${top}px`;
-        // eslint-disable-next-line max-len
         const height = (time.stopHour - time.startHour + (time.stopMinute - time.startMinute) / 60) * rowHeight;
         this.getElement().style.height = `${height}px`;
 
